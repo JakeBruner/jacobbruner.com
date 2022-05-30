@@ -12,7 +12,7 @@
 </svelte:head>
 
 <section
-  class="codybowl bg-[url('codybowl.jpg')] dark:bg-[url('jacksonstars.jpg')] bg-fixed min-h-screen min-w-full flex flex-col justify-center items-center"
+  class="codybowl bg-[url('/images/codybowl.jpg')] dark:bg-[url('/images/jacksonstars.jpg')] bg-fixed min-h-screen min-w-full flex flex-col justify-center items-center"
 >
   <Header />
   <h1 class="bg-white_translucent font-light py-0.5 px-2 my-3">

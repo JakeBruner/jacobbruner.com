@@ -11,6 +11,9 @@
 <Footer />
 
 <style>
+  body {
+    overscroll-behavior: none;
+  }
   /* main {
     flex: 1;
     display: flex;
