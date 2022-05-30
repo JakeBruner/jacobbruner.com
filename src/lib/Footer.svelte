@@ -4,11 +4,11 @@
   const nav = [
     { title: "Home", path: "/" },
     { title: "Music", path: "/about" },
-    { title: "Math", path: "/math" },
-    { title: "Photography", path: "/photography" },
-    { title: "CS", path: "/cs" },
-    { title: "Writing", path: "/writing" },
-    { title: "Contact", path: "/contact" },
+    { title: "Math", path: "/about" },
+    { title: "Photography", path: "/about" },
+    { title: "CS", path: "/about" },
+    { title: "Writing", path: "/about" },
+    { title: "Contact", path: "/about" },
   ];
 </script>
 
