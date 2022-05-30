@@ -14,25 +14,28 @@
 
 <header>
   <nav
-    class="bg-white_translucent px-2 sm:px-4 py-3.5 dark:bg-gray-800 text-black dark:text-white"
+    class="fixed top-0 left-0 right-0 z-50 bg-white_translucent dark:bg-zinc-900/80 px-2 sm:px-4 py-3.5 text-black dark:text-zinc-200/90"
   >
-    <div class="container flex flex-wrap justify-between items-center px-8">
+    <!-- dark:bg-gray-800 dark:text-white -->
+    <div
+      class="flex flex-wrap justify-between items-center xl:px-40 lg:px-24 px-12"
+    >
       <a href="/" class="name font-bold"
         >Jacob <span class="text-primary">B.</span></a
       >
       <div
         class="hidden justify-between items-center w-full md:flex md:w-auto md:order-1"
-        id="mobile-menu-2"
+        id="mobile-menu"
       >
         <ul
-          class="flex flex-col mt-4 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium"
+          class="flex mt-4 md:flex-row lg:space-x-7 space-x-4 md:mt-0 md:text-sm"
         >
           {#each nav as item}
             <li>
               <a
                 href={item.path}
                 class:active={$page.url.pathname === item.path}
-                class="decoration-primary block text-[18px] text-stone-900/90 hover:text-stone-900"
+                class="transition ease-in-out duration-300 hover:scale-105 decoration-primary block text-[17px] text-stone-900/90 hover:text-stone-900 dark:text-zinc-200/90 hover:dark:text-zinc-200 "
                 >{item.title}</a
               >
             </li>

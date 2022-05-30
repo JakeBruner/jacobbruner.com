@@ -1,4 +1,5 @@
 <script context="module">
+  import Header from "$lib/Header.svelte";
   export const prerender = true;
 </script>
 
@@ -10,50 +11,32 @@
   <title>Home</title>
 </svelte:head>
 
-<section>
-  <h1 class="text-3xl font-bold underline">
-    <div class="welcome">
-      <picture>
-        <source srcset="svelte-welcome.webp" type="image/webp" />
-        <img src="svelte-welcome.png" alt="Welcome" />
-      </picture>
-    </div>
-
-    to your new<br />SvelteKit app
+<section
+  class="codybowl bg-[url('codybowl.jpg')] dark:bg-[url('jacksonstars.jpg')] bg-fixed min-h-screen min-w-full flex flex-col justify-center items-center"
+>
+  <Header />
+  <h1 class="bg-white_translucent font-light py-0.5 px-2 my-3">
+    Learning as a Hobby
   </h1>
-
-  <h2>
-    try editing <strong>src/routes/index.svelte</strong>
+  <h2 class="bg-white_translucent text-[19px] italic font-thin py-0.1 px-0.5">
+    The work of Jacob Bruner
   </h2>
-
-  <Counter />
+  <div>
+    <button
+      class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white transition duration-500 ease-in-out transform bg-blue-400/80 lg:px-7 lg:py-2 rounded-xl hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
+      >About Me</button
+    >
+    <button
+      class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white transition duration-500 ease-in-out transform bg-primary_translucent lg:px-7 lg:py-2 rounded-xl hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
+      >About Me</button
+    >
+  </div>
+  <!-- <Counter /> -->
 </section>
 
 <style>
-  section {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    flex: 1;
-  }
-
-  h1 {
-    width: 100%;
-  }
-
-  .welcome {
-    position: relative;
-    width: 100%;
-    height: 0;
-    padding: 0 0 calc(100% * 495 / 2048) 0;
-  }
-
-  .welcome img {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    display: block;
+  .codybowl {
+    background-size: cover;
+    background-position: center;
   }
 </style>

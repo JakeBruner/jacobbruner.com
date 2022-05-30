@@ -1,10 +1,8 @@
 <script>
-  import Header from "$lib/Header.svelte";
+  //   import Header from "$lib/Header.svelte";
   import Footer from "$lib/Footer.svelte";
   import "../app.css";
 </script>
-
-<Header />
 
 <main>
   <slot />
@@ -13,7 +11,7 @@
 <Footer />
 
 <style>
-  main {
+  /* main {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -22,5 +20,5 @@
     max-width: 1024px;
     margin: 0 auto;
     box-sizing: border-box;
-  }
+  } */
 </style>
