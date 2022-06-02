@@ -1,6 +1,4 @@
 <script context="module">
-  import { each } from "svelte/internal";
-
   const nav = [
     { title: "Home", path: "/" },
     { title: "Music", path: "/about" },
@@ -18,7 +16,7 @@
       <div class="flex sm:flex-row flex-col gap-y-6">
         <div class="basis-[37.5%] px-7 xl:px-16">
           <h4 class="pb-4 font-bold text-primary">Website</h4>
-          <p class="leading-relaxed font-light dark:text-zinc-200">
+          <p class="leading-relaxed font-light dark:text-zinc-300">
             Made with love by Jacob using Svelte, TailwindCSS and many, many
             hours. Please note, I have never taken a comp-sci class; I have <i
               >absolutely</i
@@ -41,7 +39,7 @@
         </div>
         <div class="basis-[25%] px-7 xl:px-16">
           <h4 class="pb-4 font-bold text-primary">Contact Information</h4>
-          <p class="leading-relaxed font-light dark:text-zinc-200">
+          <p class="leading-relaxed font-light dark:text-zinc-300">
             New York City <br />
             United States <br />
             <a href="mailto:2023jbruner@dwight.edu">2023jbruner@dwight.edu</a>
@@ -59,7 +57,7 @@
           Made with &#x2661 by Jacob Bruner
         </small>
         <div class="flex flex-row gap-6 justify-center py-4">
-          <div class=" text-primary">
+          <div class="text-primary">
             <a href="https://www.instagram.com/jake.bruner/"
               ><svg
                 xmlns="http://www.w3.org/2000/svg"

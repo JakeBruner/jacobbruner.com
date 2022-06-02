@@ -14,7 +14,7 @@
 
 <header>
   <nav
-    class="fixed top-0 left-0 right-0 z-50 bg-white_translucent dark:bg-zinc-900/80 px-2 sm:px-4 py-3.5 text-black dark:text-zinc-200/90"
+    class="fadeIn fixed top-0 left-0 right-0 z-50 bg-white_translucent dark:bg-zinc-900/80 px-2 sm:px-4 py-3.5 text-black dark:text-zinc-200/90"
   >
     <!-- dark:bg-gray-800 dark:text-white -->
     <div
