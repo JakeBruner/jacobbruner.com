@@ -31,11 +31,11 @@
           class="flex mt-4 md:flex-row lg:space-x-7 space-x-4 md:mt-0 md:text-sm"
         >
           {#each nav as item}
-            <li>
+            <li class="hover:scale-105 transition ease-in-out duration-300">
               <a
-                href={item.path}
-                class:active={$page.url.pathname === item.path}
-                class="transition ease-in-out duration-300 hover:scale-105 decoration-primary block text-[17px] text-stone-900/90 hover:text-stone-900 dark:text-zinc-200/90 hover:dark:text-zinc-200 "
+                href="{item.path}"
+                class:active="{$page.url.pathname === item.path}"
+                class="transition ease-in-out duration-300 decoration-primary block text-[17px] text-stone-900/90 hover:text-primary dark:text-zinc-200/90 hover:dark:text-primary after:bg-primary after:bottom-[-3px] after:min-h-1 after:absolute after:h-0.5 after:left-[2px] after:right-[2px] after:invisible after:-scale-x-0 hover:after:-scale-x-100 hover:after:visible after:transition after:ease-in-out after:duration-400"
                 >{item.title}</a
               >
             </li>
@@ -66,7 +66,7 @@
   .active {
     position: relative;
   }
-  .active::after {
+  /* .active::after {
     position: absolute;
     bottom: -3px;
     left: 0;
@@ -76,5 +76,15 @@
     height: 2px;
     background: var(--accent-color);
     margin: 0 auto;
+  } */
+  .active::before {
+    content: "";
+    background-color: var(--accent-color);
+    bottom: -3px;
+    height: 2px;
+    position: absolute;
+    left: 6px;
+    right: 6px;
+    transition: all 0.15s ease-in;
   }
 </style>

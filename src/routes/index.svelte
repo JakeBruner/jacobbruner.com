@@ -67,10 +67,9 @@
 
 <!-- Extracurriciulars and other photos -->
 
-<!-- <section
-  class="min-h-[700px] bg-gradient-to-tr from-primary-200 to-primary-700 dark:from-primary-400 dark:to-primary-900 bg-fixed bg-cover bg-center justify-center items-center flex flex-col"
->
-  
-</section> -->
+<section
+  class="min-h-[700px] bg-primary bg-fixed bg-cover bg-center justify-center items-center flex flex-col"
+/>
+
 <style>
 </style>
