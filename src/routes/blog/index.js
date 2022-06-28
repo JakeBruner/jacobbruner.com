@@ -1,6 +1,6 @@
 import {
     convertDate
-} from '$lib/utils';
+} from '/src/lib/utils';
 
 export async function get() {
     const allPostFiles =

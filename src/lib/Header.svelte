@@ -35,7 +35,7 @@
               <a
                 href="{item.path}"
                 class:active="{$page.url.pathname === item.path}"
-                class="transition ease-in-out duration-300 decoration-primary block text-[17px] text-stone-900/90 hover:text-primary dark:text-zinc-200/90 hover:dark:text-primary after:bg-primary after:bottom-[-3px] after:min-h-1 after:absolute after:h-0.5 after:left-[2px] after:right-[2px] after:invisible after:-scale-x-0 hover:after:-scale-x-100 hover:after:visible after:transition after:ease-in-out after:duration-400"
+                class="transition ease-in-out duration-100 decoration-primary block text-[17px] text-stone-900/90 hover:text-primary dark:text-zinc-200/90 hover:dark:text-primary after:bg-primary after:bottom-[-3px] after:min-h-1 after:absolute after:h-0.5 after:left-[2px] after:right-[2px] after:invisible after:-scale-x-0 hover:after:-scale-x-100 hover:after:visible after:transition after:ease-in-out after:duration-500"
                 >{item.title}</a
               >
             </li>
