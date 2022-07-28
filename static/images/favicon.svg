@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 500">
+<defs>
+<style>.a{fill:#ff;}.b{filter:url(#a);}.c{fill:#c26691;}</style>
+<filter id="a" name="AI_Shadow_1">
+<feGaussianBlur result="blur" stdDeviation="5" in="SourceAlpha"/>
+<feOffset result="offsetBlurredAlpha" dx="4" dy="6" in="blur"/>
+<feColorMatrix id="recolor" type="matrix" values="
+0 0 0 0 1
+0 0 0 0 1 
+0 0 0 0 1 
+0 0 0 1 0
+" result="white-shadow" in="offsetBlurredAlpha"/>
+<feComponentTransfer>
+<feFuncA in="white-shadow" result="grey-shadow" type="linear" slope="0.3"/>
+</feComponentTransfer>
+<!-- do i need both of these filters? can i do this with the matrix? -->
+<feMerge>
+<feMergeNode in="grey-shadow"/>
+<feMergeNode in="SourceGraphic"/>
+</feMerge>
+</filter>
+</defs>
+<rect class="a" width="500" height="500" rx="79.41"/>
+<g class="b">
+<path class="c" d="M290.3,315V70.84h72.95v243q0,44.52-15.4,70.58-26.06,44-94,44.05t-91.19-35.65q-23.2-35.64-23.21-97.22v-8.05h68.92v8.05q.94,40.5,8.88,57t34,16.46q25.82,0,34.11-18Q290.29,340.37,290.3,315Z"/>
+</g>
+</svg>

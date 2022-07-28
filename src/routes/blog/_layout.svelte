@@ -50,7 +50,7 @@
       </div>
     {/if}
     {#if audiopath}
-      <div class="">
+      <div class="mb-4">
         <audio type="mp3" controls>
           <source src="{audiopath}" />
         </audio>
@@ -59,6 +59,7 @@
     <div
       class="prose prose-lg prose-slate first-letter:text-3xl first-letter:primary"
     >
+      <!-- firstletter isnt working here... not sure why -->
       <slot />
     </div>
   </div>
