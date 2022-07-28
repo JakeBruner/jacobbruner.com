@@ -1,3 +1,5 @@
+const defaultTheme = require('tailwindcss/defaultTheme');
+
 module.exports = {
   content: ['./src/**/*.{html,js,svelte,ts}'],
   theme: {
@@ -20,7 +22,17 @@ module.exports = {
         primary_translucent: 'rgba(215, 114, 161, 0.8)',
         white_translucent: 'rgba(255, 255, 255, 0.8)'
       },
+      fontFamily: {
+        sans: ['Helvetica', ...defaultTheme.fontFamily.sans],
+        serif: ['sprat', ...defaultTheme.fontFamily.serif]
+      }
     },
   },
-  plugins: [],
+  corePlugins: {
+    aspectRatio: false,
+  },
+  plugins: [
+    require('@tailwindcss/aspect-ratio'),
+    require('@tailwindcss/typography')
+  ],
 }
