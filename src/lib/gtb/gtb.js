@@ -7,9 +7,9 @@ export const search = input => {
 	let answers = [];
 	try {
 		const expression = new RegExp(cleanInput, "ig");
-		console.log(expression);
+		// console.log(expression);
 
-		answers = wordList.filter(elem => (expression.test(elem) && elem.length === input.length))
+		answers = wordList.filter(elem => (expression.test(elem) && input.length === elem.length))
 
 
 
@@ -20,3 +20,13 @@ export const search = input => {
 	return answers;
 
 }
+
+// export const test = () => {
+// 	wordList.forEach(element => {
+// 		let word = '_' + element.slice(1, element.length)
+// 		const answer = search(word)
+// 		if (answer[0] !== element) {
+// 			console.log(`${answer[0]}, ${element}`)
+// 		}
+// 	});
+// }

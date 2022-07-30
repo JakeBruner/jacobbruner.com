@@ -1,5 +1,6 @@
 <script>
   import { search } from "$lib/gtb/gtb.js";
+  // import { test } from "$lib/gtb/gtb";
   export let input = "";
   $: guesses = search(input);
   $: results = guesses.length;
@@ -13,7 +14,7 @@
     rel="stylesheet"
   />
 </head>
-
+<!-- <button on:click="{test}">hi</button> -->
 <div class="px-40 pt-20">
   <h1 class="font-medium py-5">Guess The Build Solver</h1>
   <h3 class="font-light text-lg">
