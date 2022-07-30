@@ -24,7 +24,8 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Helvetica', ...defaultTheme.fontFamily.sans],
-        serif: ['sprat', ...defaultTheme.fontFamily.serif]
+        serif: ['sprat', ...defaultTheme.fontFamily.serif],
+        mono: ["Courier", "Vazirmatn"]
       }
     },
   },
