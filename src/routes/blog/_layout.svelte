@@ -14,7 +14,7 @@
     J
   </div> -->
   <div
-    class="relative mt-[76px] mx-auto max-w-[100ch] overflow-hidden bg-white py-16 px-4 sm:px-6 lg:px-8"
+    class="relative mx-auto max-w-[100ch] overflow-hidden bg-white py-16 px-4 sm:px-6 lg:px-8"
   >
     <span
       class="block cursor-pointer"

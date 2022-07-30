@@ -32,11 +32,9 @@
         >Randomize</button
       >
     </div>
-    <!-- <Counter /> -->
   </div>
 </section>
 
-<!-- Profile Picture -->
 <section class="container my-24 px-6 mx-auto">
   <div
     class="flex flex-wrap lg:px-20 px-30 basis-auto justify-center content-center space-x-12"
@@ -69,7 +67,7 @@
 
 <section
   class="min-h-[700px] bg-primary bg-fixed bg-cover bg-center justify-center items-center flex flex-col"
-/>
+></section>
 
 <style>
 </style>

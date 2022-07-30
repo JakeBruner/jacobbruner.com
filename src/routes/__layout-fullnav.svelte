@@ -16,7 +16,7 @@
 
 <Header />
 
-<main class="mt-[76px]">
+<main>
   {#if $loading}
     <div out:fade="{{ duration: 100 }}" class="loader"></div>
   {/if}

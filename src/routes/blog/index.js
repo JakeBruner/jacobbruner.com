@@ -1,8 +1,8 @@
 import {
     convertDate
-} from '/src/lib/utils';
+} from '$lib/utils';
 
-export async function get() {
+export async function GET() {
     const allPostFiles =
         import.meta.globEager('./*/*.{svx,md}'); // this should be made page-speceifc
     // "exposes context-specific metadata to a JavaScript module"
