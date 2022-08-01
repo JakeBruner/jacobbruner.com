@@ -47,27 +47,31 @@
             text-xl
             font-normal
             mono
-            text-gray-700
-            bg-white bg-clip-padding
-            border border-solid border-gray-300
+            text-zinc-600 dark:text-zinc-300
+            bg-inherit bg-clip-padding
+            border border-solid border-zinc-300 dark:border-zinc-600
             rounded
             transition
             ease-in-out
             m-0
-            focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none
+            focus:text-zinc-700 dark:focus:text-zinc-200 focus:border-primary focus:outline-none
           "
       id="formInput"
       placeholder="Start typing..."
       bind:value={input}
     />
-    <h4 class="px-3 pt-1 text-sm font-light text-gray-500">
+    <h4 class="px-3 pt-1 text-sm font-light text-zinc-500">
       {numresults}
       {numresults === 1 ? "result" : "results"}
     </h4>
   </div>
   <ul class="mono text-lg pt-4">
     {#each guesses as guess}
-      <li class="mono even:bg-white px-2 text-xl odd:bg-zinc-50">{guess}</li>
+      <li
+        class="mono even:bg-white dark:even:bg-inherit dark:odd:bg-zinc-800 px-2 text-xl odd:bg-zinc-50"
+      >
+        {guess}
+      </li>
     {/each}
   </ul>
 

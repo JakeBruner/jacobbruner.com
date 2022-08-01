@@ -4,6 +4,7 @@
   // this is basically useless but makes it easier for me to copy paste for now :)
 </script>
 
+<!-- TODO maybe make the 'post loading' animation a little cleaner with the grey pulsing thing tailwind offers. this could hook right into navigating... maybe with some backend restructuring -->
 <!-- TODO add a way to have a thumbnail for some posts -->
 <div class=" pt-16 pb-20 px-4 sm:px-6 lg:pt-24 lg:pb-28 lg:px-8">
   <div class="max-w-lg mx-auto lg:max-w-7xl">

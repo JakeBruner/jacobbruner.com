@@ -18,7 +18,7 @@
     class="fadeIn fixed top-0 left-0 right-0 z-50 bg-white_translucent dark:bg-zinc-900/80 px-2 sm:px-4 py-5 text-black dark:text-zinc-100/90"
   >
     <!-- dark:bg-gray-800 dark:text-white -->
-    <div class="flex flex-wrap justify-between items-center xl:px-40 lg:px-24 px-12">
+    <div class="flex flex-wrap justify-between items-center xl:px-40 lg:px-24 xs:px-12 px-4">
       <a href="/" class="name font-bold text-[32px]">Jacob <span class="text-primary">B.</span></a>
       <div
         class="hidden justify-between items-center w-full md:flex md:w-auto md:order-1"
