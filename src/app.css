@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@tailwind variants;
 
 
 :root {
@@ -17,6 +18,33 @@
 	--column-width: 42rem;
 	--column-margin-top: 4rem;
 }
+/* PLEASE DONT FORGET THE SEMICOLON OR YOU GET A RANDOM ERROR THAT MAKES NO SENSE AND YOU WILL HAVE NO IDEA HOW TO FIX */
+/* PLEASE DONT WASTE MORE HOURS OF YOUR LIFE!!!!!! */
+@layer base {
+	body {
+	  @apply text-lg;
+		@apply text-zinc-600;
+		@apply dark:text-zinc-200;
+	}
+	h1 {
+		@apply text-4xl;
+    font-weight: 550;
+    @apply text-zinc-900;
+		@apply dark:text-zinc-100;
+	}
+	h2 {
+		@apply text-3xl;
+    font-weight: 550;
+    @apply text-zinc-800;
+		@apply dark:text-zinc-200;
+	}
+  p {
+    font-weight: 400;
+    line-height: 1.5;
+    @apply text-zinc-600;
+		@apply dark:text-zinc-300;
+  }
+}
 
 .fadeInDown {
 	animation: fadeInDown;
@@ -29,63 +57,6 @@
 }
 
 
-#svelte {
-	min-height: 100vh;
-	display: flex;
-	flex-direction: column;
-}
-
-h1,
-h2,
-p {
-	font-weight: 400;
-	color: var(--heading-color);
-}
-
-p {
-	line-height: 1.5;
-}
-
 a {
 	text-decoration: none;
-}
-
-/* a:hover {
-	text-decoration: underline;
-} */
-
-h1 {
-	font-size: 2rem;
-	text-align: center;
-}
-
-h2 {
-	font-size: 1rem;
-}
-
-pre {
-	font-size: 16px;
-	font-family: var(--font-mono);
-	background-color: rgba(255, 255, 255, 0.45);
-	border-radius: 3px;
-	box-shadow: 2px 2px 6px rgb(255 255 255 / 25%);
-	padding: 0.5em;
-	overflow-x: auto;
-	color: var(--text-color);
-}
-
-input,
-button {
-	font-size: inherit;
-	font-family: inherit;
-}
-
-button:focus:not(:focus-visible) {
-	outline: none;
-}
-
-@media (min-width: 720px) {
-	h1 {
-		font-size: 2.4rem;
-	}
 }

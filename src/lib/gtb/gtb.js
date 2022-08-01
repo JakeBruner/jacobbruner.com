@@ -1,25 +1,26 @@
-import wordList from './words.json'
+import wordList from "./words.json" assert { type: "json" };
 
 // search
 export const search = input => {
-	const cleanInput = input.replace(/_/g, '.')
+  const cleanInput = input.replace(/_/g, ".");
+  // console.log("____");
+  // console.log(cleanInput);
 
-	let answers = [];
-	try {
-		const expression = new RegExp(cleanInput, "ig");
-		// console.log(expression);
+  let answers = [];
+  try {
+    const expression = new RegExp(cleanInput, "ig");
+    // console.log(expression);
+    // console.log(expression);
 
-		answers = wordList.filter(elem => (expression.test(elem) && input.length === elem.length))
-
-
-
-	} catch (e) {
-		return [""]
-		// regex error
-	}
-	return answers;
-
-}
+    answers = wordList.filter((elem) => input.length === elem.length && expression.test(elem));
+    // console.log(answers);
+  } catch (e) {
+    console.log(e);
+    return [""];
+    // regex error
+  }
+  return answers;
+};
 
 // export const test = () => {
 // 	wordList.forEach(element => {

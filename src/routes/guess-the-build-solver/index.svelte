@@ -3,7 +3,7 @@
   // import { test } from "$lib/gtb/gtb";
   export let input = "";
   $: guesses = search(input);
-  $: results = guesses.length;
+  $: numresults = guesses.length;
 </script>
 
 <head>
@@ -15,28 +15,21 @@
   />
 </head>
 <!-- <button on:click="{test}">hi</button> -->
-<div class="px-40 pt-20">
-  <h1 class="font-medium py-5">Guess The Build Solver</h1>
+<div class="sm:px-40 px-20 sm:pt-20 pt-10">
+  <h1 class="font-medium py-5 dark:text-grey-0">Guess The Build Solver</h1>
   <h3 class="font-light text-lg">
-    Guess the build is a game on the Hypixel network wherein players compete to
-    match the cooresponding answer to a player's build. At the 90 second mark or
-    when a player guesses correct, hints show up revealing the length of the
-    word and a few letters. This website checks these hints against the wordlist
-    to narrow down the number of matches to help you guess correct! I do not
-    reccomend you use this on Hypixel; it is against the rules and is for
-    testing purposes only!
+    Guess the build is a game on the Hypixel network wherein players compete to match the
+    cooresponding answer to a player's build. At the 90 second mark or when a player guesses
+    correct, hints show up revealing the length of the word and a few letters. This website checks
+    these hints against the wordlist to narrow down the number of matches to help you guess correct!
+    I do not reccomend you use this on Hypixel; it is against the rules and is for testing purposes
+    only!
   </h3>
-  <div class="pt-5 xl:w-96 px-3">
-    <label
-      for="formInput"
-      class="form-label inline-block mb-2 px-2 font-medium text-gray-700 text-xl"
-    >
-      Enter guess here:</label
-    >
+  <div class="pt-5">
+    <label for="formInput" class="inline-block mb-2 font-medium text-xl"> Enter guess here:</label>
     <input
       type="text"
       class="
-            form-control
             block
             w-full
             sm:w-1/2
@@ -56,19 +49,24 @@
           "
       id="formInput"
       placeholder="Start typing..."
-      bind:value="{input}"
+      bind:value={input}
     />
     <h4 class="px-3 pt-1 text-sm font-light text-gray-500">
-      {results}
-      {results === 1 ? "result" : "results"}
+      {numresults}
+      {numresults === 1 ? "result" : "results"}
     </h4>
   </div>
-
-  <ul class="mono text-lg mx-5 pt-4">
+  <ul class="mono text-lg pt-4">
     {#each guesses as guess}
-      <li class="mono">{guess}</li>
+      <li class="mono even:bg-white px-2 text-xl odd:bg-zinc-50">{guess}</li>
     {/each}
   </ul>
+
+  {#if !numresults}
+    <div class="h-40" />
+  {:else}
+    <div class="h-20" />
+  {/if}
 </div>
 
 <style>

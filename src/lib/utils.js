@@ -21,11 +21,11 @@ export const convertDate = (published) => {
         case 1:
             dayth = day + 'st';
         case 2:
-            dayth = day + 'nd'
+            dayth = day + 'nd';
         case 3:
             dayth = day + 'rd';
         default:
-            dayth = day + 'th'
+            dayth = day + 'th';
     } // there might be a better way to do this but whatever :) it looks funny
 
     return `${months[parseInt(month)]} ${dayth}, ${year}`;
