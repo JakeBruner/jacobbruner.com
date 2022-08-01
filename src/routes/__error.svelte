@@ -5,14 +5,3 @@
     a real one!
   </h2>
 </div>
-<h1>this is a h1 tag</h1>
-<h2>this is a h2 tag</h2>
-<p>
-  this is a p tagand look this paragraph tag magically happens to ahve a lot of repeating text? g
-  magically happens to ahve a lot of repeating text?g magically happens to ahve a lot of repeating
-  text?g magically happens to ahve a lot of repeating text?g magically happens to ahve a lot of
-  repeating text?g magically happens to ahve a lot of repeating text?g magically happens to ahve a
-  lot of repeating text?g magically happens to ahve a lot of repeating text?g magically happens to
-  ahve a lot of repeating text?g magically happens to ahve a lot of repeating text?g magically
-  happens to ahve a lot of repeating text?
-</p>

@@ -13,6 +13,15 @@
     href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300&display=swap"
     rel="stylesheet"
   />
+  <meta content="notranslate" name="google" />
+  <meta
+    name="keywords"
+    content="guess the build, cheat, solver, hypixel, hypixel network, guess the build cheat, guess the build list, list"
+  />
+  <meta
+    content="Guess the Build Solver is a cheat that gives you every possible answer for a given hint in the game Guess the Build."
+    name="description"
+  />
 </head>
 <!-- <button on:click="{test}">hi</button> -->
 <div class="sm:px-40 px-20 sm:pt-20 pt-10">

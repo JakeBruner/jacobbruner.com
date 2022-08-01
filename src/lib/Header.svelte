@@ -2,13 +2,13 @@
   import { page } from "$app/stores";
   import { loading } from "$lib/loading.js";
   // console.log($page)
-  const nav = [
+  const navitems = [
     { title: "Home", path: "/" },
-    { title: "Music", path: "/about" },
-    { title: "Math", path: "/about" },
+    { title: "Music", path: "/Music" },
+    { title: "Math", path: "/Math" },
     { title: "Photography", path: "/about" },
-    { title: "CS", path: "/about" },
-    { title: "Writing", path: "/about" },
+    { title: "CS", path: "/Computer-Science" },
+    { title: "Writing", path: "/Writing" },
     { title: "Contact", path: "/about" },
   ];
 </script>
@@ -19,13 +19,13 @@
   >
     <!-- dark:bg-gray-800 dark:text-white -->
     <div class="flex flex-wrap justify-between items-center xl:px-40 lg:px-24 px-12">
-      <a href="/" class="name font-bold">Jacob <span class="text-primary">B.</span></a>
+      <a href="/" class="name font-bold text-[32px]">Jacob <span class="text-primary">B.</span></a>
       <div
         class="hidden justify-between items-center w-full md:flex md:w-auto md:order-1"
         id="mobile-menu"
       >
         <ul class="flex mt-4 md:flex-row lg:space-x-7 space-x-4 md:mt-0 md:text-sm">
-          {#each nav as item}
+          {#each navitems as item}
             <li class="hover:scale-105 transition ease-in-out duration-300">
               <a
                 href={item.path}
@@ -44,7 +44,6 @@
 
 <style>
   .name {
-    font-size: 32px;
     margin: 0;
     padding: 0;
   }
