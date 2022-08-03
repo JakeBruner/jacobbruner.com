@@ -1,6 +1,6 @@
 <script>
   export let posts;
-  const page = "Computer-Science";
+  const page = "Math";
   // this is basically useless but makes it easier for me to copy paste for now :)
 </script>
 

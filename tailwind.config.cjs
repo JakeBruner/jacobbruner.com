@@ -27,6 +27,11 @@ module.exports = {
         sans: ['Helvetica', ...defaultTheme.fontFamily.sans],
         serif: ['sprat', ...defaultTheme.fontFamily.serif],
         mono: ["Courier", "Vazirmatn", ...defaultTheme.fontFamily.mono]
+      },
+      aspectRatio: {
+        22: '22',
+        17: '17',
+        8.5: '8.5'
       }
     },
   },

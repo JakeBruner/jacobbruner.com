@@ -18,7 +18,7 @@ const config = defineConfig({
         dashes: 'oldschool',
     },
     layout: {
-        blog: path.join(dirname, './src/lib/_template.svelte')
+        blog: path.join(dirname, './src/lib/_blog.svelte')
     }
 });
 
