@@ -14,14 +14,14 @@
   <div class="w-full insex-x-0 bottom-0 left-0 right-0 pt-16 pb-10">
     <div class="md:container md:mx-auto xl:px-40 lg:px-28">
       <div class="flex sm:flex-row flex-col gap-y-6">
-        <div class="basis-[37.5%] px-7 xl:px-16">
+        <div class="basis-[37.5%] md:px-7 px-7 xl:px-16">
           <h4 class="pb-4 font-bold text-primary">Website</h4>
           <p class="leading-relaxed font-light dark:text-zinc-300">
             Made by Jacob using Svelte, TailwindCSS and many, many hours. Please note, I have never
             taken a comp-sci class; I have <i>absolutely</i> no idea what I'm doing.
           </p>
         </div>
-        <div class="basis-[37.5%] px-9 xl:px-16">
+        <div class="basis-[37.5%] md:px-9 px-7 xl:px-16">
           <h4 class="pb-4 font-bold text-primary">Links</h4>
           <p class="flex md:grid md:grid-cols-2 flex-col leading-relaxed font-light">
             {#each navitems as item}
@@ -33,7 +33,7 @@
             {/each}
           </p>
         </div>
-        <div class="basis-[25%] px-7 xl:px-16">
+        <div class="basis-[25%] md:px-7 px-7 xl:px-16">
           <h4 class="pb-4 font-bold text-primary">Contact Information</h4>
           <p class="leading-relaxed font-light dark:text-zinc-300">
             New York City <br />

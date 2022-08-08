@@ -13,6 +13,7 @@
     "@sveltejs/kit": "^1.0.0-next.398",
     "@tailwindcss/aspect-ratio": "^0.4.0",
     "@tailwindcss/typography": "^0.5.4",
+    "@types/tailwindcss": "^3.1.0",
     "autoprefixer": "^10.4.8",
     "mdsvex": "^0.10.6",
     "postcss": "^8.4.14",

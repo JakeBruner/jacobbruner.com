@@ -6,7 +6,8 @@
   $: numresults = guesses.length;
 </script>
 
-<head>
+<svelte:head>
+  <title>GTB Solver</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -22,7 +23,7 @@
     content="Guess the Build Solver is a cheat that gives you every possible answer for a given hint in the game Guess the Build."
     name="description"
   />
-</head>
+</svelte:head>
 <!-- <button on:click="{test}">hi</button> -->
 <div class="sm:px-40 px-20 sm:pt-20 pt-10">
   <h1 class="font-medium py-5 dark:text-grey-0">Guess The Build Solver</h1>

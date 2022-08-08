@@ -29,6 +29,9 @@ module.exports = {
         mono: ["Courier", "Vazirmatn", ...defaultTheme.fontFamily.mono]
       },
       aspectRatio: {
+        auto: 'auto',
+        square: '1 / 1',
+        video: '16 / 9',
         22: '22',
         17: '17',
         8.5: '8.5'
