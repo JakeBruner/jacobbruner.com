@@ -12,7 +12,26 @@
 <div class=" pt-16 pb-20 px-4 sm:px-6 lg:pt-24 lg:pb-28 lg:px-8">
   <div class="max-w-lg mx-auto lg:max-w-7xl">
     <div class="border-b border-b-zinc-200  dark:border-b-zinc-700 pb-6">
-      <h2 class="text-3xl tracking-tight font-semibold  sm:text-4xl">{page}</h2>
+      <!-- <h2 class="text-3xl tracking-tight font-semibold  sm:text-4xl">{page}</h2> -->
+      <h2
+        class="text-3xl tracking-tight font-semibold sm:text-4xl 
+
+    "
+      >
+        <details
+          class="open:bg-white dark:open:bg-slate-900 open:ring-1 open:ring-offset-[15px] open:ring-black/5 dark:open:ring-white/10 open:shadow-2xl open:rounded-xl"
+        >
+          <!-- title="there also exists a coffee functor... Coffee :: (Monad m) => x -> m x, from which this website is a corolarry of a proof of it's existence" -->
+          <summary class="select-none"> CS :: Jacob → [String] </summary>
+          <p class="p-5 text-xl dark:text-zinc-400 text-zinc-500 font-medium">
+            There also exists a coffee endofunctor, Coffee :: (Monad m) => x -> m x, from which this
+            website is a corollary of it's existence. Additionally there is a natural transformation
+            η :: a . Coffee a -> Alcohol a, where Alcohol is a contravarient functor to the Lazy
+            category. This forms a 'dinatural' Transformation :D. Unfortunately the Alcohol functor
+            has side-effects (namely liver damage), so the diagram techincally wouldn't commute.
+          </p>
+        </details>
+      </h2>
     </div>
     <div class="mt-12 grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
       {#each posts as post}
