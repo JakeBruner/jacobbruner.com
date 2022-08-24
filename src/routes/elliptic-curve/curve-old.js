@@ -1,5 +1,10 @@
-//TODO maybe make the point, instead of an array, a point class with various properties to make my life easier
+// this is old code that i used to make a proof of concept 
+// this is meant to be run on the command line with node
+// why did I originally make this in javascript? idk
 
+
+
+//TODO maybe make the point, instead of an array, a point class with various properties to make my life easier
 const start = Date.now()
 //javascript is weird... since something like -2 % 5 returns -2, i have to define this crap
 // note that i call my mod() function when the output of something may be negative

@@ -1,10 +1,10 @@
-const mod = (a, n) => {
+const mod = (a: number, n: number) => {
   return ((a % n) + n) % n;
 };
 
 // euclidean algorithm to compute inverses
 // TODO maybe store values in memory so its not recomputing
-const inverse = (a, n) => { // euclidean algorithm
+const inverse = (a: number, n: number) => { // euclidean algorithm
   [a, m] = [Number(a), Number(n)];
   if (Number.isNaN(a) || Number.isNaN(n)) {
       return NaN; //invalid input
@@ -37,24 +37,30 @@ const inverse = (a, n) => { // euclidean algorithm
 
 // simple prime testing algorithm
 // i can definitly optimise this
-const isPrime = n => {
+const isPrime = function(n: number) {
   if (mod(n, 2) === 0) { return false; }
-  for (let d = 3; d^2 < n; d += 2) {
+  for (let d = 3; (d^2) < n; d += 2) {
     if (mod(n, d) === 0) { return false; }
   }
   return true;
 };
 
-// a class for points on the curve
-interface M<T> {
-
+// an interface for points on the curve
+// dont ask why im diong this in typescript
+interface Point {
+  x: number;
+  y: number;
 }
 
-function unit<T>(value: T): M<T> {
-    // ...
-}
+// interface M<T> {
 
-function bind<T, U>(instance: M<T>, transform: (value: T) => M<U>): M<U> {
-    // ...
-}
+// }
+
+// function unit<T>(value: T): M<T> {
+//     // ...
+// }
+
+// function bind<T, U>(instance: M<T>, transform: (value: T) => M<U>): M<U> {
+//     // ...
+// }
 
