@@ -31,3 +31,4 @@ export async function GET() {
         }
     };
 }
+// TODO make a "this website" post that has rainbow header text
