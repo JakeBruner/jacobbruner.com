@@ -133,8 +133,7 @@ const repeatedAction = ([a, b], times) => { // sexy little self-referential algo
         return [a, b]
     } else if (times > 1) {
         return groupAction([a, b], repeatedAction([a, b], times - 1));
-    }
-    while (times === 0) {
+    } else {
         throw new Error("how did we get here?")
     }
 }

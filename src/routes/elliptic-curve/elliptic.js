@@ -132,6 +132,21 @@ var curve = function(a, b, r) {
       }
     }
   }
+  console.log(sqrt)
+  console.log(inv)
+  const pointa = new Point(-1,-1)
+const pointb = new Point(1,1)
+console.log(pointb);
+const sum = pointa.plus(pointb)
+console.log(sum)
+const product = pointb.times(5)
+console.log(product)
+const gen = pointb.generate();
+console.log(gen);
+console.log(pointb)
+console.log(pointb.repeatedAddition(2))
+console.log(inv)
+console.log(sqrt)
 
   // compute list of points on this curve
   // note: r might not be prime
@@ -195,3 +210,5 @@ var curve = function(a, b, r) {
     }
   };
 };
+
+curve(4,3,7);

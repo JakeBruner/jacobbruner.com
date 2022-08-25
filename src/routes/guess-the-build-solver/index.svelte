@@ -1,7 +1,7 @@
 <script>
   import { search } from "$lib/gtb/gtb.js";
   // import { test } from "$lib/gtb/gtb";
-  export let input = "";
+  let input = "";
   $: guesses = search(input);
   $: numresults = guesses.length;
 </script>
