@@ -1,7 +1,7 @@
 import wordList from "./words.json" assert { type: "json" };
 
 // search
-export const search = input => {
+export const search = (input: string) => {
   const cleanInput = input.replace(/_/g, ".");
   // console.log("____");
   // console.log(cleanInput);
