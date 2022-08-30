@@ -1,59 +1,81 @@
-// import type vite/client
-// I HATE STRICT MODE
-export interface Post {
+// PostInfo provides the nessecary information about a post to be displayed in the grid "blog homepage" layout
+export interface PostInfo {
   slug: string;
-  title?: string;
-  date: string;
-  videoid?: string;
-  audiopath?: string;
-  pdfpath?: string;
-  image?: string;
+  title: string;
+  excerpt: string;
+  date: Date;
+  datestring: string;
+  thumbnailpath?: string;
 }
-export type Post = { [index: string]: string };
 
-export interface AllPosts {
-  posts: Post[];
-} // kinda pointless until i have more things that i want to be passed thru the monad
+// note that BlogType cant inherit from navigating because not all pages (e.g., /photography) have blogs
+// this 'type ailias' is really just for type safety on the functions below
+// as an array, it also acts as a 'checker' for /[blog]/[slug]/+page.server.ts since it exists in compile time
+
+export type BlogType = "Computer-Science" | "Math" | "Music" | "Writing"; // "Computer-Science" | "Math" | "Music" | "Writing";
+// this type is used on [slug]/+page.server.ts endpoints to construct the glob path fed into the fn below
+
+export const isValidBlogType = (string: string): string is BlogType => {
+  return ["Computer-Science", "Math", "Music", "Writing"].includes(string);
+};
+// console.log(isValidBlogType("Computer-Science"));
 
 // export interface SearchParamaters {
 //   // keywords: string;
-
 // }
 
-// export interface PostsData {
-//   posts: Post[];
-//   keywords: string[];
-// }
+// once i implement search parameters this should take in (query: SearchParamaters = {}, subject)
+export const getPostsInfo = async (subject: BlogType): Promise<PostInfo[]> => {
+  // TODO implement this function without <any> generic
+  // type should be Record<string, () => Promise<NodeModule>>
+  let modules: Record<string, () => Promise<any>>;
 
-const getPath = (path: string): string | undefined => path.split("/")?.at(-1)?.replace(".md", "");
-// i want to marry typescript syntax, and negative array indexing
-// sexy little monadic design pattern
-
-// once i implement search parameters this should take in (query: SearchParamaters = {}, thispage)
-export const getPostsGlob = (subject: string): AllPosts => {
-  let postlist: Post[] = [];
-
-  const rawPosts = import.meta.glob(`/src/posts/${subject}/*.md`, { eager: true }); // eager imports the module with sideeffects automatically
-  // again, ideally this wouldn't fetch the entire page but oh well
-  for (const key in rawPosts) {
-    // const rawPost: object = rawPosts.key === undefined ? 0 : rawPosts[key];
-    const rawPost = rawPosts[key] as Record<string, string[]>; // i hate strict mode
-
-    const post: Post = {
-      slug: typeof getPath(key) === undefined ? "slug-error" : (getPath(key) as string),
-      date: rawPost["metadata"].date as string,
-      ...rawPost["metadata"],
-    };
-    postlist.push(post);
+  switch (subject) {
+    case "Computer-Science":
+      modules = import.meta.glob<any>("/src/posts/Computer-Science/*.md", { eager: false });
+      break;
+    case "Math":
+      modules = import.meta.glob<any>("/src/posts/Math/*.md", { eager: false });
+      break;
+    case "Music":
+      modules = import.meta.glob<any>("/src/posts/Music/*.md", { eager: false });
+      break;
+    case "Writing":
+      modules = import.meta.glob<any>("/src/posts/Writing/*.md", { eager: false });
+      break;
+    default:
+      throw new Error("i really dont know how we got here");
   }
+  // this should handle every possible 'error-prone' case
 
-  postlist.sort((a, b) => new Date(b.date).valueOf() - new Date(a.date).valueOf());
+  const iterableModules = Object.entries(modules)!;
+  // the type of this is [url, () => Promise]
+
+  const postlist: PostInfo[] = await Promise.all(
+    // mapping over the promise monad
+    iterableModules.map(async ([url, module]) => {
+      // .map just happens to do what i need
+      const { metadata } = await module();
+
+      const utcdate = new Date(metadata.date);
+
+      return {
+        slug: getPath(url),
+        title: metadata.title,
+        excerpt: metadata.excerpt,
+        date: utcdate,
+        datestring: convertDateToString(utcdate),
+        thumbnailpath: metadata.thumbnailpath ? metadata.thumbnailpath : null,
+        // TODO this isnt type safe i dont think. I need errorhandeling for when not all these properties exist
+      };
+    })
+  );
+
+  postlist.sort((a, b) => b.date.valueOf() - a.date.valueOf());
 
   // there should be logic to handle queries here
 
-  return {
-    posts: postlist,
-  };
+  return postlist;
 };
 
 // for reference:
@@ -76,3 +98,58 @@ export const getPostsGlob = (subject: string): AllPosts => {
 //   './dir/foo.js': __glob__0_0,
 //   './dir/bar.js': __glob__0_1
 // }
+
+// * Parametric Url Path Helpers *
+
+export interface FullPost {
+  title: string;
+  date: string;
+  content: any; //! hmm
+  videoid?: string;
+  audiopath?: string;
+  pdfpath?: string;
+  // TODO thumbnail
+}
+
+// * Helper Functions *
+
+const getPath = (path: string) => path.split("/").at(-1).replace(".md", "");
+// sexy little monadic design pattern
+// TODO make this function take both types
+
+export const convertDateToString = (date: Date): string => {
+  const listmonths = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const day = date.getDate();
+  const month = date.getMonth();
+  const year = date.getFullYear();
+
+  let dayth: string;
+  switch (
+    day % 10 // first digit
+  ) {
+    case 1:
+      dayth = day + "st";
+    case 2:
+      dayth = day + "nd";
+    case 3:
+      dayth = day + "rd";
+    default:
+      dayth = day + "th";
+  } // there might be a better way to do this but whatever :) it looks funny
+
+  return `${listmonths[month]} ${dayth}, ${year}`;
+};

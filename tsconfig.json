@@ -1,5 +1,5 @@
 {
-  "extends": "./.svelte-kit/tsconfig.json", 
+  "extends": "./.svelte-kit/tsconfig.json",
   "compilerOptions": {
     "baseUrl": ".",
     // "paths": {
@@ -7,14 +7,14 @@
     //   "$lib/*": ["src/lib/*"]
     // },
     "allowJs": true,
-		"checkJs": true,
-		"esModuleInterop": true,
-		"forceConsistentCasingInFileNames": true,
-		"resolveJsonModule": true,
-		"skipLibCheck": true,
-		"sourceMap": true,
-		"strict": true,
+    "checkJs": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
     "strictNullChecks": false
-  },
+  }
   // "include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.svelte", "src/routes/elliptic-curve/curve.ts", "src/routes/elliptic-curve/curve.ts", "src/routes/Computer-Science/+page.server.ts", "global.d.ts"]
 }

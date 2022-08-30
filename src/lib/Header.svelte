@@ -1,6 +1,6 @@
 <script>
   import { page } from "$app/stores";
-  import { loading } from "$lib/loading.js";
+  import { loading } from "$lib/loading";
   // console.log($page)
   const navitems = [
     { title: "Home", path: "/" },
