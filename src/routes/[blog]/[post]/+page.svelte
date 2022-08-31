@@ -1,14 +1,17 @@
-<script>
-  import "/src/app.css";
-  import { convertDate } from "$lib/dateutils.js";
-  export let title;
-  export let date;
-  export let videoid;
-  export let audiopath;
-  export let pdfpath;
+<script lang="ts">
+  import type { FullPost } from '$lib/blog/blog'
+  // import "/src/app.css"; // doesn't do this by default
+  export let data: FullPost;
+  // export let errors: any
+
+  // export let title: string;
+  // export let date: string;
+  // export let videoid: string;
+  // export let audiopath: string;
+  // export let pdfpath: string;
 </script>
 
-<div class="">
+<article class="">
   <!-- <div
     class="fixed top-0 left-0 right-0 z-1 bg-white px-2 sm:px-4 py-3.5 h-[76px]"
   >
@@ -34,12 +37,12 @@
       <p class="inline group-hover:-translate-x-5">back</p>
       <!-- why wont this work? -->
     </span>
-    <h2 class="my-4 text-4xl font-semibold">{title}</h2>
-    <p class="my-4 text-zinc-500 dark:text-zinc-400">{convertDate(date)}</p>
-    {#if videoid}
+    <h2 class="my-4 text-4xl font-semibold">{data.title}</h2>
+    <p class="my-4 text-zinc-500 dark:text-zinc-400">{data.date}</p>
+    {#if data?.videoid}
       <div class="w-full mb-6 aspect-w-16 aspect-h-9">
         <iframe
-          src="https://www.youtube.com/embed/{videoid}"
+          src="https://www.youtube.com/embed/{data?.videoid}"
           frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen
@@ -47,23 +50,25 @@
         />
       </div>
     {/if}
-    {#if audiopath}
+    {#if data?.audiopath}
       <div class="mb-4">
         <audio type="mp3" controls>
-          <source src={audiopath} />
+          <source src={data?.audiopath} />
         </audio>
       </div>
     {/if}
-    {#if pdfpath}
+    {#if data?.pdfpath}
       <div class="mb-8 relative aspect-h-11 aspect-w-8">
-        <iframe class="" title="Pdf file" src={pdfpath} frameborder="0" />
+        <iframe class="" title="Pdf file" src={data?.pdfpath} frameborder="0" />
       </div>
     {/if}
     <div
       class="w-full relative prose max-w-none lg:prose-xl prose-zinc dark:prose-invert first-letter:text-3xl first-letter:primary"
     >
       <!-- firstletter isnt working here... not sure why -->
-      <slot />
+
+      {@html data.content}
+      <!-- <svelte:component this={data.content} /> -->
     </div>
   </div>
-</div>
+</article>
