@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { FullPost } from '$lib/blog/blog'
+  import type { FullPost } from "$lib/blog/blog";
   // import "/src/app.css"; // doesn't do this by default
   export let data: FullPost;
   // export let errors: any
