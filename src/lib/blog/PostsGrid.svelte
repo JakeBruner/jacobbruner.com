@@ -6,9 +6,9 @@
 <div class="mt-12 grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12 content-center">
   {#each posts as post}
     <div
-      class="group border border-zinc-200 dark:border-zinc-700 rounded-lg flex flex-col justify-between self-center transition ease-in-out duration-200 shadow-sm dark:shadow-white/5 hover:shadow-lg hover:dark:shadow-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-800/25 hover:scale-[101%]"
+      class="group border border-zinc-300 dark:border-zinc-700 rounded-lg flex flex-col justify-between self-center transition ease-in-out duration-200 shadow-sm dark:shadow-white/5 hover:shadow-lg hover:dark:shadow-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-800/25 hover:scale-[101%]"
     >
-      <a href="/{subject}/{post.slug}" sveltekit:prefetch>
+      <a href="/{subject}/{post.slug}" data-svelte-prefetch>
         {#if post.thumbnailpath}
           <div
             class="group-hover:contrast-[90%] rounded-t-lg aspect-w-16 lg:aspect-h-9 aspect-h-7 w-full bg-cover bg-center min-w-full transition ease-in-out duration-200  border-b border-zinc-100 dark:border-zinc-800"
