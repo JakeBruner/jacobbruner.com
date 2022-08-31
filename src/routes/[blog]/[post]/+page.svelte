@@ -2,6 +2,7 @@
   import type { FullPost } from '$lib/blog/blog'
   // import "/src/app.css"; // doesn't do this by default
   export let data: FullPost;
+  // export let errors: any
 
   // export let title: string;
   // export let date: string;
@@ -66,7 +67,8 @@
     >
       <!-- firstletter isnt working here... not sure why -->
 
-      <svelte:component this={data.content} />
+      {@html data.content}
+      <!-- <svelte:component this={data.content} /> -->
     </div>
   </div>
 </article>

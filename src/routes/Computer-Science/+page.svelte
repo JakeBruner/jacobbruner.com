@@ -22,16 +22,15 @@
     "
       >
         <details
-          class="open:bg-white dark:open:bg-slate-900 open:ring-1 open:ring-offset-[15px] open:ring-black/5 dark:open:ring-white/10 open:shadow-2xl open:rounded-xl"
+          class="open:bg-white dark:open:bg-zinc-900 open:ring-1 open:ring-black/5 open:py-3 open:pl-1.5 open:pr-3 dark:open:ring-zinc-300/10 dark:open:shadow-white/5 open:shadow-2xl open:rounded-xl transition-all ease-in"
         >
           <!-- title="there also exists a coffee functor... Coffee :: (Monad m) => x -> m x, from which this website is a corolarry of a proof of it's existence" -->
           <summary class="select-none"> CS :: Jacob → [String] </summary>
-          <p class="p-5 text-xl dark:text-zinc-400 text-zinc-500 font-medium">
-            <!-- TODO make this look nicer on mobile -->
+          <p class="p-5 text-xl dark:text-zinc-300 text-zinc-500 font-medium leading-relaxed">
             There also exists a coffee endofunctor, Coffee :: (Monad m) => x -> m x, from which this
             website is a corollary of it's existence. Additionally there is a natural transformation
             η :: a . Coffee a -> Alcohol a, where Alcohol is a contravarient functor to the Lazy category.
-            This forms a 'dinatural' Transformation :D. Unfortunately the Alcohol functor has side-effects
+            This forms a 'dinatural' Transformation ☺. Unfortunately the Alcohol functor has side-effects
             (namely liver damage), so the diagram techincally wouldn't commute.
           </p>
         </details>
