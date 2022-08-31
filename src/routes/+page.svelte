@@ -4,7 +4,7 @@
     "/Math/ComplexNumbers",
     "/Math/EulerExploration",
     "/Computer-Science/Guess The Build Solver",
-    "/Writing/PublicDefenders",
+    "/Writing/PublicDefenders"
   ];
 
   const rand = (max: number): number => {
@@ -17,10 +17,10 @@
 <svelte:head>
   <title>Home</title>
 </svelte:head>
-
-<section class="-mt-[68px]">
+<!-- so h-screen doesn't work properly on mobile, so hopefully inset-0 will fix this -->
+<section class="-mt-[68px] inset-0">
   <div
-    class="codybowl bg-[url('/images/codybowl.jpg')] dark:bg-[url('/images/jacksonstars.jpg')] bg-fixed min-h-screen bg-cover bg-center min-w-full flex flex-col justify-center items-center"
+    class="codybowl bg-[url('/images/codybowl.jpg')] dark:bg-[url('/images/jacksonstars.jpg')] bg-fixed h-screen bg-cover bg-center min-w-full flex flex-col justify-center items-center"
   >
     <h1
       class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[53px] text-5xl text-zinc-700 dark:text-zinc-300 font-light pb-[13px] pt-[17px] px-2 my-4 fadeInDown text-center"
@@ -66,7 +66,7 @@
 
     <div class="flex-1 md:basis-1/2">
       <p
-        class="2xl:leading-loose lg:text-2xl leading-relaxed sm:text-xl text-lg inset-0 pt-8 px-10 font-light dark:text-zinc-300"
+        class="2xl:leading-loose lg:text-2xl leading-relaxed sm:text-xl text-lg inset-0 pt-8 md:px-10 px-2 font-light dark:text-zinc-300"
         id="whoami"
       >
         Jacob Bruner is a 17 year-old student at The Dwight School in New York City. During his
@@ -89,4 +89,10 @@
 />
 
 <style>
+  @supports (-webkit-touch-callout: none) {
+    .h-screen {
+      height: -webkit-fill-available;
+    }
+  }
+  /* hopefully this fixes my h-screen issues on mobile */
 </style>

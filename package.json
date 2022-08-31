@@ -18,9 +18,8 @@
     "@tailwindcss/aspect-ratio": "^0.4.0",
     "@tailwindcss/typography": "^0.5.4",
     "@tsconfig/svelte": "^3.0.0",
-    "@types/tailwindcss": "^3.1.0",
-    "@typescript-eslint/eslint-plugin": "^5.35.1",
-    "@typescript-eslint/parser": "^5.35.1",
+    "@typescript-eslint/eslint-plugin": "^5.36.1",
+    "@typescript-eslint/parser": "^5.36.1",
     "autoprefixer": "^10.4.8",
     "esbuild": "^0.15.6",
     "eslint": "^8.23.0",
@@ -30,7 +29,7 @@
     "postcss": "^8.4.16",
     "prettier-plugin-svelte": "^2.7.0",
     "svelte": "^3.46.0",
-    "svelte-check": "^2.8.1",
+    "svelte-check": "^2.9.0",
     "svelte-preprocess": "^4.10.7",
     "tailwindcss": "^3.1.8",
     "tslib": "^2.4.0",
@@ -40,7 +39,7 @@
   "type": "module",
   "dependencies": {
     "animate.css": "^4.1.1",
-    "cookie": "^0.4.1",
+    "cookie": "^0.5.0",
     "svelte-inview": "^3.0.0"
   }
 }
