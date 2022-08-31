@@ -3,7 +3,7 @@ export interface PostInfo {
   slug: string;
   title: string;
   excerpt: string;
-  date: Date;
+  date: number;
   datestring: string;
   thumbnailpath?: string;
 }
@@ -63,7 +63,7 @@ export const getPostsInfo = async (subject: BlogType): Promise<PostInfo[]> => {
         slug: getPath(url),
         title: metadata.title,
         excerpt: metadata.excerpt,
-        date: utcdate,
+        date: utcdate.valueOf(), // quick fix for sveltekit 1.0.0-next.422 requiring json serialization
         datestring: convertDateToString(utcdate),
         thumbnailpath: metadata.thumbnailpath ? metadata.thumbnailpath : null,
         // TODO this isnt type safe i dont think. I need errorhandeling for when not all these properties exist
@@ -71,7 +71,7 @@ export const getPostsInfo = async (subject: BlogType): Promise<PostInfo[]> => {
     })
   );
 
-  postlist.sort((a, b) => b.date.valueOf() - a.date.valueOf());
+  postlist.sort((a, b) => b.date - a.date);
 
   // there should be logic to handle queries here
 
