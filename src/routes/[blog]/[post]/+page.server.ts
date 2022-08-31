@@ -2,7 +2,7 @@ import { isValidBlogType, convertDateToString, type FullPost } from "$lib/blog/b
 import { error } from "@sveltejs/kit";
 
 /** @type {import('./$types').PageServerLoad} */
-export async function load({ params }): Promise<FullPost> {
+export async function load({ params }: any): Promise<FullPost> {
   // TODO this isnt strongly typed yet... i should implement a post class with all the frontmatter properties
   // console.log(params.blog);
   try {

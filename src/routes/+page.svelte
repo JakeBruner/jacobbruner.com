@@ -1,12 +1,17 @@
-<script lang='ts'>
+<script lang="ts">
   export const prerender = true;
-  const featuredposts = ["/Math/ComplexNumbers", "/Math/EulerExploration", "/Computer-Science/Guess The Build Solver", "/Writing/PublicDefenders"]
+  const featuredposts = [
+    "/Math/ComplexNumbers",
+    "/Math/EulerExploration",
+    "/Computer-Science/Guess The Build Solver",
+    "/Writing/PublicDefenders",
+  ];
 
   const rand = (max: number): number => {
-    return Math.floor(Math.random() * max)
-  }
+    return Math.floor(Math.random() * max);
+  };
 
-  const randomlink: string = featuredposts[rand(featuredposts.length)]
+  const randomlink: string = featuredposts[rand(featuredposts.length)];
 </script>
 
 <svelte:head>
@@ -35,10 +40,11 @@
         About Me
       </button>
       <a href={randomlink}>
-      <button
-        class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-primary/80 lg:px-7 lg:py-2 rounded-xl hover:bg-primary hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
-        >Random Post</button
-      ></a>
+        <button
+          class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-primary/80 lg:px-7 lg:py-2 rounded-xl hover:bg-primary hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
+          >Random Post</button
+        ></a
+      >
     </div>
   </div>
 </section>
