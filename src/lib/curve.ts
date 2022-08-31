@@ -24,7 +24,7 @@ const isPrime = function (n: number): boolean {
 // this is some of the sexiest code ive written
 
 export class FiniteField {
-  characteristic: number;
+  readonly characteristic: number;
   inverses: number[];
   residues: number[];
   constructor(char: number) {
@@ -65,14 +65,33 @@ const field = new FiniteField(23);
 //identity point as global
 // const Id = new Point()
 
-class EllipticCurve {
+export class EllipticCurve extends FiniteField {
   a: number;
   b: number;
   field: number;
-  constructor(a: number, b: number, f: FiniteField) {
+  constructor(a: number, b: number, p: number) {
+    super(p);
     this.a = a;
     this.b = b;
-    this.field = f.characteristic;
+  }
+
+  get kRationalPoints(): Point[] {
+    let points: Point[] = [];
+    points.push(new Point()); // identity
+    for (let i = 0; i < this.characteristic; i++) {
+      for (let j = 0; j <= this.characteristic / 2; j++) {
+        if (
+          j ** 2 % this.characteristic ===
+          mod(i ** 3 + this.a * i + this.b, this.characteristic)
+        ) {
+          points.push(new Point(i, j));
+          if (j % this.characteristic !== (this.characteristic - j) % this.characteristic) {
+            points.push(new Point(i, this.characteristic - j));
+          }
+        }
+      }
+    }
+    return points;
   }
 }
 
@@ -99,7 +118,7 @@ export class Point {
   }
 
   get formatted(): string {
-    return `(${this.x}, ${this.y})`;
+    return this.isIdentity ? "∞" : `(${this.x}, ${this.y})`;
   }
 
   plus(p: Point): Point {
@@ -150,10 +169,12 @@ export class Point {
   get subgroup(): Point[] {
     let i = 1;
     let subset: Point[] = [];
-    while (true) {
-      const ithElem = this.repeatedAddition(i);
-      subset.push(ithElem);
-    }
+    let next: Point = this;
+    do {
+      subset.push(this);
+      next = next.plus(this);
+    } while (!next.equals(this));
+    return subset;
   }
 
   // i dont knwo what the fuck a generator function is

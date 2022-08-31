@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { FiniteField, Point } from "$lib/curve";
+  import { EllipticCurve, Point } from "$lib/curve";
 
   let a: number = 4;
   let b: number = 3;
   let p: number = 7;
 
-  $: field = new FiniteField(p); // lol this might be a lot
+  $: curve = new EllipticCurve(a, b, p);
 </script>
 
 <div class="sm:px-40 px-20 sm:pt-20 pt-10">
@@ -90,9 +90,9 @@
           <input type="range" bind:value={p} min="0" max="10" />
         </label>
         <div class="flex-col">
-          {field.characteristic}
-          {field.inverses}
-          {field.residues}
+          {#each curve.kRationalPoints as point}
+            {point.formatted},,
+          {/each}
         </div>
       </label>
     </label>
