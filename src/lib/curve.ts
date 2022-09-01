@@ -9,7 +9,7 @@ const mod = (a: number, n: number): number => {
 // export let b = 3;
 // export let char = 7; // characteristic of the finite field
 
-const isPrime = function (n: number): boolean {
+export const isPrime = function (n: number): boolean {
   if (mod(n, 2) === 0) {
     return false;
   }
@@ -24,9 +24,9 @@ const isPrime = function (n: number): boolean {
 // this is some of the sexiest code ive written
 
 export class FiniteField {
-  characteristic: number;
-  inverses: number[];
-  residues: number[];
+  readonly characteristic: number;
+  readonly inverses: number[];
+  readonly residues: number[];
   constructor(char: number) {
     if (!isPrime(char)) {
       throw new Error("not prime");
@@ -35,19 +35,19 @@ export class FiniteField {
     this.characteristic = char;
 
     let sqrt: number[] = [];
-    let inv: number[] = [];
+    let inv: number[] = []; //
 
-    for (let i = 0; i < char; i++) {
+    for (let i = 0; i < this.characteristic; i++) {
       sqrt[i] = -1;
     }
 
-    for (let i = 0; i < char; i++) {
-      if (i <= char / 2) {
+    for (let i = 0; i < this.characteristic; i++) {
+      if (i < this.characteristic / 2) {
         // so i^2 is not > char
-        sqrt[(i * i) % char] = i; // computing quadratic residues
+        sqrt[(i * i) % this.characteristic] = i; // computing quadratic residues
       }
-      for (let j = i; j < char; j++) {
-        if ((i * j) % char == 1) {
+      for (let j = i; j < this.characteristic; j++) {
+        if ((i * j) % this.characteristic === 1) {
           // if i and j are inverse
           inv[i] = j; // write j as the i-th element of inv
           inv[j] = i; // write i as the j-th element of inv
@@ -58,37 +58,99 @@ export class FiniteField {
     this.inverses = inv;
     this.residues = sqrt;
   }
+
+  getInv(n: number): number {
+    return n >= this.characteristic ? this.inverses[n % this.characteristic] : this.inverses[n];
+  }
 }
 
 // in form y^2 = x^3 + ax + b
-const field = new FiniteField(23);
 //identity point as global
 // const Id = new Point()
 
-class EllipticCurve {
+export class EllipticCurve extends FiniteField {
   a: number;
   b: number;
-  field: number;
-  constructor(a: number, b: number, f: FiniteField) {
+  points: Point[];
+  constructor(a: number, b: number, p: number) {
+    super(p);
     this.a = a;
     this.b = b;
-    this.field = f.characteristic;
+    this.points = this.kRationalPoints;
+  }
+
+  get kRationalPoints(): Point[] {
+    let points: Point[] = [];
+    points.push(new Point(this)); // identity
+    for (let i = 0; i < this.characteristic; i++) {
+      for (let j = 0; j <= this.characteristic / 2; j++) {
+        if (
+          j ** 2 % this.characteristic ===
+          mod(i ** 3 + this.a * i + this.b, this.characteristic)
+        ) {
+          points.push(new Point(this, i, j));
+          if (j % this.characteristic !== (this.characteristic - j) % this.characteristic) {
+            points.push(new Point(this, i, this.characteristic - j));
+          }
+        }
+      }
+    }
+    return points;
+  }
+
+  get getCayleyTable(): Point[][] {
+    let table: Point[][] = [[new Point(this)]]; // not technically the identity element
+
+    const len = this.points.length;
+
+    for (let i = 0; i < len; i++) {
+      // this sweeps thru the first header column
+      // matrix in form [A]_{i,j}
+      // init len+1 by len+1 col??-major matrix\
+      table[i + 1] = [this.points[i], this.points[i]];
+    }
+
+    for (let j = 0; j < len; j++) {
+      table[0][j + 1] = this.points[j];
+      table[1][j + 1] = this.points[j];
+    }
+
+    // * computing the rest of the points
+    const len1 = len + 1;
+    for (let i = 2; i < len1; i++) {
+      // i goes down a column
+      // table[i][2] = table[i][0].plus(table[0][2]);
+      // console.log(table[i][0], " table i 0");
+      // console.log(table[0][2], " table 0 2");
+      for (let j = i; j < len1; j++) {
+        table[i][j] = this.points[i - 1].plus(this.points[j - 1]);
+        table[j][i] = table[i][j]; // symmetric about diagonal
+      }
+    }
+    // table[2][4] = this.points[0];
+    return table;
   }
 }
-
-// dont ask why im diong this in typescript
+//! currently each Point contains all the context of the curve and field.
+//! This is likely unnessecary and memory-heavy
 export class Point {
-  x: number;
-  y: number;
-  constructor(x = -1, y = -1) {
+  public x: number;
+  public y: number;
+  private _curve: EllipticCurve;
+  // i need this so .plus() can be a method on class Point
+  // this allows Point to pass the monad context of the underlying curve under it's methods that make new Points
+
+  constructor(curve: EllipticCurve, x = -1, y = -1) {
     // identity element by default
     this.x = x;
     this.y = y;
+    this._curve = curve;
+
+    // if ((this.x || this.y) > this._curve.characteristic) {
+    //   throw new Error();
+    // }
     // note this doesn't check if x,y are reduced mod p
   }
-  // get subgroup(): Point[] {
-  //
-  // }
 
   equals(p: Point): boolean {
     return p.x == this.x && p.y == this.y;
@@ -99,40 +161,52 @@ export class Point {
   }
 
   get formatted(): string {
-    return `(${this.x}, ${this.y})`;
+    return this.isIdentity ? "∞" : `(${this.x}, ${this.y})`;
   }
 
   plus(p: Point): Point {
     if (this.isIdentity) return p;
     if (p.isIdentity) return this;
 
+    if (this._curve !== p._curve) {
+      throw new Error();
+    }
+
     let m: number;
     if (this.x == p.x) {
-      // either opposite eachother or they're the same point
-      if (this.y == mod(-p.y, field.characteristic)) {
-        // if theyre inverses to eachother
-        return new Point(); // return the identity
-      } // otherwise theyre equal
+      // if x-coords equal
+      // * CASE 1: points are additive inverses
+      if (this.y !== p.y || (this.y || p.y) === 0) {
+        return new Point(this._curve);
+        // * return the identity
+      }
+      // * CASE 2: points are equal
       // from implicit differentiation we get the tangent:
       // m = \frac{3x^2 + a}{2y} \mod field.characteristic
+      // console.log(this.formatted, " + ", p.formatted);
+      // console.log(this._curve.inverses, "inverses");
+      // console.log(2 * this.y, "2*thisy");
+      // console.log(this._curve.getInv(2 * this.y), "2*thisy inverse");
+      // console.log(
+      //   (2 * this.y * this._curve.getInv(2 * this.y)) % this._curve.characteristic,
+      //   "result of multiplication"
+      // );
+
+      // m = \frac{3x^2 + a}{2y}
       m = mod(
-        (3 * (this.x * this.x) + a) * field.inverses[mod(2 * this.y, field.characteristic)],
-        field.characteristic
+        mod(3 * this.x * this.x + this._curve.a, this._curve.characteristic) *
+          this._curve.getInv(2 * this.y),
+        this._curve.characteristic
       );
     } else {
+      // * Points are different, so we draw secant thru them
       // m = \frac{py - qy}{px - qx} \mod field.characteristic
-      m = mod(
-        (p.y - this.y) * field.inverses[mod(p.x - this.x, field.characteristic)],
-        field.characteristic
-      );
+      m = mod((p.y - this.y) * this._curve.getInv(p.x - this.x), this._curve.characteristic);
     }
     // xr = \frac{m^2 - px - qx}{2*py} \mod field.characteristic
-    const xr = mod(
-      (m * m - p.x - this.x) * field.inverses[mod(2 * this.y, field.characteristic)],
-      field.characteristic
-    );
-    const yr = mod(-(this.y + m * (xr - this.x)), field.characteristic);
-    return new Point(xr, yr);
+    const xr = mod(m * m - p.x - this.x, this._curve.characteristic);
+    const yr = mod(-(this.y + m * (xr - this.x)), this._curve.characteristic);
+    return new Point(this._curve, xr, yr);
   }
 
   repeatedAddition(n: number): Point {
@@ -141,19 +215,20 @@ export class Point {
     } else if (n == 1) {
       return this; // base case is P^1 = P
     } else if (n == 0) {
-      return new Point(); // P^0 = Id
+      return new Point(this._curve); // P^0 = Id
     } else {
       throw new Error("pls specify a positive exponent");
     }
   }
 
   get subgroup(): Point[] {
-    let i = 1;
     let subset: Point[] = [];
-    while (true) {
-      const ithElem = this.repeatedAddition(i);
-      subset.push(ithElem);
-    }
+    let next: Point = this;
+    do {
+      subset.push(this);
+      next = next.plus(this);
+    } while (!next.equals(this));
+    return subset;
   }
 
   // i dont knwo what the fuck a generator function is
