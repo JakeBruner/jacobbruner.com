@@ -6,6 +6,7 @@
   let p: number = 7;
 
   $: curve = new EllipticCurve(a, b, p);
+  $: table = curve.getCayleyTable;
 </script>
 
 <div class="sm:px-40 px-20 sm:pt-20 pt-10">
@@ -91,8 +92,22 @@
         </label>
         <div class="flex-col">
           {#each curve.kRationalPoints as point}
-            {point.formatted},,
+            {point?.formatted},,
           {/each}
+        </div>
+
+        <div>
+          <table class="">
+            <tbody class="border border-collapse">
+              {#each table as row}
+                <tr class="divide-x divide-y first:bg-zinc-300">
+                  {#each row as point}
+                    <td class="first:bg-zinc-300">{point?.formatted}</td>
+                  {/each}
+                </tr>
+              {/each}
+            </tbody>
+          </table>
         </div>
       </label>
     </label>

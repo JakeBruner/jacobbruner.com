@@ -61,48 +61,73 @@ export class FiniteField {
 }
 
 // in form y^2 = x^3 + ax + b
-const field = new FiniteField(23);
 //identity point as global
 // const Id = new Point()
 
 export class EllipticCurve extends FiniteField {
   a: number;
   b: number;
-  field: number;
+  points: Point[];
   constructor(a: number, b: number, p: number) {
     super(p);
     this.a = a;
     this.b = b;
+    this.points = this.kRationalPoints;
   }
 
   get kRationalPoints(): Point[] {
     let points: Point[] = [];
-    points.push(new Point()); // identity
+    points.push(new Point(this)); // identity
     for (let i = 0; i < this.characteristic; i++) {
       for (let j = 0; j <= this.characteristic / 2; j++) {
         if (
           j ** 2 % this.characteristic ===
           mod(i ** 3 + this.a * i + this.b, this.characteristic)
         ) {
-          points.push(new Point(i, j));
+          points.push(new Point(this, i, j));
           if (j % this.characteristic !== (this.characteristic - j) % this.characteristic) {
-            points.push(new Point(i, this.characteristic - j));
+            points.push(new Point(this, i, this.characteristic - j));
           }
         }
       }
     }
     return points;
   }
-}
 
-// dont ask why im diong this in typescript
+  get getCayleyTable(): Point[][] {
+    let table: Point[][] = [];
+
+    const len = this.points.length;
+    const len1 = len + 1;
+    for (let i = 0; i < len; i++) {
+      // init column-major matrix
+      table[i] = [];
+    }
+
+    for (let i = 0; i < len; i++) {
+      for (let j = 0; j < len; j++) {
+        table[i][j] = this.points[i].plus(this.points[j]);
+        table[j][i] = table[i][j];
+      }
+    }
+
+    return table;
+  }
+}
+//! currently each Point contains all the context of the curve and field.
+//! This is likely unnessecary and memory-heavy
 export class Point {
-  x: number;
-  y: number;
-  constructor(x = -1, y = -1) {
+  public x: number;
+  public y: number;
+  private curve: EllipticCurve;
+  // i need this so .plus() can be a method on class Point
+  // this allows Point to pass the monad context of the underlying curve under it's methods that make new Points
+
+  constructor(curve: EllipticCurve, x = -1, y = -1) {
     // identity element by default
     this.x = x;
     this.y = y;
+    this.curve = curve;
     // note this doesn't check if x,y are reduced mod p
   }
   // get subgroup(): Point[] {
@@ -128,30 +153,31 @@ export class Point {
     let m: number;
     if (this.x == p.x) {
       // either opposite eachother or they're the same point
-      if (this.y == mod(-p.y, field.characteristic)) {
+      if (this.y == mod(-p.y, this.curve.characteristic)) {
         // if theyre inverses to eachother
-        return new Point(); // return the identity
+        return new Point(this.curve); // return the identity
       } // otherwise theyre equal
       // from implicit differentiation we get the tangent:
       // m = \frac{3x^2 + a}{2y} \mod field.characteristic
       m = mod(
-        (3 * (this.x * this.x) + a) * field.inverses[mod(2 * this.y, field.characteristic)],
-        field.characteristic
+        (3 * (this.x * this.x) + this.curve.a) *
+          this.curve.inverses[mod(2 * this.y, this.curve.characteristic)],
+        this.curve.characteristic
       );
     } else {
       // m = \frac{py - qy}{px - qx} \mod field.characteristic
       m = mod(
-        (p.y - this.y) * field.inverses[mod(p.x - this.x, field.characteristic)],
-        field.characteristic
+        (p.y - this.y) * this.curve.inverses[mod(p.x - this.x, this.curve.characteristic)],
+        this.curve.characteristic
       );
     }
     // xr = \frac{m^2 - px - qx}{2*py} \mod field.characteristic
     const xr = mod(
-      (m * m - p.x - this.x) * field.inverses[mod(2 * this.y, field.characteristic)],
-      field.characteristic
+      (m ** 2 - p.x - this.x) * this.curve.inverses[mod(2 * this.y, this.curve.characteristic)],
+      this.curve.characteristic
     );
-    const yr = mod(-(this.y + m * (xr - this.x)), field.characteristic);
-    return new Point(xr, yr);
+    const yr = mod(-(this.y + m * (xr - this.x)), this.curve.characteristic);
+    return new Point(this.curve, xr, yr);
   }
 
   repeatedAddition(n: number): Point {
@@ -160,14 +186,13 @@ export class Point {
     } else if (n == 1) {
       return this; // base case is P^1 = P
     } else if (n == 0) {
-      return new Point(); // P^0 = Id
+      return new Point(this.curve); // P^0 = Id
     } else {
       throw new Error("pls specify a positive exponent");
     }
   }
 
   get subgroup(): Point[] {
-    let i = 1;
     let subset: Point[] = [];
     let next: Point = this;
     do {
