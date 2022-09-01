@@ -112,10 +112,14 @@
         </div> -->
 
     <div class="pt-5">
-      <table class="border border-collapse rounded-lg">
-        <tbody class=" shadow-lg">
+      <table class="border rounded-lg border-zinc-400 dark:border-zinc-500">
+        <tbody
+          class="divide-y  dark:divide-zinc-600 divide-zinc-300 shadow-lg dark:shadow-white/10"
+        >
           {#each table as row}
-            <tr class="divide-x divide-y first:bg-zinc-300 group">
+            <tr
+              class="divide-x dark:divide-zinc-600 divide-zinc-300 first:bg-zinc-300 dark:first:bg-zinc-700 group"
+            >
               {#each row as point, j}
                 {#if active == j}
                   <td
@@ -125,7 +129,7 @@
                     on:mouseleave={() => {
                       active = -1;
                     }}
-                    class="first:bg-zinc-300 group-hover:bg-primary/40 active p-1"
+                    class="first:bg-zinc-300 dark:first:bg-zinc-700 group-hover:bg-primary/20 hover:text-zinc-800 dark:hover:text-zinc-50 active p-1"
                     >{point.formatted}</td
                   >
                 {:else}
@@ -136,7 +140,8 @@
                     on:mouseleave={() => {
                       active = -1;
                     }}
-                    class="first:bg-zinc-300 group-hover:bg-primary/20 p-1">{point.formatted}</td
+                    class="first:bg-zinc-300 dark:first:bg-zinc-700 group-hover:bg-primary/20 p-1"
+                    >{point.formatted}</td
                   >
                 {/if}
               {/each}
