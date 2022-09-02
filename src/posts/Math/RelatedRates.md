@@ -1,6 +1,6 @@
 ---
 title: Related Rates of a Mixologist and a Martini Glass
-date: 2020-11-23
+date: 2020-10-23
 layout: blog
 excerpt: Modeling the 'related rate' between pouring a beverage and the fullness of a martini glass.
 pdfpath: /pdfs/MYPRelatedRates.pdf

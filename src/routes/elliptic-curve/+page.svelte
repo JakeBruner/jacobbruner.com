@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { fade } from "svelte/transition";
   import { EllipticCurve, isPrime, hsl2hex, Point } from "$lib/curve";
 
   let a: number = 4;
@@ -13,10 +12,6 @@
   $: curve = new EllipticCurve(a, b, p);
   $: table = curve.getCayleyTable;
 
-  // const getColor = (p: Point): number => {
-  //   const index = curve.points.indexOf(p);
-  //   return index === -1 ? 0 : colors[index];
-  // };
   const createColorArray = (curve: EllipticCurve): string[] => {
     const len = curve.points.length;
     const huediff = 360 / len;
@@ -33,19 +28,11 @@
   };
 
   $: colors = createColorArray(curve);
-  $: console.log(colors);
-  $: console.log(curve.points);
-
-  // $: console.log(getHueString(new Point(curve, 0, 4)));
-
-  // let test = new Point(curve, 1, 1);
-  // let p2 = new Point(curve, 1, 1);
-
-  // console.log(p2.plus(test));
-  // console.log(test.plus(p2));
 
   let x: number = -1;
   let y: number = -1;
+
+  // let selected: Point = new Point(curve);
 </script>
 
 <div class="sm:px-40 px-20 sm:pt-20 pt-10">
@@ -138,6 +125,14 @@
           {/each}
         </div> -->
 
+    <div>
+      <!-- {#if selected}
+        {#each selected.subgroup as subgroup}
+          {subgroup.formatted}
+        {/each}
+      {/if} -->
+    </div>
+
     <div class="pt-5">
       <table class="border rounded-lg border-zinc-400 dark:border-zinc-500">
         <tbody
@@ -149,7 +144,7 @@
         >
           {#each table as row, i}
             <tr class="divide-x dark:divide-zinc-600 divide-zinc-300 y{i}">
-              {#each row as point, j}
+              {#each row as p, j}
                 <td
                   on:mouseenter={() => {
                     x = j;
@@ -158,7 +153,7 @@
                   class="x{j} first:hover:!bg-white/90"
                   class:active2={y === i}
                   class:active={x === j}
-                  style:background-color={getColor(point)}>{point.formatted}</td
+                  style:background-color={getColor(p)}>{p.formatted}</td
                 >
               {/each}
             </tr>
