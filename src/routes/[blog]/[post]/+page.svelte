@@ -59,7 +59,7 @@
     {/if}
     {#if data?.pdfpath}
       <div class="mb-8 relative aspect-h-11 aspect-w-8">
-        <iframe class="" title="Pdf file" src={data?.pdfpath} frameborder="0" />
+        <iframe class="" title="Pdf file" src="{data?.pdfpath}#toolbar=0" frameborder="0" />
       </div>
     {/if}
     <div
