@@ -150,7 +150,7 @@ export const hsl2hex = (h: number, s: number, l: number) => {
 export class Point {
   public x: number;
   public y: number;
-  private _curve: EllipticCurve;
+  private _curve: EllipticCurve; //! this was a mistake
   // i need this so .plus() can be a method on class Point
   // this allows Point to pass the monad context of the underlying curve under it's methods that make new Points
 
@@ -183,7 +183,7 @@ export class Point {
   }
 
   get formatted(): string {
-    return this.isIdentity ? "∞" : `(${this.x}, ${this.y})`;
+    return this.isIdentity ? " ∞ " : `(${this.x}, ${this.y})`;
   }
 
   plus(p: Point): Point {

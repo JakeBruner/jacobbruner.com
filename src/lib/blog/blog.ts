@@ -57,15 +57,15 @@ export const getPostsInfo = async (subject: BlogType): Promise<PostInfo[]> => {
       // .map just happens to do what i need
       const { metadata } = await module();
 
-      const utcdate = new Date(metadata.date);
+      const utcdate = new Date(metadata?.date);
 
       return {
         slug: getPath(url),
-        title: metadata.title,
-        excerpt: metadata.excerpt,
+        title: metadata?.title,
+        excerpt: metadata?.excerpt,
         date: utcdate.valueOf(), // quick fix for sveltekit 1.0.0-next.422 requiring json serialization
         datestring: convertDateToString(utcdate),
-        thumbnailpath: metadata.thumbnailpath ? metadata.thumbnailpath : null,
+        thumbnailpath: metadata?.thumbnailpath ? metadata.thumbnailpath : null,
         // TODO this isnt type safe i dont think. I need errorhandeling for when not all these properties exist
       };
     })
@@ -143,10 +143,13 @@ export const convertDateToString = (date: Date): string => {
   ) {
     case 1:
       dayth = day + "st";
+      break;
     case 2:
       dayth = day + "nd";
+      break;
     case 3:
       dayth = day + "rd";
+      break;
     default:
       dayth = day + "th";
   } // there might be a better way to do this but whatever :) it looks funny
