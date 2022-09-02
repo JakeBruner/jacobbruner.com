@@ -131,6 +131,20 @@ export class EllipticCurve extends FiniteField {
     return table;
   }
 }
+
+export const hsl2hex = (h: number, s: number, l: number) => {
+  l /= 100;
+  const a = (s * Math.min(l, 1 - l)) / 100;
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12;
+    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(255 * color)
+      .toString(16)
+      .padStart(2, "0"); // convert to Hex and prefix "0" if needed
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
+};
+
 //! currently each Point contains all the context of the curve and field.
 //! This is likely unnessecary and memory-heavy
 export class Point {
@@ -146,10 +160,18 @@ export class Point {
     this.y = y;
     this._curve = curve;
 
+    // const hueDelta = 360 / curve.points?.length;
+    // const index = curve.points.indexOf(this);
+    // this.hue = index === -1 ? 0 : index * hueDelta;
+
     // if ((this.x || this.y) > this._curve.characteristic) {
     //   throw new Error();
     // }
     // note this doesn't check if x,y are reduced mod p
+  }
+
+  get getIndex(): number {
+    return this._curve.points.findIndex((e) => e.x === this.x && e.y === this.y);
   }
 
   equals(p: Point): boolean {

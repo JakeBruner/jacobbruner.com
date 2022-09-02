@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { EllipticCurve, isPrime } from "$lib/curve";
+  import { fade } from "svelte/transition";
+  import { EllipticCurve, isPrime, hsl2hex, Point } from "$lib/curve";
 
   let a: number = 4;
   let b: number = 3;
@@ -12,13 +13,39 @@
   $: curve = new EllipticCurve(a, b, p);
   $: table = curve.getCayleyTable;
 
+  // const getColor = (p: Point): number => {
+  //   const index = curve.points.indexOf(p);
+  //   return index === -1 ? 0 : colors[index];
+  // };
+  const createColorArray = (curve: EllipticCurve): string[] => {
+    const len = curve.points.length;
+    const huediff = 360 / len;
+    let hues: number[] = [0];
+    for (let i = 1; i < len; i++) {
+      hues.push(huediff * i);
+    }
+    hues = hues;
+    return hues.map((e) => hsl2hex(e, 40, 85));
+  };
+
+  const getColor = (p: Point): string => {
+    return colors[p.getIndex];
+  };
+
+  $: colors = createColorArray(curve);
+  $: console.log(colors);
+  $: console.log(curve.points);
+
+  // $: console.log(getHueString(new Point(curve, 0, 4)));
+
   // let test = new Point(curve, 1, 1);
   // let p2 = new Point(curve, 1, 1);
 
   // console.log(p2.plus(test));
   // console.log(test.plus(p2));
 
-  let active: number = -1;
+  let x: number = -1;
+  let y: number = -1;
 </script>
 
 <div class="sm:px-40 px-20 sm:pt-20 pt-10">
@@ -115,35 +142,24 @@
       <table class="border rounded-lg border-zinc-400 dark:border-zinc-500">
         <tbody
           class="divide-y  dark:divide-zinc-600 divide-zinc-300 shadow-lg dark:shadow-white/10"
+          on:mouseleave={() => {
+            x = -1;
+            y = -1;
+          }}
         >
-          {#each table as row}
-            <tr
-              class="divide-x dark:divide-zinc-600 divide-zinc-300 first:bg-zinc-300 dark:first:bg-zinc-700 group"
-            >
+          {#each table as row, i}
+            <tr class="divide-x dark:divide-zinc-600 divide-zinc-300 y{i}">
               {#each row as point, j}
-                {#if active == j}
-                  <td
-                    on:mouseenter={() => {
-                      active = j;
-                    }}
-                    on:mouseleave={() => {
-                      active = -1;
-                    }}
-                    class="first:bg-zinc-300 dark:first:bg-zinc-700 group-hover:bg-primary/20 hover:text-zinc-800 dark:hover:text-zinc-50 active p-1"
-                    >{point.formatted}</td
-                  >
-                {:else}
-                  <td
-                    on:mouseenter={() => {
-                      active = j;
-                    }}
-                    on:mouseleave={() => {
-                      active = -1;
-                    }}
-                    class="first:bg-zinc-300 dark:first:bg-zinc-700 group-hover:bg-primary/20 p-1"
-                    >{point.formatted}</td
-                  >
-                {/if}
+                <td
+                  on:mouseenter={() => {
+                    x = j;
+                    y = i;
+                  }}
+                  class="x{j} first:hover:!bg-white/90"
+                  class:active2={y === i}
+                  class:active={x === j}
+                  style:background-color={getColor(point)}>{point.formatted}</td
+                >
               {/each}
             </tr>
           {/each}
@@ -154,7 +170,19 @@
 </div>
 
 <style>
+  .x0 {
+    @apply bg-zinc-100 dark:bg-zinc-700 dark:text-zinc-100 !important;
+  }
   .active {
-    @apply bg-primary/20;
+    @apply bg-white/90 !important;
+  }
+  .active2 {
+    @apply bg-white/90 !important;
+  }
+  td {
+    @apply p-1 whitespace-nowrap dark:text-zinc-700;
+  }
+  .y0 td {
+    @apply bg-zinc-100 dark:bg-zinc-700 dark:text-zinc-100 !important;
   }
 </style>
