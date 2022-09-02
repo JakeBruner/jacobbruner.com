@@ -171,19 +171,18 @@
 
 <style>
   .x0 {
-    @apply bg-zinc-300 dark:bg-zinc-700 dark:text-zinc-100 !important;
+    @apply bg-zinc-100 dark:bg-zinc-700 dark:text-zinc-100 !important;
   }
-
   .active {
     @apply bg-white/90 !important;
   }
   .active2 {
-    @apply bg-white/90 first:bg-zinc-300 dark:first:bg-zinc-700 !important;
+    @apply bg-white/90 !important;
   }
   td {
     @apply p-1 whitespace-nowrap dark:text-zinc-700;
   }
   .y0 td {
-    @apply bg-zinc-300 dark:bg-zinc-700 dark:text-zinc-100 !important;
+    @apply bg-zinc-100 dark:bg-zinc-700 dark:text-zinc-100 !important;
   }
 </style>
