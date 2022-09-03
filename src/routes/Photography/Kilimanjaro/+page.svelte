@@ -3,11 +3,15 @@
   import ImageHolder from "$lib/photogallery/ImageHolder.svelte";
   let fullscreen: boolean = false;
 
-  let src: string;
-  const makeFull = (e) => {
-    let src = e.target.getAttribute("src");
+  let selected = {
+    src: "",
+    alt: ""
+  };
+
+  const selectMe = (e) => {
+    selected.src = e.target.getAttribute("src");
+    selected.alt = e.target.getAttribute("alt");
     fullscreen = true;
-    console.log(src);
   };
 </script>
 
@@ -17,8 +21,16 @@
   <input type="checkbox" class="w-full" bind:checked={fullscreen} />
 </div>
 {#if fullscreen}
-  <div class="fixed  z-20 h-full bg-zinc-700/40 w-full" transition:fade={{ duration: 100 }}>
-    <img {src} alt="" srcset="" class="block object-cover object-center w-full h-full" />
+  <div
+    class="flex mx-auto fixed inset-0 z-30 h-full w-full bg-zinc-700/70 items-center"
+    transition:fade={{ duration: 100 }}
+    on:click={() => (fullscreen = false)}
+  >
+    <img
+      src={selected.src}
+      alt={selected.alt}
+      class=" !rounded-none content-center object-contain object-center"
+    />
   </div>
 {/if}
 
@@ -26,25 +38,60 @@
   <div class="container px-5 py-2 mx-auto lg:px-32">
     <div class="flex flex-wrap -m-1 md:-m-2">
       <!-- gallery container -->
-      <ImageHolder class="w-full" src="/images/kili/kilimanjaro-2465.jpg" />
+      <div class="w-full photoframe">
+        <img
+          alt="gallery"
+          class="img"
+          src="/images/kili/kilimanjaro-2465.jpg"
+          on:click={selectMe}
+        />
+      </div>
+
       <div class="flex flex-wrap md:w-1/2 w-full">
-        <ImageHolder class="w-1/2" src="/images/kili/kilimanjaro-1747.jpg" />
         <div class="w-1/2 photoframe">
-          <img alt="gallery" src="/images/kili/kilimanjaro-1954.jpg" on:click={makeFull} />
+          <img
+            alt="gallery"
+            class="img"
+            src="/images/kili/kilimanjaro-1747.jpg"
+            on:click={selectMe}
+          />
+        </div>
+        <div class="w-1/2 photoframe">
+          <img
+            alt="gallery"
+            class="img"
+            src="/images/kili/kilimanjaro-1954.jpg"
+            on:click={selectMe}
+          />
         </div>
         <div class="w-full photoframe">
-          <img alt="gallery" src="/images/kili/kilimanjaro-2433.jpg" on:click={makeFull} />
+          <img
+            alt="gallery"
+            class="img"
+            src="/images/kili/kilimanjaro-2433.jpg"
+            on:click={selectMe}
+          />
         </div>
       </div>
       <div class="flex flex-wrap md:w-1/2 w-full">
         <div class="w-full photoframe">
-          <img alt="gallery" src="/images/kili/kilimanjaro-2258.jpg" on:click={makeFull} />
+          <img
+            alt="gallery"
+            class="img"
+            src="/images/kili/kilimanjaro-2258.jpg"
+            on:click={selectMe}
+          />
         </div>
         <div class="w-1/2 photoframe">
-          <img alt="gallery" src="/images/kili/kilimanjaro-2447.jpg" on:click={makeFull} />
+          <img
+            alt="gallery"
+            class="img"
+            src="/images/kili/kilimanjaro-2447.jpg"
+            on:click={selectMe}
+          />
         </div>
         <div class="w-1/2 photoframe">
-          <img alt="gallery" src="/images/kili/kilimanjaro-2458.jpg" />
+          <img alt="gallery" class="img" src="/images/kili/kilimanjaro-2458.jpg" />
         </div>
       </div>
       <!-- end gallery container -->
@@ -57,7 +104,7 @@
     @apply transition-all ease-out hover:brightness-90 hover:contrast-[90%] hover:scale-[100.5%];
     @apply p-1 md:p-2;
   }
-  img {
+  .img {
     @apply block object-cover object-center w-full h-full rounded-lg shadow-sm;
   }
 </style>
