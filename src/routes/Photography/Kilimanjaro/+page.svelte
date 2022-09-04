@@ -1,6 +1,4 @@
 <script lang="ts">
-  import type { toggle_class } from "svelte/internal";
-
   import { fade } from "svelte/transition";
   let fullscreen: boolean = false;
 
@@ -167,6 +165,55 @@
         </div>
       </div>
 
+      <div class="w-full photoframe">
+        <img
+          alt="gallery"
+          class="img"
+          src="/images/kili/kilimanjaro-1942.jpg"
+          on:click={selectMe}
+        />
+      </div>
+
+      <div class="flex flex-wrap md:w-1/2 w-full">
+        <div class="w-full photoframe">
+          <img
+            alt="gallery"
+            class="img"
+            src="/images/kili/kilimanjaro-1827.jpg"
+            on:click={selectMe}
+          />
+        </div>
+      </div>
+      <div class="flex flex-wrap md:w-1/2 w-full">
+        <div class="w-1/2 photoframe">
+          <img
+            alt="gallery"
+            class="img"
+            src="/images/kili/kilimanjaro-2464.jpg"
+            on:click={selectMe}
+          />
+        </div>
+        <div class="w-1/2 photoframe">
+          <img
+            alt="gallery"
+            class="img"
+            src="/images/kili/kilimanjaro-2282.jpg"
+            on:click={selectMe}
+          />
+        </div>
+        <div class="w-full photoframe">
+          <img
+            alt="gallery"
+            class="img"
+            src="/images/kili/kilimanjaro-1753.jpg"
+            on:click={selectMe}
+          />
+        </div>
+      </div>
+
+      <div class="w-full photoframe">
+        <img alt="gallery" class="img" src="/images/kili/kilimanjaro-.jpg" on:click={selectMe} />
+      </div>
       <!-- end gallery container -->
     </div>
   </div>

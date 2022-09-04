@@ -4,7 +4,7 @@
     <a href="/Photography/Kilimanjaro">
       <div class="flex w-full group  items-center text-center justify-center shadow-lg">
         <h3
-          class="block tracking-wider italic self-center z-10 absolute shadow-lg font-medium dark:text-white text-white text-2xl md:text-3xl  transition ease-in-out duration-500  after:bg-white after:bottom-[-3px] after:absolute after:h-[2.5px] after:left-[2px] after:right-[2px] after:invisible after:-scale-x-0 group-hover:after:-scale-x-100 group-hover:after:visible after:transition after:ease-in-out after:duration-500"
+          class="block tracking-wider italic self-center z-10 absolute shadow-lg group-hover:shadow-2xl font-medium dark:text-white text-white text-2xl md:text-3xl  transition ease-in-out duration-500  after:bg-white after:bottom-[-3px] after:absolute after:h-[2.5px] after:left-[2px] after:right-[2px] after:invisible after:-scale-x-0 group-hover:after:-scale-x-100 group-hover:after:visible after:transition after:ease-in-out after:duration-500"
         >
           Kilimanjaro
         </h3>
