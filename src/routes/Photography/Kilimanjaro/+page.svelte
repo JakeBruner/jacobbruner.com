@@ -115,7 +115,7 @@
         <img
           alt="gallery"
           class="img"
-          src="/images/kili/kilimanjaro-2496.jpg"
+          src="/images/kili/kilimanjaro-jake.jpg"
           on:click={selectMe}
         />
       </div>
@@ -125,7 +125,7 @@
           <img
             alt="gallery"
             class="img"
-            src="/images/kili/kilimanjaro-2334.jpg"
+            src="/images/kili/kilimanjaro-2461.jpg"
             on:click={selectMe}
           />
         </div>
@@ -133,7 +133,7 @@
           <img
             alt="gallery"
             class="img"
-            src="/images/kili/kilimanjaro-2458.jpg"
+            src="/images/kili/kilimanjaro-2080.jpg"
             on:click={selectMe}
           />
         </div>
@@ -142,6 +142,26 @@
             alt="gallery"
             class="img"
             src="/images/kili/kilimanjaro-2190.jpg"
+            on:click={selectMe}
+          />
+        </div>
+      </div>
+
+      <div class="flex flex-wrap md:w-1/2 w-full">
+        <div class="w-full photoframe">
+          <img
+            alt="gallery"
+            class="img"
+            src="/images/kili/kilimanjaro-2248.jpg"
+            on:click={selectMe}
+          />
+        </div>
+
+        <div class="w-full photoframe">
+          <img
+            alt="gallery"
+            class="img"
+            src="/images/kili/kilimanjaro-2344.jpg"
             on:click={selectMe}
           />
         </div>
