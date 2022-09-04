@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { EllipticCurve, isPrime, hsl2hex, Point } from "$lib/curve";
+  import { EllipticCurve, isPrime, hsl2hex, Point } from "$lib/curve/curve";
 
   let a: number = 4;
   let b: number = 3;
@@ -150,7 +150,7 @@
                     x = j;
                     y = i;
                   }}
-                  class="x{j} first:hover:!bg-white/90"
+                  class="x{j} first:hover:!bg-white/90 text-center"
                   class:active2={y === i}
                   class:active={x === j}
                   style:background-color={getColor(p)}>{p.formatted}</td

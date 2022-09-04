@@ -6,10 +6,10 @@
     { title: "Home", path: "/" },
     { title: "Music", path: "/Music" },
     { title: "Math", path: "/Math" },
-    { title: "Photography", path: "/about" },
+    { title: "Photography", path: "/Photography" },
     { title: "CS", path: "/Computer-Science" },
     { title: "Writing", path: "/Writing" },
-    { title: "Contact", path: "/about" },
+    { title: "Contact", path: "/about" }
   ];
 
   let menuOpen = false;
@@ -17,7 +17,7 @@
 
 <header>
   <nav
-    class="fadeIn fixed top-0 left-0 right-0 z-50 bg-white_translucent dark:bg-zinc-900/80 px-2 sm:px-4 py-5 text-black dark:text-zinc-100/90 shadow-md"
+    class="fadeIn fixed top-0 left-0 right-0 z-20 bg-white_translucent dark:bg-zinc-900/80 px-2 sm:px-4 py-5 text-black dark:text-zinc-100/90 shadow-md dark:shadow-black/30"
   >
     <!-- dark:bg-gray-800 dark:text-white -->
     <div class="flex flex-wrap justify-between items-center xl:px-40 lg:px-24 xs:px-12 px-4">

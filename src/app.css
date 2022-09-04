@@ -25,6 +25,10 @@
     @apply text-zinc-600;
     @apply dark:text-zinc-200;
   }
+
+  body.noscroll {
+    overflow-y: hidden;
+  }
   h1 {
     @apply text-4xl;
     font-weight: 550;

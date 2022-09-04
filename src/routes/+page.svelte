@@ -5,6 +5,7 @@
     "/Math/EulerExploration",
     "/Computer-Science/Guess The Build Solver",
     "/Writing/PublicDefenders",
+    "/Computer-Science/EllipticCurve"
   ];
 
   const rand = (max: number): number => {
@@ -20,16 +21,17 @@
 <!-- so h-screen doesn't work properly on mobile, so hopefully inset-0 will fix this -->
 <section class="-mt-[68px] inset-0">
   <div
-    class="codybowl bg-[url('/images/codybowl.jpg')] dark:bg-[url('/images/jacksonstars.jpg')] bg-fixed h-screen bg-cover bg-center min-w-full flex flex-col justify-center items-center"
+    class="codybowl bg-[url('/images/codybowl.jpg')] dark:bg-[url('/images/jacksonstars.jpg')] bg-fixed h-screen min-h-screen bg-cover bg-center flex flex-col justify-center items-center"
+    style="min-height: -webkit-fill-available;"
   >
     <h1
-      class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[53px] text-5xl text-zinc-700 dark:text-zinc-300 font-light pb-[13px] pt-[17px] px-2 my-4 fadeInDown text-center"
+      class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[53px] text-4xl text-zinc-700 dark:text-zinc-300 font-light py-3 sm:pb-[13px] sm:pt-[17px] px-2 my-2 sm:my-4 fadeInDown text-center"
     >
       Learning as a Hobby
       <!-- Learning is a skill -->
     </h1>
     <h2
-      class="bg-white_translucent dark:bg-zinc-900/70 text-[25px] text-zinc-600 dark:text-zinc-300 italic py-0.1 px-1.5 font-normal fadeInDown"
+      class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[25px] text-xl text-zinc-600 dark:text-zinc-300 italic py-0.1 px-1.5 font-normal fadeInDown"
     >
       The work of Jacob Bruner
     </h2>
