@@ -1,6 +1,6 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
-  import { onMount } from "svelte";
+  // import { onMount } from "svelte";
 
   let fullscreen: boolean = false;
 
@@ -26,14 +26,15 @@
     document.body.classList.remove("noscroll");
   };
 
-  let srclist: string[] = [];
-  onMount(() => {
-    const allImages: HTMLCollection = document.images;
-    srclist = allImages.map((e) => {
-      return e.src;
-    });
-  });
-  $: console.log(srclist);
+  // let srclist: string[] = [];
+  // onMount(() => {
+  //   if ("getElementsByTagName" in document) {
+  //     console.log(hi);
+  //   }
+  //   const images = document.images.getElementsByTagName("img");
+  //   images.map((e) => e.src);
+
+  // });
 
   // for (let i = 0, len = allImages.length; i < len; i++) {
 
@@ -241,7 +242,7 @@
       </div>
       <!-- end gallery container -->
     </div>
-    <h5 class="pt-4 text-sm italic">
+    <h5 class="pt-4 text-sm italic dark:text-zinc-500">
       Photos taken with a Sony A7RII and my Sony FE 24-105mm f4.0 lens :)
     </h5>
   </div>
