@@ -1,23 +1,43 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
+  import { onMount } from "svelte";
+
   let fullscreen: boolean = false;
 
-  let selected = {
+  interface Photo {
+    src: string;
+    alt: string;
+  }
+
+  let selected: Photo = {
     src: "",
     alt: ""
   };
 
-  const selectMe = (e) => {
+  const selectMe = (e: MouseEvent): void => {
     selected.src = e.target.getAttribute("src");
     selected.alt = e.target.getAttribute("alt");
     fullscreen = true;
     document.body.classList.add("noscroll");
   };
 
-  const deselectMe = () => {
+  const deselectMe = (): void => {
     fullscreen = false;
     document.body.classList.remove("noscroll");
   };
+
+  let srclist: string[] = [];
+  onMount(() => {
+    const allImages: HTMLCollection = document.images;
+    srclist = allImages.map((e) => {
+      return e.src;
+    });
+  });
+  $: console.log(srclist);
+
+  // for (let i = 0, len = allImages.length; i < len; i++) {
+
+  // }
 </script>
 
 <svelte:body class:overflow-y={fullscreen ? "hidden" : "auto"} />
@@ -221,6 +241,9 @@
       </div>
       <!-- end gallery container -->
     </div>
+    <h5 class="pt-4 text-sm italic">
+      Photos taken with a Sony A7RII and my Sony FE 24-105mm f4.0 lens :)
+    </h5>
   </div>
 </section>
 
