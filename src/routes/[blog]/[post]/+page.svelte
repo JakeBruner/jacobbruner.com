@@ -41,7 +41,7 @@
     <p class="my-4 text-zinc-500 dark:text-zinc-400">{data.date}</p>
     {#if data?.videoid}
       <div class="w-full mb-6 aspect-w-16 aspect-h-9">
-        <iframe
+        <embed
           src="https://www.youtube.com/embed/{data?.videoid}"
           frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
