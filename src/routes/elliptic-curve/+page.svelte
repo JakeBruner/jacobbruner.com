@@ -1,10 +1,10 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
-  import { EllipticCurve, isPrime, hsl2hex, Point } from "$lib/curve/curve";
+  import { EllipticCurve, isPrime, hsl2hex, Point, RawPoint, getSubgroup } from "$lib/curve/curve";
 
   let a: number = 4;
   let b: number = 3;
-  let p: number = 13;
+  let p: number = 17;
   let prime: number;
 
   $: {
@@ -38,6 +38,13 @@
 
   // let selected: Point = new Point(curve);
   let hidePopup = false;
+
+  $: {
+    let selected: RawPoint = curve?.points[1];
+
+    let sg = getSubgroup(selected, curve);
+    console.log(sg);
+  }
 </script>
 
 <!-- mobile popup -->

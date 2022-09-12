@@ -145,28 +145,32 @@ export const hsl2hex = (h: number, s: number, l: number) => {
   return `#${f(0)}${f(8)}${f(4)}`;
 };
 
-//! currently each Point contains all the context of the curve and field.
-//! This is likely unnessecary and memory-heavy
-export class Point {
+// this is a hacky way to get this to work
+// why did I make Point inherit a private curve....
+export class RawPoint {
   public x: number;
   public y: number;
+  constructor(x: number, y: number) {
+    this.x = x;
+    this.y = y;
+  }
+
+  get isIdentity(): boolean {
+    return this.x == -1 && this.y == -1;
+  }
+}
+
+//! currently each Point contains all the context of the curve and field.
+//! This is likely unnessecary and memory-heavy
+export class Point extends RawPoint {
   private _curve: EllipticCurve; //! this was a mistake
   // i need this so .plus() can be a method on class Point
   // this allows Point to pass the monad context of the underlying curve under it's methods that make new Points
 
   constructor(curve: EllipticCurve, x = -1, y = -1) {
     // identity element by default
-    this.x = x;
-    this.y = y;
+    super(x, y);
     this._curve = curve;
-
-    // const hueDelta = 360 / curve.points?.length;
-    // const index = curve.points.indexOf(this);
-    // this.hue = index === -1 ? 0 : index * hueDelta;
-
-    // if ((this.x || this.y) > this._curve.characteristic) {
-    //   throw new Error();
-    // }
     // note this doesn't check if x,y are reduced mod p
   }
 
@@ -176,10 +180,6 @@ export class Point {
 
   equals(p: Point): boolean {
     return p.x == this.x && p.y == this.y;
-  }
-
-  get isIdentity(): boolean {
-    return this.x == -1 && this.y == -1;
   }
 
   get formatted(): string {
@@ -243,14 +243,11 @@ export class Point {
     }
   }
 
-  get subgroup(): Point[] {
-    let subset: Point[] = [];
-    let next: Point = this;
-    do {
-      subset.push(this);
-      next = next.plus(this);
-    } while (!next.equals(this));
-    return subset;
+  get getRawPoint(): rawPoint {
+    return {
+      x: this.x,
+      y: this.y,
+    };
   }
 
   // i dont knwo what the fuck a generator function is
@@ -264,6 +261,44 @@ export class Point {
 
   // }
 }
+type input = RawPoint | RawPoint[];
+
+export const getSubgroup = (point: input, curve: EllipticCurve): RawPoint[] => {
+  let subgroup: RawPoint[];
+
+  if (point instanceof RawPoint) {
+    // handle types
+    subgroup = [point];
+  } else {
+    subgroup = point;
+  }
+
+  // let subgroup: rawPoint[] = [];
+
+  // base case
+  if (subgroup[subgroup.length - 1].isIdentity) {
+    return subgroup;
+  } else {
+    // I handle the tangent logic here
+    const thispoint = subgroup[subgroup.length - 1];
+    if (thispoint.isIdentity) {
+      return subgroup;
+    }
+
+    let m = mod(
+      mod(3 * thispoint.x * thispoint.x + curve.a, curve.characteristic) *
+        curve.getInv(2 * thispoint.y),
+      curve.characteristic
+    );
+
+    // xr = \frac{m^2 - px - qx}{2*py} \mod field.characteristic
+    const xr = mod(m * m - 2 * thispoint.x, curve.characteristic);
+    const yr = mod(-(thispoint.y + m * (xr - thispoint.x)), curve.characteristic);
+    subgroup.push(new RawPoint(xr, yr));
+
+    return getSubgroup(subgroup, curve);
+  }
+};
 
 // all my homies hate functional programming
 // interface M<T> {
