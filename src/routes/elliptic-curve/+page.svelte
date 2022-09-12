@@ -5,12 +5,15 @@
   let a: number = 4;
   let b: number = 3;
   let p: number = 13;
+  let prime: number;
 
-  if (!isPrime(p)) {
-    p = 7;
+  $: {
+    if (isPrime(p)) {
+      prime = p;
+    }
   }
 
-  $: curve = new EllipticCurve(a, b, p);
+  $: curve = new EllipticCurve(a, b, prime);
   $: table = curve.getCayleyTable;
 
   const createColorArray = (curve: EllipticCurve): string[] => {
@@ -76,15 +79,12 @@
     the cayley table.
   </h3>
   <div class="pt-4 pb-10">
-    <style>
-      .curve span {
-        font-weight: 800;
-        text-decoration: underline;
-      }
-    </style>
     <h3>Curve:</h3>
     <h3 class="curve text-2xl">
-      y<sup>2</sup> = x<sup>3</sup> + <span>{a}</span>x + <span>{b}</span> mod <span>{p}</span>
+      y<sup>2</sup> &equiv; x<sup>3</sup> + <span class="font-bold underline">{a}</span>x +
+      <span class="font-bold underline">{b}</span>
+      <span class="text-xl italic">‎ mod</span>
+      <span class="font-bold underline">{p}</span>
     </h3>
     <label class="p-8">
       <input
