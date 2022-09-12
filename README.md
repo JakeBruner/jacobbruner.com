@@ -6,4 +6,4 @@ I really dont know what I'm doing. I'm building this website with primarily Svel
 
 After spending dozens of hours on this, I would maybe advise against choosing the most bleeding-edge tech stack possible, since too much of my type has been spent resolving breaking changes in my dependencies.
 
-Either way, if you read my code, it's probably not amazing. Again--I don't know what I'm doing and I've never taken a coding class in my life.
+Either way, if you read my code, it's probably not amazing. Again—I don't know what I'm doing and I've never taken a coding class in my life.
