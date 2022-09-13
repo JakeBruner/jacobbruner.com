@@ -4,8 +4,10 @@
 
   let a: number = 4;
   let b: number = 6;
-  let p: number = 17;
+  let p: number = 13;
   let prime: number;
+
+  $: discriminant = (-16 * (4 * a ** 3 + 27 * (b * b))) % prime;
 
   $: {
     a = a;
@@ -17,6 +19,7 @@
   let inputIsPrime: boolean = true;
 
   $: {
+    // prime = p;
     if (isPrime(p)) {
       prime = p;
       inputIsPrime = true;
@@ -115,7 +118,7 @@
         on:change={() => {
           selected = null;
         }}
-        min="0"
+        min="-20"
         max="20"
         class="block
         py-1
@@ -139,14 +142,14 @@
       on:change={() => {
         selected = null;
       }}
-      min="0"
+      min="-20"
       max="20"
     />
     <label class="p-8">
       <input
         type="number"
         bind:value={b}
-        min="0"
+        min="-20"
         max="20"
         class="block
           py-1
@@ -179,7 +182,7 @@
             text-zinc-600 dark:text-zinc-300
             border border-solid border-zinc-300 dark:border-zinc-600
             rounded
-
+            bg-inherit bg-clip-padding
             m-0
             shadow-inner
 
@@ -201,6 +204,11 @@
           {subgroup.formatted}
         {/each}
       {/if} -->
+      <span
+        class="p-1 rounded-md"
+        style:background-color={discriminant === 0 ? "rgba(100,100,100,30)" : ""}
+        >discriminant = {discriminant}</span
+      >
     </div>
   </div>
 </div>
