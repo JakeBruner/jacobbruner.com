@@ -10,6 +10,7 @@ const mod = (a: number, n: number): number => {
 // export let char = 7; // characteristic of the finite field
 
 export const isPrime = function (n: number): boolean {
+  // return true;
   if (mod(n, 2) === 0) {
     return false;
   }
