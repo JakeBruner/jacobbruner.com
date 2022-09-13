@@ -2,9 +2,9 @@
   import { fade } from "svelte/transition";
   import { EllipticCurve, isPrime, hsl2hex, Point, RawPoint, getSubgroup } from "$lib/curve/curve";
 
-  let a: number = 4;
-  let b: number = 3;
-  let p: number = 17;
+  let a: number = 6;
+  let b: number = 5;
+  let p: number = 13;
   let prime: number;
 
   $: {
@@ -39,10 +39,13 @@
   // let selected: Point = new Point(curve);
   let hidePopup = false;
 
+  let sg: RawPoint[];
   $: {
     let selected: RawPoint = curve?.points[1];
+    if (curve) {
+      sg = getSubgroup(selected, curve);
+    }
 
-    let sg = getSubgroup(selected, curve);
     console.log(sg);
   }
 </script>

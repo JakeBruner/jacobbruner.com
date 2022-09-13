@@ -150,7 +150,7 @@ export const hsl2hex = (h: number, s: number, l: number) => {
 export class RawPoint {
   public x: number;
   public y: number;
-  constructor(x: number, y: number) {
+  constructor(x = -1, y = -1) {
     this.x = x;
     this.y = y;
   }
@@ -264,28 +264,34 @@ export class Point extends RawPoint {
 type input = RawPoint | RawPoint[];
 
 export const getSubgroup = (point: input, curve: EllipticCurve): RawPoint[] => {
+  if (!(curve instanceof EllipticCurve)) {
+    console.log("something went wrong");
+    return [];
+  }
+
   let subgroup: RawPoint[];
 
-  if (point instanceof RawPoint) {
+  if (point instanceof Point) {
     // handle types
+    const rp = new RawPoint(point.x, point.y);
+    subgroup = [rp];
+  } else if (point instanceof RawPoint) {
     subgroup = [point];
   } else {
     subgroup = point;
   }
 
-  // let subgroup: rawPoint[] = [];
-
-  // base case
-  if (subgroup[subgroup.length - 1].isIdentity) {
-    return subgroup;
-  } else {
+  let thispoint: RawPoint;
+  let m: number;
+  do {
     // I handle the tangent logic here
-    const thispoint = subgroup[subgroup.length - 1];
-    if (thispoint.isIdentity) {
+    thispoint = subgroup[subgroup.length - 1];
+    if (thispoint.isIdentity || !thispoint.x) {
+      console.log("identity");
       return subgroup;
     }
 
-    let m = mod(
+    m = mod(
       mod(3 * thispoint.x * thispoint.x + curve.a, curve.characteristic) *
         curve.getInv(2 * thispoint.y),
       curve.characteristic
@@ -294,10 +300,20 @@ export const getSubgroup = (point: input, curve: EllipticCurve): RawPoint[] => {
     // xr = \frac{m^2 - px - qx}{2*py} \mod field.characteristic
     const xr = mod(m * m - 2 * thispoint.x, curve.characteristic);
     const yr = mod(-(thispoint.y + m * (xr - thispoint.x)), curve.characteristic);
-    subgroup.push(new RawPoint(xr, yr));
+    if (!xr || !yr) {
+      subgroup.push(new RawPoint());
+    } else {
+      subgroup.push(new RawPoint(xr, yr));
+    }
 
+    // console.log("recursive call");
+    console.log(subgroup);
     return getSubgroup(subgroup, curve);
-  }
+  } while (!subgroup[subgroup.length - 1].isIdentity);
+
+  // let subgroup: rawPoint[] = [];
+
+  // base case
 };
 
 // all my homies hate functional programming
