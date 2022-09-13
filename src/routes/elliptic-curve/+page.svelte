@@ -7,9 +7,14 @@
   let p: number = 13;
   let prime: number;
 
+  let inputIsPrime: boolean = true;
+
   $: {
     if (isPrime(p)) {
       prime = p;
+      inputIsPrime = true;
+    } else {
+      inputIsPrime = false;
     }
   }
 
@@ -36,17 +41,17 @@
   let x: number = -1;
   let y: number = -1;
 
+  let selected: RawPoint;
+
   // let selected: Point = new Point(curve);
   let hidePopup = false;
 
   let sg: RawPoint[];
   $: {
-    let selected: RawPoint = curve?.points[1];
-    if (curve) {
+    if (selected) {
       sg = getSubgroup(selected, curve);
+      console.log(sg);
     }
-
-    console.log(sg);
   }
 </script>
 
@@ -154,7 +159,6 @@
             text-xl
             font-normal
             text-zinc-600 dark:text-zinc-300
-            bg-inherit bg-clip-padding
             border border-solid border-zinc-300 dark:border-zinc-600
             rounded
 
@@ -162,8 +166,9 @@
             shadow-inner
 
             focus:text-zinc-700 dark:focus:text-zinc-200 focus:border-primary focus:outline-none"
+        style:color={inputIsPrime ? "" : "red"}
       />
-      *must be prime
+      <span style:color={inputIsPrime ? "" : "red"}>*must be prime</span>
       <!-- <input type="range" bind:value={p} min="0" max="10" /> -->
     </label>
     <!-- <div class="flex-col">
@@ -181,7 +186,16 @@
     </div>
   </div>
 </div>
-<div class="pt-5 w-full flex content-center">
+<div class="pt-5 w-full flex flex-col content-center">
+  {#if selected}
+    <div class="text-center w-auto pb-2">
+      {#each sg as elem, i}
+        {#if i !== 0}
+          &#10230;
+        {/if}{elem.formatted}
+      {/each}
+    </div>
+  {/if}
   <div class=" mx-auto overflow-auto">
     <table class="border rounded-lg border-zinc-400 dark:border-zinc-500">
       <tbody
@@ -198,6 +212,10 @@
                 on:mouseenter={() => {
                   x = j;
                   y = i;
+                }}
+                on:click={() => {
+                  const pt = table[x][y].getRawPoint;
+                  selected = pt;
                 }}
                 class="x{j} first:hover:!bg-white/90"
                 class:active2={y === i}

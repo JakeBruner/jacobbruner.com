@@ -158,6 +158,18 @@ export class RawPoint {
   get isIdentity(): boolean {
     return this.x == -1 && this.y == -1;
   }
+
+  get isNull(): boolean {
+    return this.x !== this.x;
+  }
+
+  rawequals(p: RawPoint): boolean {
+    return p.x == this.x && p.y == this.y;
+  }
+
+  get formatted(): string {
+    return this.isIdentity ? " ∞ " : `(${this.x}, ${this.y})`;
+  }
 }
 
 //! currently each Point contains all the context of the curve and field.
@@ -180,10 +192,6 @@ export class Point extends RawPoint {
 
   equals(p: Point): boolean {
     return p.x == this.x && p.y == this.y;
-  }
-
-  get formatted(): string {
-    return this.isIdentity ? " ∞ " : `(${this.x}, ${this.y})`;
   }
 
   plus(p: Point): Point {
@@ -243,11 +251,8 @@ export class Point extends RawPoint {
     }
   }
 
-  get getRawPoint(): rawPoint {
-    return {
-      x: this.x,
-      y: this.y,
-    };
+  get getRawPoint(): RawPoint {
+    return new RawPoint(this.x, this.y);
   }
 
   // i dont knwo what the fuck a generator function is
@@ -261,33 +266,21 @@ export class Point extends RawPoint {
 
   // }
 }
-type input = RawPoint | RawPoint[];
 
-export const getSubgroup = (point: input, curve: EllipticCurve): RawPoint[] => {
+export const getSubgroup = (point: RawPoint, curve: EllipticCurve): RawPoint[] => {
   if (!(curve instanceof EllipticCurve)) {
     console.log("something went wrong");
     return [];
   }
 
-  let subgroup: RawPoint[];
+  let subgroup: RawPoint[] = [point];
 
-  if (point instanceof Point) {
-    // handle types
-    const rp = new RawPoint(point.x, point.y);
-    subgroup = [rp];
-  } else if (point instanceof RawPoint) {
-    subgroup = [point];
-  } else {
-    subgroup = point;
-  }
-
-  let thispoint: RawPoint;
   let m: number;
   do {
     // I handle the tangent logic here
-    thispoint = subgroup[subgroup.length - 1];
-    if (thispoint.isIdentity || !thispoint.x) {
-      console.log("identity");
+    let thispoint: RawPoint = subgroup[subgroup.length - 1];
+    if (thispoint.isIdentity || thispoint.x !== thispoint.x) {
+      // console.log("identity");
       return subgroup;
     }
 
@@ -300,22 +293,34 @@ export const getSubgroup = (point: input, curve: EllipticCurve): RawPoint[] => {
     // xr = \frac{m^2 - px - qx}{2*py} \mod field.characteristic
     const xr = mod(m * m - 2 * thispoint.x, curve.characteristic);
     const yr = mod(-(thispoint.y + m * (xr - thispoint.x)), curve.characteristic);
-    if (!xr || !yr) {
+    if (xr !== xr) {
+      // if null
       subgroup.push(new RawPoint());
     } else {
       subgroup.push(new RawPoint(xr, yr));
     }
 
     // console.log("recursive call");
-    console.log(subgroup);
-    return getSubgroup(subgroup, curve);
-  } while (!subgroup[subgroup.length - 1].isIdentity);
+  } while (!subgroup[subgroup.length - 1].isIdentity && checkUnique(subgroup));
 
-  // let subgroup: rawPoint[] = [];
-
-  // base case
+  return subgroup;
 };
 
+//* helper function for the while loop above
+const checkUnique = (array: RawPoint[]): boolean => {
+  //! god this will hurt perfomance
+  const len = array.length - 1;
+  for (let i = 0; i < len; i++) {
+    for (let j = 0; j < len; j++) {
+      if (i == j) {
+        break;
+      } else if (array[i].rawequals(array[j])) {
+        return false;
+      }
+    }
+  }
+  return true;
+};
 // all my homies hate functional programming
 // interface M<T> {
 
