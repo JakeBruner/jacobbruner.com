@@ -1,6 +1,15 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
-  import { EllipticCurve, isPrime, hsl2hex, Point, RawPoint, getSubgroup } from "$lib/curve/curve";
+  import {
+    EllipticCurve,
+    isPrime,
+    hsl2hex,
+    Point,
+    RawPoint,
+    getSubgroup,
+    getFactors
+  } from "$lib/curve/curve";
+  import { each } from "svelte/internal";
 
   let a: number = 4;
   let b: number = 6;
@@ -68,7 +77,7 @@
 <!-- mobile popup -->
 <div
   class="fixed z-[200] sm:!hidden inset-0 w-full h-full bg-black/40 transition-all ease-in-out"
-  style={hidePopup ? "visibility: hidden;" : "visibility: visible"}
+  style:visibility={hidePopup ? "hidden" : "visible"}
   transition:fade
   on:click={() => (hidePopup = true)}
 >
@@ -206,7 +215,7 @@
       {/if} -->
       <span
         class="p-1 rounded-md"
-        style:background-color={discriminant === 0 ? "rgba(100,100,100,30)" : ""}
+        style:background-color={discriminant === 0 ? "rgba(249, 255, 124, 0.3)" : ""}
         >discriminant = {discriminant}</span
       >
     </div>
@@ -214,14 +223,18 @@
 </div>
 <div class="pt-5 w-full flex flex-col content-center text-center">
   {#if selected}
-    <div class=" w-auto pb-2" transition:fade>
+    <div class=" w-auto pb-2 font-semibold text-xl" transition:fade>
       {#each sg as elem, i}
-        {#if i !== 0}
-          &#10230;
-        {/if}{elem.formatted}
+        <span class="">
+          {#if i !== 0}
+            &#10230;
+          {/if}{elem.formatted}
+        </span>
       {/each}
     </div>
-    <h5>Order** = {sg.length} (possibly - 2)</h5>
+    <h5 class="pb-2">Order** = {sg.length} (possibly wrong)</h5>
+  {:else}
+    <h4 class="italic pb-5">Click on a point to generate its subgroup!</h4>
   {/if}
   <div class=" mx-auto overflow-auto">
     <table class="border rounded-lg border-zinc-400 dark:border-zinc-500">
@@ -255,6 +268,10 @@
       </tbody>
     </table>
   </div>
+  {#key curve}
+    order = {curve.points.length}, which has divisors 1{#each getFactors(curve.points.length) as factor},
+      {factor}{/each}
+  {/key}
 </div>
 
 <style>

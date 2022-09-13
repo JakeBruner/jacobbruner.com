@@ -277,7 +277,7 @@ export const getSubgroup = (point: RawPoint, curve: EllipticCurve): RawPoint[] =
   let subgroup: RawPoint[] = [point];
 
   let m: number;
-  do {
+  while (!subgroup[subgroup.length - 1].isIdentity && checkUnique(subgroup)) {
     // I handle the tangent logic here
     let thispoint: RawPoint = subgroup[subgroup.length - 1];
     if (thispoint.isIdentity || thispoint.x !== thispoint.x) {
@@ -302,7 +302,7 @@ export const getSubgroup = (point: RawPoint, curve: EllipticCurve): RawPoint[] =
     }
 
     // console.log("recursive call");
-  } while (!subgroup[subgroup.length - 1].isIdentity && checkUnique(subgroup));
+  }
 
   return subgroup;
 };
@@ -321,6 +321,19 @@ const checkUnique = (array: RawPoint[]): boolean => {
     }
   }
   return true;
+};
+
+export const getFactors = (num: number): number[] => {
+  const half = num / 2 + 1;
+  let factors = [];
+  for (let i = 2; i < half; i++) {
+    if (num % i === 0) {
+      factors.push(i);
+      // factors.push(num / i); this is unecessary
+    }
+  }
+  // factors.sort(); this is unnecessary
+  return factors;
 };
 // all my homies hate functional programming
 // interface M<T> {
