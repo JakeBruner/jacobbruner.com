@@ -1,15 +1,27 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
-  import { EllipticCurve, isPrime, hsl2hex, Point } from "$lib/curve/curve";
+  import { EllipticCurve, isPrime, hsl2hex, Point, RawPoint, getSubgroup } from "$lib/curve/curve";
 
   let a: number = 4;
-  let b: number = 3;
-  let p: number = 13;
+  let b: number = 6;
+  let p: number = 17;
   let prime: number;
+
+  $: {
+    a = a;
+    b = b;
+    p = p;
+    selected = null;
+  } // this ugly shit makes the subgroup disappear if these values change
+
+  let inputIsPrime: boolean = true;
 
   $: {
     if (isPrime(p)) {
       prime = p;
+      inputIsPrime = true;
+    } else {
+      inputIsPrime = false;
     }
   }
 
@@ -36,8 +48,18 @@
   let x: number = -1;
   let y: number = -1;
 
+  let selected: RawPoint;
+
   // let selected: Point = new Point(curve);
   let hidePopup = false;
+
+  let sg: RawPoint[];
+  $: {
+    if (selected) {
+      sg = getSubgroup(selected, curve);
+      console.log(sg);
+    }
+  }
 </script>
 
 <!-- mobile popup -->
@@ -90,6 +112,9 @@
       <input
         type="number"
         bind:value={a}
+        on:change={() => {
+          selected = null;
+        }}
         min="0"
         max="20"
         class="block
@@ -108,7 +133,15 @@
         focus:text-zinc-700 dark:focus:text-zinc-200 focus:border-primary focus:outline-none"
       />
     </label>
-    <input type="range" bind:value={a} min="0" max="20" />
+    <input
+      type="range"
+      bind:value={a}
+      on:change={() => {
+        selected = null;
+      }}
+      min="0"
+      max="20"
+    />
     <label class="p-8">
       <input
         type="number"
@@ -144,7 +177,6 @@
             text-xl
             font-normal
             text-zinc-600 dark:text-zinc-300
-            bg-inherit bg-clip-padding
             border border-solid border-zinc-300 dark:border-zinc-600
             rounded
 
@@ -152,8 +184,9 @@
             shadow-inner
 
             focus:text-zinc-700 dark:focus:text-zinc-200 focus:border-primary focus:outline-none"
+        style:color={inputIsPrime ? "" : "red"}
       />
-      *must be prime
+      <span style:color={inputIsPrime ? "" : "red"}>*must be prime</span>
       <!-- <input type="range" bind:value={p} min="0" max="10" /> -->
     </label>
     <!-- <div class="flex-col">
@@ -171,7 +204,17 @@
     </div>
   </div>
 </div>
-<div class="pt-5 w-full flex content-center">
+<div class="pt-5 w-full flex flex-col content-center text-center">
+  {#if selected}
+    <div class=" w-auto pb-2" transition:fade>
+      {#each sg as elem, i}
+        {#if i !== 0}
+          &#10230;
+        {/if}{elem.formatted}
+      {/each}
+    </div>
+    <h5>Order** = {sg.length} (possibly - 2)</h5>
+  {/if}
   <div class=" mx-auto overflow-auto">
     <table class="border rounded-lg border-zinc-400 dark:border-zinc-500">
       <tbody
@@ -188,6 +231,10 @@
                 on:mouseenter={() => {
                   x = j;
                   y = i;
+                }}
+                on:click={() => {
+                  const pt = table[x][y].getRawPoint;
+                  selected = pt;
                 }}
                 class="x{j} first:hover:!bg-white/90"
                 class:active2={y === i}

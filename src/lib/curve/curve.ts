@@ -145,28 +145,44 @@ export const hsl2hex = (h: number, s: number, l: number) => {
   return `#${f(0)}${f(8)}${f(4)}`;
 };
 
-//! currently each Point contains all the context of the curve and field.
-//! This is likely unnessecary and memory-heavy
-export class Point {
+// this is a hacky way to get this to work
+// why did I make Point inherit a private curve....
+export class RawPoint {
   public x: number;
   public y: number;
+  constructor(x = -1, y = -1) {
+    this.x = x;
+    this.y = y;
+  }
+
+  get isIdentity(): boolean {
+    return this.x == -1 && this.y == -1;
+  }
+
+  get isNull(): boolean {
+    return this.x !== this.x;
+  }
+
+  rawequals(p: RawPoint): boolean {
+    return p.x == this.x && p.y == this.y;
+  }
+
+  get formatted(): string {
+    return this.isIdentity ? " ∞ " : `(${this.x}, ${this.y})`;
+  }
+}
+
+//! currently each Point contains all the context of the curve and field.
+//! This is likely unnessecary and memory-heavy
+export class Point extends RawPoint {
   private _curve: EllipticCurve; //! this was a mistake
   // i need this so .plus() can be a method on class Point
   // this allows Point to pass the monad context of the underlying curve under it's methods that make new Points
 
   constructor(curve: EllipticCurve, x = -1, y = -1) {
     // identity element by default
-    this.x = x;
-    this.y = y;
+    super(x, y);
     this._curve = curve;
-
-    // const hueDelta = 360 / curve.points?.length;
-    // const index = curve.points.indexOf(this);
-    // this.hue = index === -1 ? 0 : index * hueDelta;
-
-    // if ((this.x || this.y) > this._curve.characteristic) {
-    //   throw new Error();
-    // }
     // note this doesn't check if x,y are reduced mod p
   }
 
@@ -176,14 +192,6 @@ export class Point {
 
   equals(p: Point): boolean {
     return p.x == this.x && p.y == this.y;
-  }
-
-  get isIdentity(): boolean {
-    return this.x == -1 && this.y == -1;
-  }
-
-  get formatted(): string {
-    return this.isIdentity ? " ∞ " : `(${this.x}, ${this.y})`;
   }
 
   plus(p: Point): Point {
@@ -243,14 +251,8 @@ export class Point {
     }
   }
 
-  get subgroup(): Point[] {
-    let subset: Point[] = [];
-    let next: Point = this;
-    do {
-      subset.push(this);
-      next = next.plus(this);
-    } while (!next.equals(this));
-    return subset;
+  get getRawPoint(): RawPoint {
+    return new RawPoint(this.x, this.y);
   }
 
   // i dont knwo what the fuck a generator function is
@@ -265,6 +267,60 @@ export class Point {
   // }
 }
 
+export const getSubgroup = (point: RawPoint, curve: EllipticCurve): RawPoint[] => {
+  if (!(curve instanceof EllipticCurve)) {
+    console.log("something went wrong");
+    return [];
+  }
+
+  let subgroup: RawPoint[] = [point];
+
+  let m: number;
+  do {
+    // I handle the tangent logic here
+    let thispoint: RawPoint = subgroup[subgroup.length - 1];
+    if (thispoint.isIdentity || thispoint.x !== thispoint.x) {
+      // console.log("identity");
+      return subgroup;
+    }
+
+    m = mod(
+      mod(3 * thispoint.x * thispoint.x + curve.a, curve.characteristic) *
+        curve.getInv(2 * thispoint.y),
+      curve.characteristic
+    );
+
+    // xr = \frac{m^2 - px - qx}{2*py} \mod field.characteristic
+    const xr = mod(m * m - 2 * thispoint.x, curve.characteristic);
+    const yr = mod(-(thispoint.y + m * (xr - thispoint.x)), curve.characteristic);
+    if (xr !== xr) {
+      // if null
+      subgroup.push(new RawPoint());
+    } else {
+      subgroup.push(new RawPoint(xr, yr));
+    }
+
+    // console.log("recursive call");
+  } while (!subgroup[subgroup.length - 1].isIdentity && checkUnique(subgroup));
+
+  return subgroup;
+};
+
+//* helper function for the while loop above
+const checkUnique = (array: RawPoint[]): boolean => {
+  //! god this will hurt perfomance
+  const len = array.length - 1;
+  for (let i = 0; i < len; i++) {
+    for (let j = 0; j < len; j++) {
+      if (i == j) {
+        break;
+      } else if (array[i].rawequals(array[j])) {
+        return false;
+      }
+    }
+  }
+  return true;
+};
 // all my homies hate functional programming
 // interface M<T> {
 
