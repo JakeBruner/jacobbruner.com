@@ -232,7 +232,7 @@
         </span>
       {/each}
     </div>
-    <h5 class="pb-2">Order** = {sg.length} (possibly wrong)</h5>
+    <h5 class="pb-2" transition:fade>Order** = {sg.length} (possibly wrong)</h5>
   {:else}
     <h4 class="italic pb-5">Click on a point to generate its subgroup!</h4>
   {/if}

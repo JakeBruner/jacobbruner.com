@@ -21,7 +21,6 @@ export const isPrime = function (n: number): boolean {
   }
   return true;
 };
-
 // this is some of the sexiest code ive written
 
 export class FiniteField {
