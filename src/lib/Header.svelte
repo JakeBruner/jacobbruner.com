@@ -22,15 +22,7 @@
     <style>
       nav::before {
         /* background-image: linear-gradient(90deg, #b15e84, #d772a1, #8b4968, #b15e84); */
-        background-image: linear-gradient(
-          90deg,
-          #d772a1ff,
-          #b58dbeff,
-          #93a8daff,
-          #b58dbeff,
-          #d772a1ff
-        );
-        animation: gradientWander 15s linear infinite;
+        animation: gradientWander 25s linear infinite;
         height: 4px;
         position: fixed;
         top: 0;
@@ -39,18 +31,28 @@
         content: "";
         background-size: 200%;
       }
+      @media (prefers-color-scheme: light) {
+        nav::before {
+          background-image: linear-gradient(90deg, #d772a1, #bc8ebf, #93a8da, #bc8ebf, #d772a1);
+        }
+      }
+      @media (prefers-color-scheme: dark) {
+        nav::before {
+          background-image: linear-gradient(90deg, #c16891, #8b6d92, #6e7ea4, #8b6d92, #c16891);
+        }
+      }
       @keyframes gradientWander {
         0% {
-          background-position: 0% 0%;
+          background-position: -30% 0%;
         }
         100% {
-          background-position: 200% 0%;
+          background-position: 170% 0%;
         }
       }
     </style>
     <!-- dark:bg-gray-800 dark:text-white -->
     <div
-      class="pt-[5px] flex flex-wrap justify-between items-center xl:px-40 lg:px-24 xs:px-12 px-4"
+      class="pt-[4px] flex flex-wrap justify-between items-center xl:px-40 lg:px-24 xs:px-12 px-4"
     >
       <!-- NAME/LOGO -->
       <a href="/" class="name m-0 p-0 font-bold text-[28px]"
@@ -61,14 +63,14 @@
       <button class="z-51 flex md:hidden" on:click={() => (menuOpen = !menuOpen)}>
         <!-- svg with 3 lines -->
         <svg
-          width="32"
-          height="24"
-          class="min-h-[24px] transition-transform duration-300 ease-in-out stroke-zinc-500"
+          width="28"
+          height="21"
+          class="min-h-[21px] stroke-1 transition-transform duration-300 ease-in-out stroke-zinc-500"
           class:menuOpen
         >
-          <line id="top" x1="0" y1="2" x2="32" y2="2" />
-          <line id="middle" x1="0" y1="12" x2="24" y2="12" />
-          <line id="bottom" x1="0" y1="22" x2="32" y2="22" />
+          <line id="top" x1="0" y1="2" x2="28" y2="2" />
+          <line id="middle" x1="0" y1="10.5" x2="24" y2="10.5" />
+          <line id="bottom" x1="0" y1="19" x2="28" y2="19" />
           <!-- look at how pretty this thing is -->
         </svg>
       </button>
@@ -76,7 +78,7 @@
       <!-- MOBILE ROW POPOUT MENU -->
       <aside
         class:menuOpen
-        class="md:hidden fixed -z-1 w-1/2 mt-[68px] min-h-screen inset-y-0 shadow-md bg-white/80 dark:bg-zinc-900/80  transition duration-300 ease-in-out"
+        class="md:hidden fixed -z-1 w-1/2 mt-[60px] min-h-screen inset-y-0 shadow-md bg-white/80 dark:bg-zinc-900/80  transition duration-300 ease-in-out"
       >
         <ul class="flex flex-col p-5 space-y-4 ">
           {#each navitems as item}
@@ -84,7 +86,7 @@
               <a
                 href={item.path}
                 class:active={$page.url.pathname === item.path}
-                class="transition ease-in-out duration-100 text-zinc-800/90 hover:text-primary dark:text-zinc-200/90"
+                class="before:!bottom-[-2px] transition ease-in-out duration-100 text-zinc-800/90 hover:text-primary dark:text-zinc-200/90"
                 on:click={() => {
                   $loading = true;
                   menuOpen = false;
@@ -125,13 +127,13 @@
   }
   /* SVG HAMBURGER ANIMATION */
   svg {
-    min-height: 24px;
+    min-height: 21px;
     transition: transform 0.3s ease-in-out;
   }
 
   svg line {
     @apply stroke-zinc-600 dark:stroke-zinc-300;
-    stroke-width: 3;
+    stroke-width: 1.5;
     transition: transform 0.3s ease-in-out;
   }
 
@@ -140,7 +142,7 @@
   }
 
   .menuOpen #top {
-    @apply translate-x-1.5 rotate-45;
+    @apply translate-x-1 scale-90 rotate-45;
   }
 
   .menuOpen #middle {
@@ -148,7 +150,7 @@
   }
 
   .menuOpen #bottom {
-    @apply -translate-x-3 translate-y-2 -rotate-45;
+    @apply -translate-x-[0.63rem] translate-y-[0.43rem] scale-90 -rotate-45;
   }
 
   /* PINK UNDERLINE */
