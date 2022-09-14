@@ -17,12 +17,43 @@
 
 <header>
   <nav
-    class="fadeIn fixed top-0 left-0 right-0 z-20 bg-white_translucent dark:bg-zinc-900/80 px-2 sm:px-4 py-5 text-black dark:text-zinc-100/90 shadow-md dark:shadow-black/30"
+    class=" fixed top-0 left-0 right-0 z-20 bg-white_translucent dark:bg-zinc-900/80 px-2 sm:px-4 py-3.5 text-black dark:text-zinc-100/90 shadow-md dark:shadow-black/30"
   >
+    <style>
+      nav::before {
+        /* background-image: linear-gradient(90deg, #b15e84, #d772a1, #8b4968, #b15e84); */
+        background-image: linear-gradient(
+          90deg,
+          #d772a1ff,
+          #b58dbeff,
+          #93a8daff,
+          #b58dbeff,
+          #d772a1ff
+        );
+        animation: gradientWander 15s linear infinite;
+        height: 4px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        content: "";
+        background-size: 200%;
+      }
+      @keyframes gradientWander {
+        0% {
+          background-position: 0% 0%;
+        }
+        100% {
+          background-position: 200% 0%;
+        }
+      }
+    </style>
     <!-- dark:bg-gray-800 dark:text-white -->
-    <div class="flex flex-wrap justify-between items-center xl:px-40 lg:px-24 xs:px-12 px-4">
+    <div
+      class="pt-[5px] flex flex-wrap justify-between items-center xl:px-40 lg:px-24 xs:px-12 px-4"
+    >
       <!-- NAME/LOGO -->
-      <a href="/" class="name m-0 p-0 font-bold text-[32px]"
+      <a href="/" class="name m-0 p-0 font-bold text-[28px]"
         >Jacob <span class="text-primary">B.</span></a
       >
 
@@ -67,13 +98,13 @@
       <!-- LARGE SCREEN COLUMN LAYOUT -->
       <div class="hidden md:flex justify-between items-center w-full md:w-auto md:order-1">
         <!-- hidden and flex utility classes overwrite oneanother: here it is hidden until the min width 'md' makes it flex -->
-        <ul class="flex mt-4 lg:space-x-7 space-x-4 md:mt-0 md:text-sm">
+        <ul class="flex lg:space-x-7 space-x-4">
           {#each navitems as item}
             <li class="hover:scale-105 transition ease-in-out duration-300">
               <a
                 href={item.path}
                 class:active={$page.url.pathname === item.path}
-                class="transition ease-in-out duration-100 decoration-primary block text-[17px] text-zinc-800/90 hover:text-primary dark:text-zinc-200/90 hover:dark:text-primary after:bg-primary after:bottom-[-3px] after:absolute after:h-[2.5px] after:left-[2px] after:right-[2px] after:invisible after:-scale-x-0 hover:after:-scale-x-100 hover:after:visible after:transition after:ease-in-out after:duration-500"
+                class="transition ease-in-out duration-100 decoration-primary block text-[17px] text-zinc-800/90 hover:text-primary dark:text-zinc-200/90 hover:dark:text-primary after:bg-primary after:bottom-[2px] after:absolute after:h-[2.5px] after:left-[2px] after:right-[2px] after:invisible after:-scale-x-0 hover:after:-scale-x-100 hover:after:visible after:transition after:ease-out after:duration-500"
                 on:click={() => ($loading = true)}>{item.title}</a
               >
             </li>
@@ -145,7 +176,7 @@
   .active::before {
     content: "";
     background-color: var(--accent-color);
-    bottom: -3px;
+    bottom: 2px;
     height: 2px;
     position: absolute;
     left: 6px;
