@@ -8,7 +8,7 @@
     RawPoint,
     getSubgroup,
     getFactors
-  } from "$lib/curve/curve";
+  } from "$lib/math/curve";
   import { each } from "svelte/internal";
 
   let a: number = 4;
