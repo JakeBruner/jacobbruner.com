@@ -2,7 +2,6 @@
   import { onMount } from "svelte";
   import { initShaderProgram, initBuffers, draw } from "./shaderUtils";
   import { vertexSource, fragmentSource } from "./shaders";
-  import { translate43 } from "./matrixUtils";
 
   export let w: number;
   export let h: number;

@@ -1,6 +1,9 @@
 // code modified from gl-matrix, ported to typescript
 
-export const translate43 = (a: number[], vector: number[]): number[] => {
+export const translate = (
+  a: number[] | Float32Array,
+  vector: number[]
+): number[] | Float32Array => {
   const x = vector[0],
     y = vector[1],
     z = vector[2];
