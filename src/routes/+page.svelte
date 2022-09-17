@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+
   export const prerender = true;
   const featuredposts = [
     "/Math/ComplexNumbers",
@@ -7,46 +9,147 @@
     "/Writing/PublicDefenders",
     "/Computer-Science/EllipticCurve"
   ];
+  let w: number;
+  let h: number;
 
   const rand = (max: number): number => {
     return Math.floor(Math.random() * max);
   };
 
   const randomlink: string = featuredposts[rand(featuredposts.length)];
+
+  const main = () => {
+    const canvas = document.querySelector("#gl") as HTMLCanvasElement;
+
+    const gl = canvas.getContext("webgl");
+
+    if (!gl) {
+      throw new Error("WebGL not supported");
+    }
+    console.log(gl);
+
+    gl.clearColor(1.0, 1.0, 0.0, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
+
+    const programInfo = {
+      program: shaderProgram,
+      attribLocations: {
+        vertexPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition")
+      },
+      uniformLocations: {
+        projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix"),
+        modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix")
+      }
+    };
+
+    return;
+  };
+
+  const vsSource = `
+    attribute vec4 aVertexPosition;
+
+    uniform mat4 uModelViewMatrix;
+    uniform mat4 uProjectionMatrix;
+
+    void main() {
+      gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+    }
+  `;
+  const fsSource = `
+    void main() {
+      gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    }
+  `;
+
+  function initShaderProgram(gl, vsSource, fsSource) {
+    const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
+    const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
+
+    // Create the shader program
+
+    const shaderProgram = gl.createProgram();
+    gl.attachShader(shaderProgram, vertexShader);
+    gl.attachShader(shaderProgram, fragmentShader);
+    gl.linkProgram(shaderProgram);
+
+    // If creating the shader program failed, alert
+
+    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+      alert(`Unable to initialize the shader program: ${gl.getProgramInfoLog(shaderProgram)}`);
+      return null;
+    }
+
+    return shaderProgram;
+  }
+
+  //
+  // creates a shader of the given type, uploads the source and
+  // compiles it.
+  //
+  function loadShader(gl, type, source) {
+    const shader = gl.createShader(type);
+
+    // Send the source to the shader object
+
+    gl.shaderSource(shader, source);
+
+    // Compile the shader program
+
+    gl.compileShader(shader);
+
+    // See if it compiled successfully
+
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      alert(`An error occurred compiling the shaders: ${gl.getShaderInfoLog(shader)}`);
+      gl.deleteShader(shader);
+      return null;
+    }
+
+    return shader;
+  }
 </script>
 
 <svelte:head>
   <title>Home</title>
 </svelte:head>
+
+<svelte:window on:load={() => main()} />
+
 <!-- so h-screen doesn't work properly on mobile, so hopefully inset-0 will fix this -->
 <section class="-mt-[64px] inset-0">
   <div
-    class="codybowl bg-[url('/images/codybowl.jpg')] dark:bg-[url('/images/jacksonstars.jpg')] bg-fixed h-screen min-h-screen bg-cover bg-center flex flex-col justify-center items-center"
+    class="codybowl h-screen min-h-screen bg-cover bg-center flex flex-col justify-center items-center"
     style="min-height: -webkit-fill-available;"
+    bind:clientWidth={w}
+    bind:clientHeight={h}
   >
-    <h1
-      class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[53px] text-4xl text-zinc-700 dark:text-zinc-300 font-light py-3 sm:pb-[13px] sm:pt-[17px] px-2 my-2 sm:my-4 fadeInDown text-center"
-    >
-      Learning as a Hobby
-      <!-- Learning is a skill -->
-    </h1>
-    <h2
-      class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[25px] text-xl text-zinc-600 dark:text-zinc-300 italic py-0.1 px-1.5 font-normal fadeInDown"
-    >
-      The work of Jacob Bruner
-    </h2>
-    <div>
-      <button
-        class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-blue-400/80 lg:px-7 lg:py-2 rounded-xl hover:bg-blue-400 hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
+    <canvas id="absolute z-0" width={w} height={h} />
+    <div class="absolute items-center flex flex-col">
+      <h1
+        class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[53px] text-4xl text-zinc-700 dark:text-zinc-300 font-light py-3 sm:pb-[13px] sm:pt-[17px] px-2 my-2 sm:my-4 fadeInDown text-center"
       >
-        About Me
-      </button>
-      <a href={randomlink}>
+        Learning as a Hobby
+        <!-- Learning is a skill -->
+      </h1>
+      <h2
+        class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[25px] text-xl text-zinc-600 dark:text-zinc-300 italic py-0.1 px-1.5 font-normal fadeInDown"
+      >
+        The work of Jacob Bruner
+      </h2>
+      <div>
         <button
-          class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-primary/80 lg:px-7 lg:py-2 rounded-xl hover:bg-primary hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
-          data-svelte-prefetch>Random Post</button
-        ></a
-      >
+          class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-blue-400/80 lg:px-7 lg:py-2 rounded-xl hover:bg-blue-400 hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
+        >
+          About Me
+        </button>
+        <a href={randomlink}>
+          <button
+            class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-primary/80 lg:px-7 lg:py-2 rounded-xl hover:bg-primary hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
+            data-svelte-prefetch>Random Post</button
+          ></a
+        >
+      </div>
     </div>
   </div>
 </section>
