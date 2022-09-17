@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, tick } from "svelte";
-  import { initShaderProgram, initBuffers, draw } from "./shaderUtils";
+  import { initShaderProgram, initBuffers, draw, type ProgramInfo } from "./shaderUtils";
   import { vertexSource, fragmentSource } from "./shaders";
 
   export let w: number;
@@ -9,21 +9,27 @@
   let canvas: HTMLCanvasElement;
   const vsSource = `
     attribute vec4 aVertexPosition;
+    attribute vec4 aVertexColor;
 
     uniform mat4 uModelViewMatrix;
     uniform mat4 uProjectionMatrix;
 
-    void main() {
+    varying lowp vec4 vColor;
+
+    void main(void) {
       gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+      vColor = aVertexColor;
     }
   `;
 
   const fsSource = `
-    void main() {
-      gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    varying lowp vec4 vColor;
+
+    void main(void) {
+      gl_FragColor = vColor;
     }
   `;
-  onMount(() => {
+  onMount(async () => {
     const gl = canvas.getContext("webgl");
     if (gl === null) {
       alert("webgl not enabled");
@@ -32,10 +38,11 @@
 
     const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
 
-    const programInfo: WebGLProgram = {
+    const programInfo: ProgramInfo = {
       program: shaderProgram,
       attribLocations: {
-        vertexPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition")
+        vertexPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
+        vertexColor: gl.getAttribLocation(shaderProgram, "aVertexColor")
       },
       uniformLocations: {
         projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix"),
@@ -43,10 +50,9 @@
       }
     };
 
-    initBuffers(gl);
+    const buff = initBuffers(gl);
 
-    draw(gl, programInfo);
-    draw(gl, programInfo);
+    draw(gl, programInfo, buff);
   });
 </script>
 
