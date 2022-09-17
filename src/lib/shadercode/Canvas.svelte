@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import {} from "./shaderUtils";
+  import { initShaderProgram, initBuffers, draw } from "./shaderUtils";
+  import { vertexSource, fragmentSource } from "./shaders";
+  import { translate43 } from "./matrixUtils";
 
   export let w: number;
   export let h: number;
@@ -17,10 +19,23 @@
       return;
     }
 
-    // Set clear color to black, fully opaque
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
-    // Clear the color buffer with specified clear color
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    const shaderProgram = initShaderProgram(gl, vertexSource, fragmentSource);
+    console.log(shaderProgram);
+
+    const programInfo = {
+      program: shaderProgram,
+      attribLocations: {
+        vertexPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition")
+      },
+      uniformLocations: {
+        projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix"),
+        modelViewMatrix: gl.getUniformLocation(shaderProgram, "uModelViewMatrix")
+      }
+    };
+
+    initBuffers(gl);
+
+    draw(gl, programInfo);
   });
 
   const vsSource = `
