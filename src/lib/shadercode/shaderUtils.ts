@@ -65,8 +65,8 @@ export const initBuffers = (gl: WebGLRenderingContext): WebGLBuffer => {
   };
 };
 
-export const draw = (gl: WebGLRenderingContext, programInfo: any) => {
-  gl.clearColor(0.2, 0.0, 0.0, 1.0);
+export const draw = (gl: WebGLRenderingContext, programInfo: WebGLProgram) => {
+  gl.clearColor(0.0, 0.0, 0.1, 1.0);
   gl.clearDepth(1.0);
   gl.enable(gl.DEPTH_TEST); // enable depth testing
   gl.depthFunc(gl.LEQUAL); // near things obscure far things
@@ -76,6 +76,7 @@ export const draw = (gl: WebGLRenderingContext, programInfo: any) => {
   const fov = (45 * Math.PI) / 180; // in radians
   const f = 1.0 / Math.tan(fov / 2);
   const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+  console.log("aspect", aspect);
   const zNear = 0.1;
   const zFar = 100.0;
   const nf = 1 / (zNear - zFar);
@@ -83,8 +84,8 @@ export const draw = (gl: WebGLRenderingContext, programInfo: any) => {
   const projectionArray = [
     f/aspect, 0,  0,             0,
     0,        f,  0,             0,
-    0,        0,  -1,            2*zNear, // convention is negative z
-    0,        0,  -1, 0
+    0,        0,  -(zFar+zNear)*nf, (2*zFar*zNear)/nf, // convention is negative z
+    0,        0, -1, 0
   ]
   const projectionMatrix = new Float32Array(projectionArray);
   // typed arrays tend to be faster in this application, and webgl takes typed arrays anyways
