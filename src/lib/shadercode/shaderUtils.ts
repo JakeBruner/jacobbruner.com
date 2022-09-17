@@ -1,13 +1,7 @@
-// code imported from project I did ~2 years ago
-
-// creates a certain type of shader, attaches the code, and compiles
-function createShader(gl, type, source) {
+// creates/compiles shader object
+const createShader = (gl: WebGL2RenderingContext, type: number, source: string): WebGLShader => {
   var shader = gl.createShader(type);
-
-  // send code to shader object
   gl.shaderSource(shader, source);
-
-  // compile shader shaderProgram
   gl.compileShader(shader);
 
   // error
@@ -18,50 +12,30 @@ function createShader(gl, type, source) {
   }
 
   return shader;
-}
+};
 
 // initialises a shader program so webgl can draw the data
-export function initShaderProgram(gl, vertCode, fragCode) {
+export const initShaderProgram = (
+  gl: WebGL2RenderingContext,
+  vertCode: string,
+  fragCode: string
+): WebGLProgram => {
+  // create shader objects, type is WebGLShader
+  const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertCode);
+  const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragCode);
+
   // create shader shaderProgram and attach/link shaders
-  var shaderProgram = gl.createProgram();
+  const shaderProgram = gl.createProgram();
+  gl.attachShader(shaderProgram, vertexShader);
+  gl.attachShader(shaderProgram, fragmentShader);
 
-  // attach source code
-  var vertShader = loadShader(gl, gl.VERTEX_SHADER, vertCode);
-  var fragShader = loadShader(gl, gl.FRAGMENT_SHADER, fragCode);
-
-  gl.attachShader(shaderProgram, vertShader);
-  gl.attachShader(shaderProgram, fragShader);
-  gl.linkProgram(shaderProgram);
-  gl.linkProgram(shaderProgram);
   if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-    alert("shader could not link: \n" + gl.getProgramInfoLog(shaderProgram));
-    return null;
-    throw new Error(gl.getProgramInfoLog(shaderProgram));
-  }
-
-  // error message
-  if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-    // if shader program isnt linked
-    alert("shaders could not link: \n" + gl.getProgramInfoLog(shaderProgram));
+    alert("shader program could not link: " + gl.getProgramInfoLog(shaderProgram));
     return null;
   }
 
-  const wrapper = { shaderProgram: shaderProgram };
-
-  const numAttributes = gl.getProgramParameter(shaderProgram, gl.ACTIVE_ATTRIBUTES);
-  for (let i = 0; i < numAttributes; i++) {
-    const attribute = gl.getActiveAttrib(shaderProgram, i);
-    wrapper[attribute.name] = gl.getAttribLocation(shaderProgram, attribute.name);
-  }
-  const numUniforms = gl.getProgramParameter(shaderProgram, gl.ACTIVE_UNIFORMS);
-  for (let i = 0; i < numUniforms; i++) {
-    const uniform = gl.getActiveUniform(shaderProgram, i);
-    wrapper[uniform.name] = gl.getUniformLocation(shaderProgram, uniform.name);
-  }
-
-  return wrapper;
-  console.log(wrapper);
-}
+  return shaderProgram;
+};
 
 export function createTexture(gl, filter, data, width, height) {
   const texture = gl.createTexture();
