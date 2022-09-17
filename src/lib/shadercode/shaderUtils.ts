@@ -1,7 +1,7 @@
 import { translate } from "./matrixUtils";
 
 // creates/compiles shader object
-const createShader = (gl: WebGL2RenderingContext, type: number, source: string): WebGLShader => {
+const createShader = (gl: WebGLRenderingContext, type: number, source: string): WebGLShader => {
   var shader = gl.createShader(type);
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
@@ -18,7 +18,7 @@ const createShader = (gl: WebGL2RenderingContext, type: number, source: string):
 
 // initialises a shader program so webgl can draw the data
 export const initShaderProgram = (
-  gl: WebGL2RenderingContext,
+  gl: WebGLRenderingContext,
   vertCode: string,
   fragCode: string
 ): WebGLProgram => {
@@ -40,7 +40,7 @@ export const initShaderProgram = (
   return shaderProgram;
 };
 
-export const initBuffers = (gl: WebGL2RenderingContext): WebGLBuffer => {
+export const initBuffers = (gl: WebGLRenderingContext): WebGLBuffer => {
   // Create a buffer for the square's positions.
 
   const positionBuffer = gl.createBuffer();
@@ -65,12 +65,8 @@ export const initBuffers = (gl: WebGL2RenderingContext): WebGLBuffer => {
   };
 };
 
-export const draw = (
-  gl: WebGL2RenderingContext,
-  programInfo: WebGLProgram,
-  buffers?: WebGLBuffer
-) => {
-  gl.clearColor(0.0, 0.0, 0.0, 1.0);
+export const draw = (gl: WebGLRenderingContext, programInfo: any) => {
+  gl.clearColor(0.2, 0.0, 0.0, 1.0);
   gl.clearDepth(1.0);
   gl.enable(gl.DEPTH_TEST); // enable depth testing
   gl.depthFunc(gl.LEQUAL); // near things obscure far things
@@ -82,31 +78,36 @@ export const draw = (
   const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
   const zNear = 0.1;
   const zFar = 100.0;
+  const nf = 1 / (zNear - zFar);
   // prettier-ignore
   const projectionArray = [
-    f/aspect, 0,  0,                                   0,
-    0,        f,  0,                                   0,
-    0,        0,  (zFar + zNear) / (zNear - zFar),    -1, // convention is negative z
-    0,        0,  (2 * zFar * zNear) / (zNear - zFar), 0
+    f/aspect, 0,  0,             0,
+    0,        f,  0,             0,
+    0,        0,  -1,            2*zNear, // convention is negative z
+    0,        0,  -1, 0
   ]
   const projectionMatrix = new Float32Array(projectionArray);
   // typed arrays tend to be faster in this application, and webgl takes typed arrays anyways
   // i think converting from normal array to typed array is costly, so this jank works for now
 
   // set draw position -6 in z
-  let modelViewMatrix = new Float32Array(16);
-  modelViewMatrix = translate(modelViewMatrix, [0.0, 0.0, -6.0]) as Float32Array;
+  // prettier-ignore
+  const modelViewArray = [
+    1, 0,  0, 0,
+    0, 1,  0, 0,
+    0, 0,  -6.0, 0,
+    0, 0,  0,  1
+  ]
+  const modelViewMatrix = new Float32Array(modelViewArray);
 
-  // Tell WebGL how to pull out the positions from the position
-  // buffer into the vertexPosition attribute.
+  // tell WebGL how to get positions from buffer into vertexPosition
   {
     const numComponents = 2; // pull out 2 values per iteration
-    const type = gl.FLOAT; // the data in the buffer is 32bit floats
+    const type = gl.FLOAT; // the data is 32bit floats
     const normalize = false; // don't normalize
-    const stride = 0; // how many bytes to get from one set of values to the next
-    // 0 = use type and numComponents above
-    const offset = 0; // how many bytes inside the buffer to start from
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
+    const stride = 0;
+    const offset = 0;
+    // gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);
     gl.vertexAttribPointer(
       programInfo.attribLocations.vertexPosition,
       numComponents,
@@ -118,11 +119,9 @@ export const draw = (
     gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
   }
 
-  // Tell WebGL to use our program when drawing
-
   gl.useProgram(programInfo.program);
 
-  // Set the shader uniforms
+  // set the shader uniforms
 
   gl.uniformMatrix4fv(programInfo.uniformLocations.projectionMatrix, false, projectionMatrix);
   gl.uniformMatrix4fv(programInfo.uniformLocations.modelViewMatrix, false, modelViewMatrix);
