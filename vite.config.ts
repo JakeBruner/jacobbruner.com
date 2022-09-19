@@ -13,6 +13,9 @@ const config: UserConfig = {
     },
     sveltekit(),
   ],
+  ssr: {
+    noExternal: ["three", "troika-three-text"],
+  },
   server: {
     host: "localhost",
     port: 3000,

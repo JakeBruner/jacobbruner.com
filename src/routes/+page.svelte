@@ -1,6 +1,4 @@
 <script lang="ts">
-  import Canvas from "$lib/shadercode/Canvas.svelte";
-
   export const prerender = true;
   const featuredposts = [
     "/Math/ComplexNumbers",
@@ -9,8 +7,8 @@
     "/Writing/PublicDefenders",
     "/Computer-Science/EllipticCurve"
   ];
-  let w: number;
-  let h: number;
+  // let w: number;
+  // let h: number;
 
   const rand = (max: number): number => {
     return Math.floor(Math.random() * max);
@@ -28,10 +26,7 @@
   <div
     class="codybowl h-screen min-h-screen bg-cover bg-center flex flex-col justify-center items-center"
     style="min-height: -webkit-fill-available;"
-    bind:clientWidth={w}
-    bind:clientHeight={h}
   >
-    <Canvas {w} {h} />
     <div class="absolute items-center flex flex-col">
       <h1
         class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[53px] text-4xl text-zinc-700 dark:text-zinc-300 font-light py-3 sm:pb-[13px] sm:pt-[17px] px-2 my-2 sm:my-4 fadeInDown text-center"
