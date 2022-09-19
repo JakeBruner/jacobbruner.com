@@ -21,11 +21,10 @@
   <title>Home</title>
 </svelte:head>
 
-<!-- so h-screen doesn't work properly on mobile, so hopefully inset-0 will fix this -->
 <section class="-mt-[64px] inset-0">
   <div
-    class="codybowl h-screen min-h-screen bg-cover bg-center flex flex-col justify-center items-center"
-    style="min-height: -webkit-fill-available;"
+    class="codybowl ios bg-[url('/images/codybowl.jpg')] dark:bg-[url('/images/jacksonstars.jpg')] bg-fixed h-screen min-h-screen bg-cover bg-center flex flex-col justify-center items-center"
+    style="height: -webkit-fill-available;"
   >
     <div class="absolute items-center flex flex-col">
       <h1

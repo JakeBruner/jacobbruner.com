@@ -14,7 +14,7 @@
 </svelte:head>
 
 <div class="w-full -mt-[64px] h-auto bg-zinc-800 ">
-  <video class="flex px-5 pt-16 lg:w-1/2 md:w-2/3 mx-auto" autoplay autoPlay loop muted>
+  <video class="flex px-5 pt-16 lg:w-1/2 md:w-2/3 mx-auto" autoplay playsinline autoPlay loop muted>
     <source src="videos/ComplexFourierTransform.webm" type="video/webm" />
     <source src="videos/ComplexFourierTransform2.mp4" type="video/mp4" />
     <track kind="captions" />

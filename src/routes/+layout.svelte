@@ -17,9 +17,12 @@
 
 <Header />
 
-<main class="mt-[68px]">
+<main class="mt-[60px]">
   {#if $loading}
-    <div out:fade={{ duration: 100 }} class="loader" />
+    <div
+      out:fade={{ duration: 100 }}
+      class="loader fixed inset-0 opacity-100 h-full w-full z-[9999] bg-[url('/images/loader.gif)'] bg-center bg-no-repeat"
+    />
   {/if}
   <slot />
 </main>
@@ -27,14 +30,15 @@
 <Footer />
 
 <style>
-  .loader {
-    position: fixed;
-    left: 0px;
-    top: 0px;
-    opacity: 100%;
-    width: 100%;
-    height: 100%;
-    z-index: 9999;
-    background: url(/images/loader.gif) center no-repeat #fff;
+  @media (prefers-color-scheme: light) {
+    .loader {
+      background: url(/images/loader.gif) center no-repeat #fff;
+    }
+  }
+  @media (prefers-color-scheme: dark) {
+    .loader {
+      background: url(/images/loader.gif) center no-repeat #18181b;
+      /* #18181B is zinc-900 */
+    }
   }
 </style>
