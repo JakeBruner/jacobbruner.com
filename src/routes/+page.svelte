@@ -7,6 +7,8 @@
     "/Writing/PublicDefenders",
     "/Computer-Science/EllipticCurve"
   ];
+  // let w: number;
+  // let h: number;
 
   const rand = (max: number): number => {
     return Math.floor(Math.random() * max);
@@ -20,38 +22,35 @@
 </svelte:head>
 
 <section class="-mt-[64px] inset-0">
-  <style>
-    .ios {
-      height: -webkit-fill-available;
-    }
-  </style>
   <div
     class="codybowl ios bg-[url('/images/codybowl.jpg')] dark:bg-[url('/images/jacksonstars.jpg')] bg-fixed h-screen min-h-screen bg-cover bg-center flex flex-col justify-center items-center"
-    style="min-height: -webkit-fill-available;"
+    style="height: -webkit-fill-available;"
   >
-    <h1
-      class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[53px] text-4xl text-zinc-700 dark:text-zinc-300 font-light py-3 sm:pb-[13px] sm:pt-[17px] px-2 my-2 sm:my-4 fadeInDown text-center"
-    >
-      Learning as a Hobby
-      <!-- Learning is a skill -->
-    </h1>
-    <h2
-      class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[25px] text-xl text-zinc-600 dark:text-zinc-300 italic py-0.1 px-1.5 font-normal fadeInDown"
-    >
-      The work of Jacob Bruner
-    </h2>
-    <div>
-      <button
-        class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-blue-400/80 lg:px-7 lg:py-2 rounded-xl hover:bg-blue-400 hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
+    <div class="absolute items-center flex flex-col">
+      <h1
+        class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[53px] text-4xl text-zinc-700 dark:text-zinc-300 font-light py-3 sm:pb-[13px] sm:pt-[17px] px-2 my-2 sm:my-4 fadeInDown text-center"
       >
-        About Me
-      </button>
-      <a href={randomlink}>
+        Learning as a Hobby
+        <!-- Learning is a skill -->
+      </h1>
+      <h2
+        class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[25px] text-xl text-zinc-600 dark:text-zinc-300 italic py-0.1 px-1.5 font-normal fadeInDown"
+      >
+        The work of Jacob Bruner
+      </h2>
+      <div>
         <button
-          class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-primary/80 lg:px-7 lg:py-2 rounded-xl hover:bg-primary hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
-          data-svelte-prefetch>Random Post</button
-        ></a
-      >
+          class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-blue-400/80 lg:px-7 lg:py-2 rounded-xl hover:bg-blue-400 hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
+        >
+          About Me
+        </button>
+        <a href={randomlink}>
+          <button
+            class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-primary/80 lg:px-7 lg:py-2 rounded-xl hover:bg-primary hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
+            data-svelte-prefetch>Random Post</button
+          ></a
+        >
+      </div>
     </div>
   </div>
 </section>
