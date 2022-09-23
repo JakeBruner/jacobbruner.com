@@ -6,7 +6,7 @@
     { title: "Photography", path: "/about" },
     { title: "CS", path: "/Computer-Science" },
     { title: "Writing", path: "/Writing" },
-    { title: "Contact", path: "/about" },
+    { title: "Contact", path: "/about" }
   ];
 </script>
 
@@ -17,8 +17,8 @@
         <div class="basis-[37.5%] md:px-7 px-7 xl:px-16">
           <h4 class="pb-4 font-bold text-primary">Website</h4>
           <p class="leading-relaxed font-light dark:text-zinc-300">
-            Made by Jacob using Svelte, TailwindCSS and many, many hours. Please note, I have never
-            taken a comp-sci class; I have <i>absolutely</i> no idea what I'm doing.
+            Hand-coded by Jacob using Svelte, TailwindCSS, Typescript and many, many hours. Please
+            note, I have never taken a comp-sci class; I have <i>absolutely</i> no idea what I'm doing.
           </p>
         </div>
         <div class="basis-[37.5%] md:px-9 px-7 xl:px-16">
@@ -38,6 +38,7 @@
           <p class="leading-relaxed font-light dark:text-zinc-300">
             New York City <br />
             United States <br />
+            <a href="mailto:jacobbruner24@gmail.com">jacobbruner24@gmail.com</a><br />
             <a href="mailto:2023jbruner@dwight.edu">2023jbruner@dwight.edu</a>
             <br />
             <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">jacobbruner.com</a>

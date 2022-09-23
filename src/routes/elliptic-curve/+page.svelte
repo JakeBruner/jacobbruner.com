@@ -250,7 +250,6 @@
       <span class="font-bold">{selected.formatted}</span>
       <span class=" text-zinc-600 dark:text-zinc-400">⟩ |</span>
       = {sg.length}
-      (possibly wrong)
     </h5>
   {:else}
     <h4 class="italic pb-5">Click on a point to generate its subgroup!</h4>
@@ -297,7 +296,7 @@
   {/if}
 </div>
 
-<div class="sm:px-40 px-10 sm:pt-10 text-2xl">
+<div class="sm:px-40 px-10 pt-5 sm:pt-10 text-2xl">
   <p class="font-light text-lg">
     Some quick notes about the group structure on an elliptic curve: The elliptic curve group 𝐸(𝔽<sub
       >𝑞</sub
