@@ -269,41 +269,52 @@ export class Point extends RawPoint {
 }
 
 export const getSubgroup = (point: RawPoint, curve: EllipticCurve): RawPoint[] => {
+  let subgroup: RawPoint[] = [point];
+
   if (!(curve instanceof EllipticCurve)) {
     console.log("something went wrong");
     return [];
   }
+  // this is how this should have been implemented in the first place...
+  // for now its just a helper function in thise local scope
+  // should probably be a method on EllipticCurve
+  const plus = (P: RawPoint, Q: RawPoint): RawPoint => {
+    if (P.isIdentity) return P;
+    if (Q.isIdentity) return this;
 
-  let subgroup: RawPoint[] = [point];
+    let m: number;
+    if (P.x == Q.x) {
+      // if x-coords equal
+      //* CASE 1: points are additive inverses
+      if (P.y !== Q.y || (P.y || Q.y) === 0) {
+        return new RawPoint();
+        //* return the identity
+      }
 
-  let m: number;
-  while (!subgroup[subgroup.length - 1].isIdentity && checkUnique(subgroup)) {
-    // I handle the tangent logic here
-    let thispoint: RawPoint = subgroup[subgroup.length - 1];
-    if (thispoint.isIdentity || thispoint.x !== thispoint.x) {
-      // console.log("identity");
-      return subgroup;
-    }
-
-    m = mod(
-      mod(3 * thispoint.x * thispoint.x + curve.a, curve.characteristic) *
-        curve.getInv(2 * thispoint.y),
-      curve.characteristic
-    );
-
-    // xr = \frac{m^2 - px - qx}{2*py} \mod field.characteristic
-    const xr = mod(m * m - 2 * thispoint.x, curve.characteristic);
-    const yr = mod(-(thispoint.y + m * (xr - thispoint.x)), curve.characteristic);
-    if (xr !== xr) {
-      // if null
-      subgroup.push(new RawPoint());
+      //* CASE 2: points are equal
+      // from implicit differentiation we get the tangent:
+      // m = \frac{3x^2 + a}{2y} \mod curve.characteristic
+      m = mod(
+        // I use P here but Q would work too
+        mod(3 * P.x * P.x + curve.a, curve.characteristic) * curve.getInv(2 * P.y),
+        curve.characteristic
+      );
     } else {
-      subgroup.push(new RawPoint(xr, yr));
+      //* Points are different, so we draw secant thru them
+      // m = \frac{py - qy}{px - qx} \mod field.characteristic
+      m = mod((Q.y - P.y) * curve.getInv(Q.x - P.x), curve.characteristic);
     }
+    // xr = \frac{m^2 - px - qx}{2*py} \mod field.characteristic
+    const xr = mod(m * m - Q.x - P.x, curve.characteristic);
+    const yr = mod(-(P.y + m * (xr - P.x)), curve.characteristic);
+    return new RawPoint(xr, yr);
+  };
 
-    // console.log("recursive call");
+  // the order of an element in a finitely generated group must be finite => must wrap to Id
+  while (!subgroup[subgroup.length - 1].isIdentity || subgroup[subgroup.length - 2].isNull) {
+    subgroup.push(plus(point, subgroup[subgroup.length - 1]));
+    console.log(subgroup[subgroup.length - 1]);
   }
-
   return subgroup;
 };
 
@@ -335,6 +346,7 @@ export const getFactors = (num: number): number[] => {
   // factors.sort(); this is unnecessary
   return factors;
 };
+
 // all my homies hate functional programming
 // interface M<T> {
 
