@@ -270,6 +270,7 @@ export class Point extends RawPoint {
 
 export const getSubgroup = (point: RawPoint, curve: EllipticCurve): RawPoint[] => {
   let subgroup: RawPoint[] = [point];
+  // console.log(subgroup);
 
   if (!(curve instanceof EllipticCurve)) {
     console.log("something went wrong");
@@ -279,10 +280,12 @@ export const getSubgroup = (point: RawPoint, curve: EllipticCurve): RawPoint[] =
   // for now its just a helper function in thise local scope
   // should probably be a method on EllipticCurve
   const plus = (P: RawPoint, Q: RawPoint): RawPoint => {
-    if (P.isIdentity) return P;
-    if (Q.isIdentity) return this;
-
     let m: number;
+
+    if (P.isIdentity || Q.isIdentity) {
+      return new RawPoint();
+    }
+
     if (P.x == Q.x) {
       // if x-coords equal
       //* CASE 1: points are additive inverses
@@ -296,43 +299,50 @@ export const getSubgroup = (point: RawPoint, curve: EllipticCurve): RawPoint[] =
       // m = \frac{3x^2 + a}{2y} \mod curve.characteristic
       m = mod(
         // I use P here but Q would work too
-        mod(3 * P.x * P.x + curve.a, curve.characteristic) * curve.getInv(2 * P.y),
+        mod(3 * P.x ** 2 + curve.a, curve.characteristic) * curve.getInv(2 * P.y),
         curve.characteristic
       );
+      // console.log("x coordinates equal");
     } else {
       //* Points are different, so we draw secant thru them
       // m = \frac{py - qy}{px - qx} \mod field.characteristic
-      m = mod((Q.y - P.y) * curve.getInv(Q.x - P.x), curve.characteristic);
+      m = mod(
+        mod(Q.y - P.y, curve.characteristic) * curve.getInv(mod(Q.x - P.x, curve.characteristic)),
+        curve.characteristic
+      );
     }
     // xr = \frac{m^2 - px - qx}{2*py} \mod field.characteristic
     const xr = mod(m * m - Q.x - P.x, curve.characteristic);
     const yr = mod(-(P.y + m * (xr - P.x)), curve.characteristic);
+    // console.log(m, xr, yr);
     return new RawPoint(xr, yr);
   };
 
   // the order of an element in a finitely generated group must be finite => must wrap to Id
-  while (!subgroup[subgroup.length - 1].isIdentity || subgroup[subgroup.length - 2].isNull) {
+  while (!subgroup[subgroup.length - 1].isIdentity) {
     subgroup.push(plus(point, subgroup[subgroup.length - 1]));
-    console.log(subgroup[subgroup.length - 1]);
+    // console.log(subgroup);
+    if (subgroup.length > 20) {
+      break;
+    }
   }
   return subgroup;
 };
 
-//* helper function for the while loop above
-const checkUnique = (array: RawPoint[]): boolean => {
-  //! god this will hurt perfomance
-  const len = array.length - 1;
-  for (let i = 0; i < len; i++) {
-    for (let j = 0; j < len; j++) {
-      if (i == j) {
-        break;
-      } else if (array[i].rawequals(array[j])) {
-        return false;
-      }
-    }
-  }
-  return true;
-};
+// //* helper function for the while loop above
+// const checkUnique = (array: RawPoint[]): boolean => {
+//   const len = array.length - 1;
+//   for (let i = 0; i < len; i++) {
+//     for (let j = 0; j < len; j++) {
+//       if (i == j) {
+//         break;
+//       } else if (array[i].rawequals(array[j])) {
+//         return false;
+//       }
+//     }
+//   }
+//   return true;
+// };
 
 export const getFactors = (num: number): number[] => {
   const half = num / 2 + 1;

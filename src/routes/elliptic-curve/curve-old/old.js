@@ -1,6 +1,6 @@
-// this is old code that i used to make a proof of concept
-// this is meant to be run on the command line with node
-// why did I originally make this in javascript? idk
+//* this is old code that i used to make a proof of concept
+//* this is meant to be run on the command line with node
+//* why did I originally make this in javascript? idk
 
 //TODO maybe make the point, instead of an array, a point class with various properties to make my life easier
 const start = Date.now();
@@ -70,12 +70,12 @@ const inverse = (a, n) => {
 }
 // console.log("log inverse " + inverse(2,5))
 */
-
-E = [[Infinity, Infinity]]; // set of points over field Fp with its identity element
-p = 13;
+//! this was before I knew how to write javascript lol
+const E = [[Infinity, Infinity]]; // set of points over field Fp with its identity element
+const p = 13;
 // in form y^2 = x^3 + ax + b
-a = 4;
-b = 9;
+const a = 4;
+const b = 9;
 
 for (let j = 0; j < p; j++) {
   // test for solutions within the field
