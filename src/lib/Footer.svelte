@@ -6,7 +6,7 @@
     { title: "Photography", path: "/about" },
     { title: "CS", path: "/Computer-Science" },
     { title: "Writing", path: "/Writing" },
-    { title: "Contact", path: "/about" }
+    { title: "Contact", path: "/Photography" }
   ];
 </script>
 
