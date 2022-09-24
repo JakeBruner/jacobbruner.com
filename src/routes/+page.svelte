@@ -73,7 +73,6 @@
     <div class="flex-1 md:basis-1/2">
       <p
         class="2xl:leading-loose lg:text-2xl leading-relaxed sm:text-xl text-lg inset-0 pt-8 md:px-10 px-2 font-light dark:text-zinc-300"
-        id="whoami"
       >
         Jacob Bruner is a 17 year-old student at The Dwight School in New York City. During his
         junior year in high-school, he is exploring his various creative interests through his
@@ -88,11 +87,49 @@
   </div>
 </section>
 
-<!-- Extracurriciulars and other photos -->
+<!-- Interactive stuff on this website :) -->
 
 <section
-  class="min-h-[700px] bg-primary bg-fixed bg-cover bg-center justify-center items-center flex flex-col"
-/>
+  class="min-h-[700px] bg-primary items-center pt-16 pb-20 px-4 sm:px-6 lg:pt-24 lg:pb-28 lg:px-8"
+>
+  <h1 class="text-zinc-50 dark:text-zinc-800 underline">Interactive Projects</h1>
+
+  <div class="mt-12 grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12 content-center">
+    <div
+      class="group border border-zinc-300 dark:border-zinc-700 rounded-lg flex flex-col justify-between self-center transition ease-in-out duration-200 shadow-lg dark:shadow-white/5 hover:shadow-xl hover:dark:shadow-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-800/25 hover:scale-[101%]"
+    >
+      <a href="/elliptic-curve" data-svelte-prefetch>
+        <div
+          class="group-hover:contrast-[90%] rounded-t-lg aspect-w-16 lg:aspect-h-9 aspect-h-7 w-full bg-cover bg-center min-w-full transition ease-in-out duration-200  border-b border-zinc-100 dark:border-zinc-800"
+          style="background-image: url('/thumbnails/ellipticcurve.jpg')"
+        />
+        <div class="bg-zinc-100 dark:bg-zinc-800 rounded-b-lg p-4 self-end">
+          <p class="text-xl font-medium dark:text-zinc-100 text-zinc-800">
+            Elliptic Curve Cayley Table Generator
+          </p>
+        </div>
+      </a>
+    </div>
+
+    <div
+      class="group border border-zinc-300 dark:border-zinc-700 rounded-lg flex flex-col justify-between self-center transition ease-in-out duration-200 shadow-lg dark:shadow-white/5 hover:shadow-xl hover:dark:shadow-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-800/25 hover:scale-[101%]"
+    >
+      <a href="/guess-the-build-solver" data-svelte-prefetch>
+        <div
+          class="group-hover:contrast-[90%] rounded-t-lg aspect-w-16 lg:aspect-h-9 aspect-h-7 w-full bg-cover bg-center min-w-full transition ease-in-out duration-200  border-b border-zinc-100 dark:border-zinc-800"
+          style="background-image: url('/thumbnails/guessthebuild.jpg')"
+        />
+        <div class="bg-zinc-100 dark:bg-zinc-800 rounded-b-lg p-4 self-end">
+          <p class="text-xl font-medium dark:text-zinc-100 text-zinc-800">
+            Hypixel Guess the Build
+          </p>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="h-20 md:h-0" />
 
 <style>
   @supports (-webkit-touch-callout: none) {

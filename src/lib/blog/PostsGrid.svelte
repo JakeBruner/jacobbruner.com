@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { PostInfo } from "./blog";
-  export let subject: string, posts: PostInfo[];
+  export let subject: string;
+  export let posts: PostInfo[];
 </script>
 
 <div class="mt-12 grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12 content-center">
