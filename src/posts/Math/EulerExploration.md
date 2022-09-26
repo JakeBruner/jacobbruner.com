@@ -1,6 +1,6 @@
 ---
-title: Understanding Euler's Form of Complex Numbers Through the Lens of Compound Interest
-date: 2022-05-22
+title: Understanding Euler's Form of Complex Numbers Through Compound Interest
+date: 2022-02-22
 layout: blog
 excerpt: How might the idea of continuously compounding a quantity over an interval change when that quantity is complex? In this exploration, I demonstrate the link between complex multiplication and rotation.
 pdfpath: /pdfs/EulerForm.pdf

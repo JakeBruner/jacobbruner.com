@@ -12,16 +12,27 @@
 <svelte:head>
   <title>{subject}</title>
 </svelte:head>
-
-<div class="w-full -mt-[64px] h-auto bg-zinc-800 ">
-  <video class="flex px-5 pt-16 lg:w-1/2 md:w-2/3 mx-auto" autoplay playsinline autoPlay loop muted>
-    <source src="videos/ComplexFourierTransform.webm" type="video/webm" />
-    <source src="videos/ComplexFourierTransform2.mp4" type="video/mp4" />
-    <track kind="captions" />
-  </video>
+<div class="bg-zinc-800 group">
+  <div class="w-full -mt-[64px] h-auto bg-zinc-800 flex flex-col ">
+    <video
+      class="flex bg-inherit px-5 pt-16 w-full lg:w-1/2 md:w-2/3 mx-auto"
+      autoplay
+      playsinline
+      loop
+      muted
+    >
+      <source src="videos/ComplexFourierTransform.webm" type="video/webm" />
+      <source src="videos/ComplexFourierTransform2.mp4" type="video/mp4" />
+      <track kind="captions" />
+    </video>
+    <p
+      class="self-end justify-self-end -mb-[27px] italic dark:text-zinc-300/70 text-zinc-700 group-hover:-translate-x-2 transition-all duration-300 ease-out text-xs md:text-md lg:text-lg pb-2 lg:pb-0"
+    >
+      Discrete Complex Fourier Transform of my initials as a 2d path
+    </p>
+  </div>
 </div>
 
-<!-- TODO add a way to have a thumbnail for some posts -->
 <div class="sm:pt-10 pt-8  pb-20 px-4 sm:px-6 lg:pb-28 lg:px-8">
   <div class="max-w-lg mx-auto lg:max-w-7xl">
     <div class="border-b border-b-zinc-200  dark:border-b-zinc-700 pb-6">

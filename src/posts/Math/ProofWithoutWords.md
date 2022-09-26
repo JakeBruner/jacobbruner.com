@@ -1,6 +1,6 @@
 ---
 title: Exploring Visual Proof, Integration by Parts
-date: 2022-05-22
+date: 2021-10-11
 layout: blog
 excerpt: Exploring the viability of "proof without words" through a number of famous proofs of theoroms including right triangles and integration by parts.
 pdfpath: /pdfs/ProofWithoutWords.pdf
