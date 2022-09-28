@@ -1,5 +1,6 @@
 import { sveltekit } from "@sveltejs/kit/vite";
 import type { UserConfig } from "vite";
+import wasmPack from "vite-plugin-wasm-pack";
 
 /** @type {import('vite').UserConfig} */
 const config: UserConfig = {
@@ -12,9 +13,13 @@ const config: UserConfig = {
       }, // gets rid of the import
     },
     sveltekit(),
+    [wasmPack("./webassembly")],
   ],
   ssr: {
     noExternal: ["three", "troika-three-text"],
+  },
+  build: {
+    minify: true,
   },
   server: {
     host: "localhost",
