@@ -3,9 +3,9 @@
   "name": "jacobbruner.com",
   "version": "0.0.1",
   "scripts": {
-    "wasm": "wasm-pack build ./webassembly --target web",
-    "dev": "vite dev",
-    "build": "npm build:wasm && vite build",
+    "wasm": "wasm-pack build ./game-of-life --target web",
+    "dev": "vite",
+    "build": "vite build",
     "package": "vite package",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",

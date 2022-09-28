@@ -13,8 +13,11 @@ const config: UserConfig = {
       }, // gets rid of the import
     },
     sveltekit(),
-    [wasmPack("./webassembly")],
+    [wasmPack("./game-of-life")],
   ],
+  optimizeDeps: {
+    exclude: ["./game-of-life"],
+  },
   ssr: {
     noExternal: ["three", "troika-three-text"],
   },
