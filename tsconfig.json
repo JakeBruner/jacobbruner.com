@@ -3,10 +3,11 @@
   "compilerOptions": {
     "baseUrl": ".",
     "typeRoots": ["node_modules/@types"],
-    // "paths": {
-    //   "$lib": ["src/lib"],
-    //   "$lib/*": ["src/lib/*"]
-    // },
+    "paths": {
+      "$lib": ["src/lib"],
+      "$lib/*": ["src/lib/*"],
+      "$rust/*": ["game-of-life/pkg/*"]
+    },
     "allowJs": true,
     "checkJs": true,
     "esModuleInterop": true,

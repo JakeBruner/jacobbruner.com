@@ -1,9 +1,12 @@
 <script lang="ts">
   //@ts-ignore
-  import init, { greet } from "./game_of_life_bg.wasm";
+  import init, { greet } from "$rust/game_of_life_bg.wasm";
 
-  init().then(() => {
-    console.log(greet("Svelte"));
+  import { onMount } from "svelte";
+
+  onMount(async () => {
+    await init();
+    greet("svelte");
   });
 </script>
 
