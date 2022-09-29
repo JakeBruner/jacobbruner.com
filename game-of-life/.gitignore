@@ -2,5 +2,5 @@
 **/*.rs.bk
 Cargo.lock
 bin/
-pkg/
+# pkg/  ---- because I need to manually modify package.json
 wasm-pack.log

@@ -15,5 +15,5 @@ extern "C" {
 
 #[wasm_bindgen]
 pub fn greet() {
-    alert("Hello, WebAssembly!");
+    alert("its workign!!!!!");
 }

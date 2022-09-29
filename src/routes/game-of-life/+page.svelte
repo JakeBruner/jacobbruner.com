@@ -8,5 +8,5 @@
   });
 </script>
 
-<h1>hi</h1>
+<h1>Press the big red button to run some precompiled webassembly code :)</h1>
 <button class="h-10 w-10 bg-red-800" on:click={greet} />

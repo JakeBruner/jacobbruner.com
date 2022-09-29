@@ -5,8 +5,7 @@
     "typeRoots": ["node_modules/@types"],
     "paths": {
       "$lib": ["src/lib"],
-      "$lib/*": ["src/lib/*"],
-      "$rust/*": ["game-of-life/pkg/*"]
+      "$lib/*": ["src/lib/*"]
     },
     "allowJs": true,
     "checkJs": true,

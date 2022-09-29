@@ -17,8 +17,8 @@ const config: UserConfig = {
     },
     sveltekit(),
     wasm(),
-    topLevelAwait(),
-    wasmPack("./game-of-life")
+    wasmPack(["./game-of-life"]),
+    topLevelAwait()
   ],
   optimizeDeps: {
     exclude: ["./game-of-life"]
