@@ -3,10 +3,10 @@
   "compilerOptions": {
     "baseUrl": ".",
     "typeRoots": ["node_modules/@types"],
-    // "paths": {
-    //   "$lib": ["src/lib"],
-    //   "$lib/*": ["src/lib/*"]
-    // },
+    "paths": {
+      "$lib": ["src/lib"],
+      "$lib/*": ["src/lib/*"]
+    },
     "allowJs": true,
     "checkJs": true,
     "esModuleInterop": true,
@@ -19,3 +19,5 @@
   }
   // "include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.svelte", "src/routes/elliptic-curve/curve.ts", "src/routes/elliptic-curve/curve.ts", "src/routes/Computer-Science/+page.server.ts", "global.d.ts"]
 }
+
+//TODO make tests using playwright

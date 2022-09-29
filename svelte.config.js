@@ -14,6 +14,24 @@ const config = {
   ],
   kit: {
     adapter: adapter(),
+    // vite: {
+    //   plugins: [
+    //     wasmPack('./game-of-life/pkg',
+    //     //   {
+    //     //   crateDirectory: './wasm',
+    //     //   outDir: './wasm/pkg',
+    //     //   outName: 'wasm',
+    //     //   outExtension: '.js',
+    //     //   outDirRelative: true,
+    //     //   watchDirectories: ['./wasm/src'],
+    //     //   extraArgs: '--target web',
+    //     // }
+    //     ),
+    //   ],
+    //   optimizeDeps: {
+    //     exclude: ['game-of-life'],
+    //   },
+    // },
   },
 };
 
