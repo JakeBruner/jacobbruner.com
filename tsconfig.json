@@ -20,3 +20,5 @@
   }
   // "include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.svelte", "src/routes/elliptic-curve/curve.ts", "src/routes/elliptic-curve/curve.ts", "src/routes/Computer-Science/+page.server.ts", "global.d.ts"]
 }
+
+//TODO make tests using playwright

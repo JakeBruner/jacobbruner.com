@@ -1,8 +1,9 @@
 import { sveltekit } from "@sveltejs/kit/vite";
 import type { UserConfig } from "vite";
+import wasmPack from "vite-plugin-wasm-pack";
 import wasm from "vite-plugin-wasm";
 import topLevelAwait from "vite-plugin-top-level-await";
-import path from "path";
+// import path from "path";
 
 /** @type {import('vite').UserConfig} */
 const config: UserConfig = {
@@ -11,31 +12,32 @@ const config: UserConfig = {
     {
       name: "fix-animatecss-bug",
       transform(code, id, options = {}) {
-        if (options.ssr) return code.replace(/import .animate\.css.*$/gm, ""); // woo i did some regex
-      }, // gets rid of the import
+        if (options.ssr) return code.replace(/import .animate\.css.*$/gm, "");
+      } // gets rid of the import
     },
     sveltekit(),
     wasm(),
     topLevelAwait(),
+    wasmPack("./game-of-life")
   ],
   optimizeDeps: {
-    exclude: ["./game-of-life"],
+    exclude: ["./game-of-life"]
   },
   ssr: {
-    noExternal: ["three", "troika-three-text"],
+    noExternal: ["three", "troika-three-text"]
   },
   build: {
-    minify: true,
+    minify: true
   },
   server: {
     host: "localhost",
-    port: 3000,
-  },
-  resolve: {
-    alias: {
-      $rust: path.resolve("./game-of-life/pkg"),
-    },
-  },
+    port: 4000
+  }
+  // resolve: {
+  //   alias: {
+  //     $rust: path.resolve(__dirname, "./game-of-life/pkg")
+  //   }
+  // }
 };
 
 export default config;

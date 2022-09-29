@@ -1,13 +1,12 @@
 <script lang="ts">
-  //@ts-ignore
-  import init, { greet } from "$rust/game_of_life_bg.wasm";
+  import init, { greet } from "game-of-life";
 
   import { onMount } from "svelte";
 
   onMount(async () => {
     await init();
-    greet("svelte");
   });
 </script>
 
 <h1>hi</h1>
+<button class="h-10 w-10 bg-red-800" on:click={greet} />
