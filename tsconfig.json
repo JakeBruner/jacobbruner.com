@@ -1,5 +1,6 @@
 {
   "extends": "./.svelte-kit/tsconfig.json",
+  "exclude": ["node_modules/*", "game-of-life/*", "static/*"],
   "compilerOptions": {
     "baseUrl": ".",
     "typeRoots": ["node_modules/@types"],
@@ -7,7 +8,8 @@
       "$lib": ["src/lib"],
       "$lib/*": ["src/lib/*"]
     },
-    "allowJs": true,
+
+    // "allowJs": true,
     "checkJs": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -15,7 +17,7 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "strictNullChecks": false
+    "strictNullChecks": true
   }
   // "include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.svelte", "src/routes/elliptic-curve/curve.ts", "src/routes/elliptic-curve/curve.ts", "src/routes/Computer-Science/+page.server.ts", "global.d.ts"]
 }

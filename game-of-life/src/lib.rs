@@ -16,6 +16,8 @@ pub enum Cell {
     Alive = 1,
 }
 
+// index(row, column, universe) = row * width(universe) + column
+
 #[wasm_bindgen]
 pub struct Universe {
     width: u32,
