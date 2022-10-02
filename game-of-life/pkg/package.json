@@ -9,6 +9,7 @@
     "game_of_life.js",
     "game_of_life.d.ts"
   ],
+  "type": "module",
   "module": "game_of_life.js",
   "types": "game_of_life.d.ts",
   "sideEffects": false
