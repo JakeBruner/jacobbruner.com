@@ -10,6 +10,17 @@ export enum Cell {
 */
 export class Universe {
   free(): void;
+/**
+*/
+  tick(): void;
+/**
+* @returns {Universe}
+*/
+  static new(): Universe;
+/**
+* @returns {string}
+*/
+  render(): string;
 }
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
@@ -17,6 +28,11 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly __wbg_universe_free: (a: number) => void;
+  readonly universe_tick: (a: number) => void;
+  readonly universe_new: () => number;
+  readonly universe_render: (a: number, b: number) => void;
+  readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
+  readonly __wbindgen_free: (a: number, b: number) => void;
 }
 
 export type SyncInitInput = BufferSource | WebAssembly.Module;
