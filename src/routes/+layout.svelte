@@ -13,6 +13,8 @@
   $: $loading = !!$navigating;
   // this ugly thing hacks an object into a bool
   // onmount was giving vite a headache
+
+  //TODO: make another layout without the header and footer
 </script>
 
 <Header />
