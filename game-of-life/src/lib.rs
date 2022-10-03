@@ -110,6 +110,18 @@ impl Universe {
     pub fn render(&self) -> String {
         self.to_string() // our Display trait below
     }
+
+    pub fn width(&self) -> u32 {
+        self.width
+    }
+
+    pub fn height(&self) -> u32 {
+        self.height
+    }
+
+    pub fn cells(&self) -> *const Cell {
+        self.cells.as_ptr() // a pointer to the vec
+    }
 }
 
 // to make this as a string, we implement std::fmt::Display
