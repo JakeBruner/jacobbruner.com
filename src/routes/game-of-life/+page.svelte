@@ -5,10 +5,10 @@
   import { onMount } from "svelte";
 
   let universe: Universe;
+  let pre: HTMLPreElement;
 
   onMount(async () => {
     await init();
-    const pre = document.getElementById("canvas");
 
     universe = Universe.new();
 
@@ -24,11 +24,11 @@
     }
   });
 
-  const start = () => {
-    requestAnimationFrame(() => {
-      universe.tick();
-    });
-  };
+  // const start = () => {
+  //   requestAnimationFrame(() => {
+  //     universe.tick();
+  //   });
+  // };
 </script>
 
 <div class="pt-5 text-center">
@@ -37,15 +37,11 @@
 </div>
 
 <pre
-  id="canvas"
+  bind:this={pre}
   class="pt-5 leading-[0.92rem] inset-0 w-full h-full flex flex-col items-center justify-center"
 />
 <!-- bind:this isnt working -->
 
 <div class=" pt-5 text-center underline">
   <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">wikipedia</a>
-</div>
-
-<div class="pt-5 text-center">
-  <button on:click={start}>Start</button>
 </div>
