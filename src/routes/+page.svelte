@@ -14,7 +14,44 @@
     return Math.floor(Math.random() * max);
   };
 
+  //TODO look into https://vercel.com/templates/svelte/sveltekit-edge-functions
+
   const randomlink: string = featuredposts[rand(featuredposts.length)];
+
+  // let canvas: HTMLCanvasElement;
+  // let ctx: CanvasRenderingContext2D;
+  // let imageData: ImageData;
+  // let data: Uint8ClampedArray;
+
+  // const getMousePos = (e: MouseEvent): [number, number] => {
+  //   const rect = canvas.getBoundingClientRect();
+  //   const x = e.clientX - rect.left;
+  //   const y = e.clientY - rect.top;
+  //   return [x, y];
+  // };
+
+  // const update = (e: MouseEvent): void => {
+  //   const [x, y] = getMousePos(e);
+  //   const i = (x + y * w) * 4;
+  //   data[i] = 255;
+  //   data[i + 1] = 255;
+  //   data[i + 2] = 255;
+  //   data[i + 3] = 255;
+  //   ctx.putImageData(imageData, 0, 0);
+  // };
+
+  // const init = (): void => {
+  //   w = canvas.width;
+  //   h = canvas.height;
+  //   ctx = canvas.getContext("2d");
+  //   imageData = ctx.getImageData(0, 0, w, h);
+  //   data = imageData.data;
+  //   canvas.addEventListener("mousemove", update);
+  // };
+
+  // onMount(() => {
+  //   init();
+  // });
 </script>
 
 <svelte:head>

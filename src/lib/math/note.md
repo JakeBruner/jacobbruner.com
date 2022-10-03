@@ -1,0 +1,7 @@
+# On the task of eventually porting the elliptic curve code to Rust
+
+A) the task will not be fun
+
+B) in researching the ways in which Rust's linear memory interfaces with Javascript's garbage-collected memory, it's worth thinking about how I would structure the interface between these. Realistically, I wouldnt want to be serializing and desearializing the points that the rust computes. So some good opaque pointer interface so it's only serialized on the JS side. Although, for the operation of generating the cayley table, that should probably be on the rust side, but contrasting this with the performance toll from copying the data back and forth. Perhaps implementing a method on the point class (on the rust side) that is callable with an opaque handle triggered by on:click to generate the subgroup as well. Some stuff like input validation could probably stay in JS, and perhaps stuff like prime testing or factoring the order of the group.
+
+Here's copilot's suggestion for the solution: "I think the best way to do this is to have a single function that takes a pointer to a buffer, and a length, and returns a pointer to a buffer, and a length. This is the same interface that Rust's `Vec` uses, and it's the same interface that Javascript's `ArrayBuffer` uses. This means that I can use the same interface for both languages, and I can use the same interface for both the input and the output. This is a good thing."

@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream:src/routes/plotter/j-invar.glsl
-vec2 g(vec2 t, int k) { // modular invarient
-=======
 vec2 g(vec2 t, int k) { // modular invariant
->>>>>>> Stashed changes:src/routes/E8/j-invar.glsv
   vec2 sum = vec2(0,0);
   for (int m = 1; m < 10; m++) {  // sum over the lattice points
     for (int n = -5; n < 0; n++) {  
@@ -30,10 +26,6 @@ vec2 g(vec2 t, int k) { // modular invariant
   return 2.0 * sum;
 } 
 
-<<<<<<< Updated upstream:src/routes/plotter/j-invar.glsl
-vec2 mapping(vec2 z) { // j invarient
-  return cdiv(ONE, ONE - 2.45 * cdiv(
-=======
 vec2 mapping(vec2 z) {
   return g(z,2) + 24* g(z,3);
 } 
@@ -44,11 +36,12 @@ vec2 mapping(vec2 z) { // modular discriminant
 
 vec2 mapping(vec2 z) {
   return cdiv(ONE, ONE - 2.45 * cdiv(  // 1 over
->>>>>>> Stashed changes:src/routes/E8/j-invar.glsv
     csquare( g(z, 3) ),
     cpow( g(z, 2), 3.0 * ONE )
   ));
 }
+
+// https://github.com/sagemath/sage/blob/develop/src/sage/modular/modform/j_invariant.py
 
 // vec2 mapping(vec2 z) {
 //   return 1728 * cdiv(
