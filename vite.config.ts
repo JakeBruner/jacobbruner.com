@@ -3,7 +3,7 @@ import type { UserConfig } from "vite";
 import wasmPack from "vite-plugin-wasm-pack";
 import wasm from "vite-plugin-wasm";
 import topLevelAwait from "vite-plugin-top-level-await";
-// import path from "path";
+import path from "path";
 
 /** @type {import('vite').UserConfig} */
 const config: UserConfig = {
@@ -32,12 +32,12 @@ const config: UserConfig = {
   server: {
     host: "localhost",
     port: 4000
+  },
+  resolve: {
+    alias: {
+      $components: path.resolve(__dirname, "./src/components")
+    }
   }
-  // resolve: {
-  //   alias: {
-  //     $rust: path.resolve(__dirname, "./game-of-life/pkg")
-  //   }
-  // }
 };
 
 export default config;

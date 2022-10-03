@@ -9,7 +9,8 @@
     getSubgroup,
     getFactors
   } from "$lib/math/curve";
-  import { Curve } from "three";
+
+  import MobilePopup from "$components/MobilePopup.svelte";
 
   let a: number = 4;
   let b: number = 6;
@@ -63,7 +64,6 @@
   let selected: RawPoint;
 
   // let selected: Point = new Point(curve);
-  let hidePopup = false;
 
   let sg: RawPoint[];
   $: {
@@ -86,35 +86,23 @@
   // first ten primes === 1 mod 12:  [1, 13, 25, 37, 49, 61, 73, 85, 97, 109];
 </script>
 
-<!-- mobile popup -->
-<div
-  class="fixed z-[200] sm:!hidden inset-0 w-full h-full bg-black/40 transition-all ease-in-out"
-  style:visibility={hidePopup ? "hidden" : "visible"}
-  transition:fade
-  on:click={() => (hidePopup = true)}
->
-  <div class="m-5 mt-20">
-    <div class="w-full flex flex-col p-3 rounded-lg bg-white dark:bg-zinc-800 shadow-xl">
-      <span class="flex absolute h-4 w-4 top-0 right-0 mr-[.75em] mt-[4em]">
-        <span
-          class="animate-ping duration-300 absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"
-        />
-        <span class="relative inline-flex rounded-full h-4 w-4 bg-primary" />
-      </span>
-      <h3 class="pt-2 mx-auto text-xl font-semibold tracking-wide">
-        It looks like you're on mobile!
-      </h3>
-      <p class="px-2 text-center whitespace-normal pt-2 text-zinc-500 dark:text-zinc-300">
-        This part of the site in particular isn't made/optimized for viewing on mobile because of
-        the difficulty styling all of the procedurally generated maths. For this reason, this is
-        best viewed on a computer.
-      </p>
-      <span class="text-right px-4 !no-underline">—Jacob</span>
-      <h6 class="italic pl-2 text-zinc-400">Tap to dismiss.</h6>
-    </div>
-  </div>
-</div>
-<!-- end mobile popup -->
+<svelte:head>
+  <title>Elliptic Curve Viewer</title>
+  <meta
+    name="keywords"
+    content="Elliptic Curve, Group theory, Cryptography, mathematics, math, finite groups, group structure"
+  />
+  <meta
+    content="Elliptic curves are a special type of algebraic curve that have a well-defined group structure
+    on them by drawing secants through points. Over a finite field, however, they posess different
+    properties that make them suitable for use in cryptography. To attempt to understand their group
+    struture, I've built a program that calculates the number of points on the curve and generates
+    the cayley table."
+    name="description"
+  />
+</svelte:head>
+
+<MobilePopup />
 
 <div class="relative sm:px-40 px-10 sm:pt-10">
   <h1 class="font-medium py-5 dark:text-grey-0">Elliptic Curve Visualiser</h1>

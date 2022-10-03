@@ -54,6 +54,18 @@
   $: ms = 1000 / fps;
 </script>
 
+<svelte:head>
+  <title>Conway's Game of Life</title>
+  <meta
+    name="keywords"
+    content="John Conway, Game of Life, Cellular Automata, mathematics, math, chaotic systems, symbolic dynamics"
+  />
+  <meta
+    content="John Conway's Game of Life is a cellular automaton created to demonstrate the unpredictability of emergent behavior in chaotic systems."
+    name="description"
+  />
+</svelte:head>
+
 <div class="pt-5 text-center">
   <h1>Conway's Game of Life</h1>
   <h2 class="text-xl">Running with Rust + Webassembly</h2>
@@ -69,7 +81,7 @@
 
 <pre
   bind:this={pre}
-  class="pt-5 leading-[0.92rem] inset-0 w-full h-full flex flex-col items-center justify-center"
+  class="mx-auto overflow-x-auto pt-5 md:leading-[0.92rem] leading-[0.6rem] text-sm md:text-lg inset-0 w-full h-full flex flex-col items-center justify-center"
 />
 
 <!-- bind:this isnt working -->
@@ -83,4 +95,16 @@
   <br />
 
   <a class="" href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">wikipedia</a>
+</div>
+
+<div class="px-5 pt-5 md:px-20">
+  <p class="italic text-justify">
+    John Conway's Game of Life is a cellular automaton created to demonstrate the unpredictability
+    of emergent behavior in chaotic systems. It was invented by Cambridge mathematician John Conway
+    in 1970. John Conway is a personal role-model of mine, influencing many fields of mathematics
+    with his work. For instance, his work in finite group theory during the completion of the
+    classification of finite simple groups is a major contribution to the field. His work on the
+    Game of Life is a great example of his ability to think outside the box and create something
+    beautiful and interesting from a simple set of rules.
+  </p>
 </div>

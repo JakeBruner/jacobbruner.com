@@ -6,7 +6,9 @@
     "typeRoots": ["node_modules/@types"],
     "paths": {
       "$lib": ["src/lib"],
-      "$lib/*": ["src/lib/*"]
+      "$lib/*": ["src/lib/*"],
+      "$components": ["src/components"],
+      "$components/*": ["src/components/*"]
     },
 
     // "allowJs": true,
