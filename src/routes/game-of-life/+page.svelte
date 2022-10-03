@@ -43,6 +43,7 @@
 
   const reset = () => {
     universe = Universe.new();
+    ticknum = 0;
   };
 
   // const start = () => {
