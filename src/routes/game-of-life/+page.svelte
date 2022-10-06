@@ -1,6 +1,6 @@
 <script lang="ts">
-  // import memory from "game-of-life/game_of_life_bg";
   import init, { Universe, Cell } from "game-of-life";
+  import memory from "game-of-life/game_of_life_bg.wasm";
 
   import { onMount } from "svelte";
   const width = 64;
@@ -18,90 +18,94 @@
   let ticknum = 0;
   let now: number, then: number, delta: number;
 
-  onMount(async () => {
-    await init();
-    universe = Universe.new();
-    ctx = canvas.getContext("2d")!; // ignore null union type
+  onMount(() => {
+    //* ensure canvas is mounted
+    init().then((exports) => {
+      //* ensure wasm is loaded
+      universe = Universe.new();
+      ctx = canvas.getContext("2d")!; // ignore null union type
 
-    if (canvas && ctx && universe) {
-      const width = universe.width();
-      const height = universe.height();
+      if (canvas && ctx && universe) {
+        const width = universe.width();
+        const height = universe.height();
 
-      canvas.height = (CELL_SIZE + 1) * height + 1;
-      canvas.width = (CELL_SIZE + 1) * width + 1;
+        canvas.height = (CELL_SIZE + 1) * height + 1;
+        canvas.width = (CELL_SIZE + 1) * width + 1;
 
-      //* helper functions
-      // (in this scope becuase they mutate global state which fucks with null checking)
-      const drawGrid = () => {
-        ctx.beginPath();
-        ctx.strokeStyle = GRID_COLOR;
+        //* helper functions
+        // (in this scope becuase they mutate global state which fucks with null checking)
+        const drawGrid = () => {
+          ctx.beginPath();
+          ctx.strokeStyle = GRID_COLOR;
 
-        // Vertical lines.
-        for (let i = 0; i <= width; i++) {
-          ctx.moveTo(i * (CELL_SIZE + 1) + 1, 0);
-          ctx.lineTo(i * (CELL_SIZE + 1) + 1, (CELL_SIZE + 1) * height + 1);
-        }
-
-        // Horizontal lines.
-        for (let j = 0; j <= height; j++) {
-          ctx.moveTo(0, j * (CELL_SIZE + 1) + 1);
-          ctx.lineTo((CELL_SIZE + 1) * width + 1, j * (CELL_SIZE + 1) + 1);
-        }
-
-        ctx.stroke();
-      };
-      const getIndex = (row: number, column: number) => {
-        return row * width + column;
-      };
-      const drawCells = () => {
-        const cellsPtr = universe.cells();
-        const cells = new Uint8Array(memory.buffer, cellsPtr, width * height);
-
-        ctx.beginPath();
-
-        for (let row = 0; row < height; row++) {
-          for (let col = 0; col < width; col++) {
-            const idx = getIndex(row, col);
-
-            ctx.fillStyle = cells[idx] === Cell.Dead ? DEAD_COLOR : ALIVE_COLOR;
-
-            ctx.fillRect(
-              col * (CELL_SIZE + 1) + 1,
-              row * (CELL_SIZE + 1) + 1,
-              CELL_SIZE,
-              CELL_SIZE
-            );
+          // Vertical lines.
+          for (let i = 0; i <= width; i++) {
+            ctx.moveTo(i * (CELL_SIZE + 1) + 1, 0);
+            ctx.lineTo(i * (CELL_SIZE + 1) + 1, (CELL_SIZE + 1) * height + 1);
           }
-        }
 
-        ctx.stroke();
-      };
+          // Horizontal lines.
+          for (let j = 0; j <= height; j++) {
+            ctx.moveTo(0, j * (CELL_SIZE + 1) + 1);
+            ctx.lineTo((CELL_SIZE + 1) * width + 1, j * (CELL_SIZE + 1) + 1);
+          }
 
-      //* render loop
-      const renderLoop = () => {
-        now = Date.now();
-        delta = now - then;
+          ctx.stroke();
+        };
+        const getIndex = (row: number, column: number) => {
+          return row * width + column;
+        };
+        const drawCells = () => {
+          const cellsPtr = universe.cells();
 
-        if (delta > ms) {
-          ticknum++;
-          then = now - (delta % ms);
+          const cells = new Uint8Array(exports.memory.buffer, cellsPtr, width * height);
 
-          universe.tick();
-          drawGrid();
-          drawCells();
-        }
+          ctx.beginPath();
 
+          for (let row = 0; row < height; row++) {
+            for (let col = 0; col < width; col++) {
+              const idx = getIndex(row, col);
+
+              ctx.fillStyle = cells[idx] === Cell.Dead ? DEAD_COLOR : ALIVE_COLOR;
+
+              ctx.fillRect(
+                col * (CELL_SIZE + 1) + 1,
+                row * (CELL_SIZE + 1) + 1,
+                CELL_SIZE,
+                CELL_SIZE
+              );
+            }
+          }
+
+          ctx.stroke();
+        };
+
+        //* render loop
+        const renderLoop = () => {
+          now = Date.now();
+          delta = now - then;
+
+          if (delta > ms) {
+            ticknum++;
+            then = now - (delta % ms);
+
+            universe.tick();
+            drawGrid();
+            drawCells();
+          }
+
+          requestAnimationFrame(renderLoop);
+        };
+
+        drawGrid();
+        drawCells();
         requestAnimationFrame(renderLoop);
-      };
+      }
 
-      drawGrid();
-      drawCells();
-      requestAnimationFrame(renderLoop);
-    }
+      universe = Universe.new();
 
-    universe = Universe.new();
-
-    then = Date.now();
+      then = Date.now();
+    });
   }); // onMount
 
   const reset = () => {
@@ -114,7 +118,7 @@
   //     universe.tick();
   //   });
   // };
-  let fps = 30;
+  let fps = 2;
   $: ms = 1000 / fps;
 </script>
 
@@ -147,7 +151,10 @@
   bind:this={pre}
   class="mx-auto overflow-x-auto pt-5 md:leading-[0.92rem] leading-[0.6rem] text-sm md:text-lg inset-0 w-full h-full flex flex-col items-center justify-center"
 /> -->
-<canvas class="mx-auto overflow-x-auto pt-5" bind:this={canvas} />
+<canvas
+  class="mx-auto overflow-x-auto mt-5 bortder-zinc-600 border-2 rounded-sm"
+  bind:this={canvas}
+/>
 
 <!-- bind:this isnt working -->
 

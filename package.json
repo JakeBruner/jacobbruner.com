@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "setup": "npm install && npm run build:wasm",
-    "build:wasm": "wasm-pack build ./game-of-life --target web --release",
+    "build:wasm": "wasm-pack build ./game-of-life --target web && python3 ./scripts/fixwasm.py",
     "watch:wasm": "cd game-of-life && cargo watch -i .gitignore -i \"pkg/*\" -i \"target/*\" -s \"wasm-pack build --target web --dev\"",
     "dev": "vite",
     "build": "vite build",
