@@ -1,6 +1,6 @@
 <script lang="ts">
   import init, { Universe, Cell } from "game-of-life";
-  import memory from "game-of-life/game_of_life_bg.wasm";
+  // import memory
 
   import { onMount } from "svelte";
   const width = 64;
@@ -20,12 +20,16 @@
 
   onMount(() => {
     //* ensure canvas is mounted
-    init().then((exports) => {
+    init().then((instance) => {
       //* ensure wasm is loaded
+      // const tick = instance.exports.tick as CallableFunction;
+      // console.log(instance.memory);
+
       universe = Universe.new();
       ctx = canvas.getContext("2d")!; // ignore null union type
+      // instance.exports.
 
-      if (canvas && ctx && universe) {
+      if (canvas && ctx) {
         const width = universe.width();
         const height = universe.height();
 
@@ -58,7 +62,7 @@
         const drawCells = () => {
           const cellsPtr = universe.cells();
 
-          const cells = new Uint8Array(exports.memory.buffer, cellsPtr, width * height);
+          const cells = new Uint8Array(instance.memory.buffer, cellsPtr, width * height);
 
           ctx.beginPath();
 

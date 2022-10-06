@@ -28,6 +28,7 @@ const config: UserConfig = {
   },
   build: {
     minify: true
+    // target: "esnext"
   },
   server: {
     host: "localhost",
