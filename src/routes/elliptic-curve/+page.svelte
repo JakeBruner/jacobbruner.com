@@ -61,7 +61,7 @@
   let x: number = -1;
   let y: number = -1;
 
-  let selected: RawPoint;
+  let selected: RawPoint | null;
 
   // let selected: Point = new Point(curve);
 

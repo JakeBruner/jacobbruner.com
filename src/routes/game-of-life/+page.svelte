@@ -1,9 +1,7 @@
 <script lang="ts">
   import init, { Universe, Cell } from "game-of-life";
-  // import memory
-
   import { onMount } from "svelte";
-  const width = 64;
+  // const width = 64;
 
   const CELL_SIZE = 10; // px
   const GRID_COLOR = "#CCCCCC";
@@ -122,8 +120,8 @@
   //     universe.tick();
   //   });
   // };
-  let fps = 2;
-  $: ms = 1000 / fps;
+  let tps = 20;
+  $: ms = 1000 / tps;
 </script>
 
 <svelte:head>
@@ -142,11 +140,11 @@
   <h1>Conway's Game of Life</h1>
   <h2 class="text-xl">Running with Rust + Webassembly</h2>
   <p class="pt-3">
-    Tick: {ticknum} running at fps:
+    Tick: {ticknum} running at tps:
     <input
       class="bg-zinc-200 rounded-md p-0.5 pl-1 dark:bg-zinc-700 w-14"
       type="text"
-      bind:value={fps}
+      bind:value={tps}
     />
   </p>
 </div>
