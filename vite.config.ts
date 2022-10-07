@@ -1,6 +1,6 @@
 import { sveltekit } from "@sveltejs/kit/vite";
 import type { UserConfig } from "vite";
-import wasmPack from "vite-plugin-wasm-pack";
+// import wasmPack from "vite-plugin-wasm-pack";
 import wasm from "vite-plugin-wasm";
 import topLevelAwait from "vite-plugin-top-level-await";
 import path from "path";
@@ -17,7 +17,7 @@ const config: UserConfig = {
     },
     sveltekit(),
     wasm(),
-    wasmPack(["./game-of-life"]),
+    // wasmPack(["./game-of-life"]),
     topLevelAwait()
   ],
   optimizeDeps: {
@@ -32,7 +32,11 @@ const config: UserConfig = {
   },
   server: {
     host: "localhost",
-    port: 4000
+    port: 4000,
+    fs: {
+      //! this should be changed to only include specific paths
+      strict: false
+    }
   },
   resolve: {
     alias: {
