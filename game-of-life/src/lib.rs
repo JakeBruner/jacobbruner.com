@@ -107,9 +107,9 @@ impl Universe {
         }
     }
 
-    pub fn render(&self) -> String {
-        self.to_string() // our Display trait below
-    }
+    // pub fn render(&self) -> String {
+    //     self.to_string() // our Display trait below
+    // }
 
     pub fn width(&self) -> u32 {
         self.width
@@ -125,16 +125,16 @@ impl Universe {
 }
 
 // to make this as a string, we implement std::fmt::Display
-use std::fmt::Display;
-impl Display for Universe {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        for line in self.cells.as_slice().chunks(self.width as usize) {
-            for &cell in line {
-                let symbol = if cell == Cell::Dead { '◻' } else { '◼' };
-                write!(f, "{}", symbol)?;
-            }
-            write!(f, "\n")?;
-        }
-        Ok(())
-    }
-}
+// use std::fmt::Display;
+// impl Display for Universe {
+//     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+//         for line in self.cells.as_slice().chunks(self.width as usize) {
+//             for &cell in line {
+//                 let symbol = if cell == Cell::Dead { '◻' } else { '◼' };
+//                 write!(f, "{}", symbol)?;
+//             }
+//             write!(f, "\n")?;
+//         }
+//         Ok(())
+//     }
+// }

@@ -18,10 +18,6 @@ export class Universe {
 */
   static new(): Universe;
 /**
-* @returns {string}
-*/
-  render(): string;
-/**
 * @returns {number}
 */
   width(): number;
@@ -42,12 +38,9 @@ export interface InitOutput {
   readonly __wbg_universe_free: (a: number) => void;
   readonly universe_tick: (a: number) => void;
   readonly universe_new: () => number;
-  readonly universe_render: (a: number, b: number) => void;
   readonly universe_width: (a: number) => number;
   readonly universe_height: (a: number) => number;
   readonly universe_cells: (a: number) => number;
-  readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
-  readonly __wbindgen_free: (a: number, b: number) => void;
 }
 
 export type SyncInitInput = BufferSource | WebAssembly.Module;
