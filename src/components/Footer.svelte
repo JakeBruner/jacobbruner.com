@@ -17,8 +17,8 @@
         <div class="basis-[37.5%] md:px-7 px-7 xl:px-16">
           <h4 class="pb-4 font-bold text-primary">Website</h4>
           <p class="leading-relaxed font-light dark:text-zinc-300">
-            Hand-coded by Jacob using Svelte, TailwindCSS, Typescript and many, many hours. Please
-            note, I have never taken a comp-sci class; I have <i>absolutely</i> no idea what I'm doing.
+            Hand-coded by Jacob using Svelte, Rust, Typescript and many, many hours. Please note, I
+            have never taken a comp-sci class; I have <i>absolutely</i> no idea what I'm doing.
           </p>
         </div>
         <div class="basis-[37.5%] md:px-9 px-7 xl:px-16">

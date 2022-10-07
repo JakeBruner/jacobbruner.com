@@ -1,16 +1,16 @@
 {
-  "name": "game-of-life",
-  "collaborators": [
-    "Jacob Bruner <74114605+JakeBruner@users.noreply.github.com>"
-  ],
-  "version": "0.1.0",
-  "files": [
-    "game_of_life_bg.wasm",
-    "game_of_life.js",
-    "game_of_life.d.ts"
-  ],
-  "type": "module",
-  "module": "game_of_life.js",
-  "types": "game_of_life.d.ts",
-  "sideEffects": false
+    "name": "game-of-life",
+    "collaborators": [
+        "Jacob Bruner <74114605+JakeBruner@users.noreply.github.com>"
+    ],
+    "version": "0.1.0",
+    "files": [
+        "game_of_life_bg.wasm",
+        "game_of_life.js",
+        "game_of_life.d.ts"
+    ],
+    "module": "game_of_life.js",
+    "types": "game_of_life.d.ts",
+    "sideEffects": false,
+    "type": "module"
 }

@@ -1,9 +1,9 @@
 import { sveltekit } from "@sveltejs/kit/vite";
 import type { UserConfig } from "vite";
-import wasmPack from "vite-plugin-wasm-pack";
+// import wasmPack from "vite-plugin-wasm-pack";
 import wasm from "vite-plugin-wasm";
 import topLevelAwait from "vite-plugin-top-level-await";
-// import path from "path";
+import path from "path";
 
 /** @type {import('vite').UserConfig} */
 const config: UserConfig = {
@@ -17,7 +17,7 @@ const config: UserConfig = {
     },
     sveltekit(),
     wasm(),
-    wasmPack(["./game-of-life"]),
+    // wasmPack(["./game-of-life"]),
     topLevelAwait()
   ],
   optimizeDeps: {
@@ -28,16 +28,21 @@ const config: UserConfig = {
   },
   build: {
     minify: true
+    // target: "esnext"
   },
   server: {
     host: "localhost",
-    port: 4000
+    port: 4000,
+    fs: {
+      //! this should be changed to only include specific paths
+      strict: false
+    }
+  },
+  resolve: {
+    alias: {
+      $components: path.resolve(__dirname, "./src/components")
+    }
   }
-  // resolve: {
-  //   alias: {
-  //     $rust: path.resolve(__dirname, "./game-of-life/pkg")
-  //   }
-  // }
 };
 
 export default config;

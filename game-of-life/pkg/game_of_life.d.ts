@@ -21,6 +21,18 @@ export class Universe {
 * @returns {string}
 */
   render(): string;
+/**
+* @returns {number}
+*/
+  width(): number;
+/**
+* @returns {number}
+*/
+  height(): number;
+/**
+* @returns {number}
+*/
+  cells(): number;
 }
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
@@ -31,6 +43,9 @@ export interface InitOutput {
   readonly universe_tick: (a: number) => void;
   readonly universe_new: () => number;
   readonly universe_render: (a: number, b: number) => void;
+  readonly universe_width: (a: number) => number;
+  readonly universe_height: (a: number) => number;
+  readonly universe_cells: (a: number) => number;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
   readonly __wbindgen_free: (a: number, b: number) => void;
 }

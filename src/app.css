@@ -21,31 +21,24 @@
 /* PLEASE DONT WASTE MORE HOURS OF YOUR LIFE!!!!!! */
 @layer base {
   body {
-    @apply text-lg;
-    @apply text-zinc-600;
-    @apply dark:text-zinc-200;
+    @apply text-lg text-zinc-600 dark:text-zinc-200;
   }
 
   body.noscroll {
     overflow-y: hidden;
   }
   h1 {
-    @apply text-4xl;
+    @apply text-4xl text-zinc-900 dark:text-zinc-100;
     font-weight: 550;
-    @apply text-zinc-900;
-    @apply dark:text-zinc-100;
   }
   h2 {
-    @apply text-3xl;
+    @apply text-3xl text-zinc-800 dark:text-zinc-200;
     font-weight: 550;
-    @apply text-zinc-800;
-    @apply dark:text-zinc-200;
   }
   p {
     font-weight: 400;
     line-height: 1.5;
-    @apply text-zinc-600;
-    @apply dark:text-zinc-300;
+    @apply text-zinc-600 dark:text-zinc-300;
   }
 }
 

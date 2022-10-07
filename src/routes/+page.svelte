@@ -125,11 +125,46 @@
 </section>
 
 <!-- Interactive stuff on this website :) -->
+<!-- TODO these should be svelte components -->
+<section class="bg-primary items-center pt-10 pb-20 px-4 sm:px-6 lg:pt-16 lg:pb-28 lg:px-8">
+  <!-- <style>
+    .anim {
+      /* text-shadow: 0.03em 0.03em 0 hsla(230, 40%, 50%, 1); */
+    }
+    .anim:after {
+      content: "Interactive Projects!";
+      position: relative;
+      top: 0.06em;
+      left: 0.06em;
+      z-index: -1;
+      text-shadow: none;
+      background-image: linear-gradient(
+        45deg,
+        transparent 80%,
+        hsla(48, 20%, 90%, 1) 45%,
+        hsla(48, 20%, 90%, 1) 55%,
+        transparent 0
+      );
+      background-size: 0.05em 0.05em;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
 
-<section
-  class="min-h-[700px] bg-primary items-center pt-16 pb-20 px-4 sm:px-6 lg:pt-24 lg:pb-28 lg:px-8"
->
-  <h1 class="text-zinc-50 dark:text-zinc-800 underline">Interactive Projects</h1>
+      animation: shad-anim 15s linear infinite;
+    }
+
+    @keyframes shad-anim {
+      0% {
+        background-position: 0 0;
+      }
+      0% {
+        background-position: 100% -100%;
+      }
+    }
+  </style> -->
+  <!-- TODO -->
+  <h1 class="anim text-6xl text-zinc-50 dark:text-zinc-800 italic text-center">
+    Interactive Projects!
+  </h1>
 
   <div class="mt-12 grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12 content-center">
     <div
@@ -144,6 +179,20 @@
           <p class="text-xl font-medium dark:text-zinc-100 text-zinc-800">
             Elliptic Curve Cayley Table Generator
           </p>
+        </div>
+      </a>
+    </div>
+
+    <div
+      class="group border border-zinc-300 dark:border-zinc-700 rounded-lg flex flex-col justify-between self-center transition ease-in-out duration-200 shadow-lg dark:shadow-white/5 hover:shadow-xl hover:dark:shadow-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-800/25 hover:scale-[101%]"
+    >
+      <a href="/game-of-life" data-svelte-prefetch>
+        <div
+          class="group-hover:contrast-[90%] rounded-t-lg aspect-w-16 lg:aspect-h-9 aspect-h-7 w-full bg-cover bg-center min-w-full transition ease-in-out duration-200  border-b border-zinc-100 dark:border-zinc-800"
+          style="background-image: url('/thumbnails/gameoflife.png')"
+        />
+        <div class="bg-zinc-100 dark:bg-zinc-800 rounded-b-lg p-4 self-end">
+          <p class="text-xl font-medium dark:text-zinc-100 text-zinc-800">Conway's Game of Life</p>
         </div>
       </a>
     </div>

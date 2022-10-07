@@ -92,7 +92,7 @@ impl Universe {
 
         let cells = (0..width * height)
             .map(|i| {
-                if i % 9 == 0 || i % 4 == 0 {
+                if i % 2 == 0 || i % 11 == 0 {
                     Cell::Alive
                 } else {
                     Cell::Dead
@@ -109,6 +109,18 @@ impl Universe {
 
     pub fn render(&self) -> String {
         self.to_string() // our Display trait below
+    }
+
+    pub fn width(&self) -> u32 {
+        self.width
+    }
+
+    pub fn height(&self) -> u32 {
+        self.height
+    }
+
+    pub fn cells(&self) -> *const Cell {
+        self.cells.as_ptr() // a pointer to the vec
     }
 }
 

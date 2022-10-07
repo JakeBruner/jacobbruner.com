@@ -1,12 +1,14 @@
 {
   "extends": "./.svelte-kit/tsconfig.json",
-  "exclude": ["node_modules/*", "game-of-life/*", "static/*"],
+  "exclude": ["game-of-life/*", "static/*", "node_modules/game-of-life/*"],
   "compilerOptions": {
     "baseUrl": ".",
     "typeRoots": ["node_modules/@types"],
     "paths": {
       "$lib": ["src/lib"],
-      "$lib/*": ["src/lib/*"]
+      "$lib/*": ["src/lib/*"],
+      "$components": ["src/components"],
+      "$components/*": ["src/components/*"]
     },
 
     // "allowJs": true,

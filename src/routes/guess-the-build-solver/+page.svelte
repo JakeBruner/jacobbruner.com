@@ -24,6 +24,7 @@
     name="description"
   />
 </svelte:head>
+
 <!-- <button on:click="{test}">hi</button> -->
 <div class="sm:px-40 px-20 sm:pt-20 pt-10">
   <h1 class="font-medium py-5 dark:text-grey-0">Guess The Build Solver</h1>
