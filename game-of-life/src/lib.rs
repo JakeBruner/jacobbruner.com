@@ -1,5 +1,9 @@
 mod utils;
 
+// extern crate fixedbitset;
+extern crate js_sys;
+
+// use fixedbitset::FixedBitSet;
 use wasm_bindgen::prelude::*;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
@@ -85,20 +89,59 @@ impl Universe {
         self.cells = next;
     }
 
-    pub fn new() -> Universe {
+    pub fn new(width: u32, height: u32, mode: u8, density: f64) -> Universe {
         // * constructor
-        let width = 64;
-        let height = 64;
+        // I assume density is inputted even if mode is not 2
 
-        let cells = (0..width * height)
-            .map(|i| {
-                if i % 2 == 0 || i % 11 == 0 {
-                    Cell::Alive
-                } else {
-                    Cell::Dead
+        utils::set_panic_hook();
+        assert!(mode <= 3, "mode must be between 0 and 2");
+
+        // if mode == 2 {
+        //     assert!(density.is_some() && density.unwrap() > 0.0 && density.unwrap() < 1.0);
+        // };
+
+        let cells = match mode {
+            0 => (0..width * height).map(|_| Cell::Dead).collect(),
+            1 => (0..width * height)
+                .map(|i| {
+                    if i % 2 == 0 || i % 11 == 0 {
+                        Cell::Alive
+                    } else {
+                        Cell::Dead
+                    }
+                })
+                .collect(),
+            2 => (0..width * height)
+                .map(|_| {
+                    if js_sys::Math::random() < density {
+                        Cell::Alive
+                    } else {
+                        Cell::Dead
+                    }
+                })
+                .collect(),
+            //* mode 3 is a glider
+            3 => {
+                let mut temp: Vec<Cell> = (0..width * height).map(|_| Cell::Dead).collect();
+                let glider = [(1, 0), (2, 1), (0, 2), (1, 2), (2, 2)];
+                for (row, col) in glider.iter().cloned() {
+                    let idx = Universe::get_index(
+                        &Universe {
+                            width,
+                            height,
+                            cells: temp.clone(),
+                        },
+                        row,
+                        col,
+                    );
+                    temp[idx] = Cell::Alive;
                 }
-            })
-            .collect();
+                temp
+            } // this a bit hacky
+            _ => (0..width * height).map(|_| Cell::Dead).collect(),
+        };
+
+        // // glider
 
         Universe {
             width,

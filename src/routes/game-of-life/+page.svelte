@@ -16,6 +16,11 @@
   let ticknum = 0;
   let now: number, then: number, delta: number;
 
+  let width = 64;
+  let height = 64;
+  let mode = 3;
+  let density = 0.5;
+
   onMount(() => {
     //* ensure canvas is mounted
     init().then((instance) => {
@@ -23,7 +28,7 @@
       // const tick = instance.exports.tick as CallableFunction;
       // console.log(instance.memory);
 
-      universe = Universe.new();
+      universe = Universe.new(width, height, mode, density);
       ctx = canvas.getContext("2d")!; // ignore null union type
       // instance.exports.
 
@@ -104,14 +109,12 @@
         requestAnimationFrame(renderLoop);
       }
 
-      universe = Universe.new();
-
       then = Date.now();
     });
   }); // onMount
 
   const reset = () => {
-    universe = Universe.new();
+    universe = Universe.new(width, height, mode, density);
     ticknum = 0;
   };
 
