@@ -150,6 +150,7 @@
   let height: number;
   let mode: number; // default set on the dropdown menu below
   let density = 0.5;
+  // $: console.log("density", density);
 </script>
 
 <svelte:head>
