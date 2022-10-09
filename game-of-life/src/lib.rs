@@ -8,6 +8,7 @@ use wasm_bindgen::prelude::*;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
+#[allow(unused)]
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
@@ -124,6 +125,9 @@ impl Universe {
             3 => {
                 let mut temp: Vec<Cell> = (0..width * height).map(|_| Cell::Dead).collect();
                 let glider = [(1, 0), (2, 1), (0, 2), (1, 2), (2, 2)];
+                // display in middle of screen
+                let offset = (width / 2 - 1, height / 2 - 1);
+
                 for (row, col) in glider.iter().cloned() {
                     let idx = Universe::get_index(
                         &Universe {
@@ -131,8 +135,8 @@ impl Universe {
                             height,
                             cells: temp.clone(),
                         },
-                        row,
-                        col,
+                        row + offset.0,
+                        col + offset.1,
                     );
                     temp[idx] = Cell::Alive;
                 }
