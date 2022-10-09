@@ -102,6 +102,7 @@ impl Universe {
         let mut cells = FixedBitSet::with_capacity(size);
 
         assert!(mode <= 4, "mode must be between 0 and 4");
+        assert!(density <= 1.0, "density must be between 0 and 1");
 
         // if mode == 2 {
         //     assert!(density.is_some() && density.unwrap() > 0.0 && density.unwrap() < 1.0);
@@ -146,7 +147,7 @@ impl Universe {
                 // math generated
                 // if congruent to 0 mod 2 or mod 7, then alive
                 for i in 0..size {
-                    cells.set(i, i % 2 == 0 || i % 7 == 0);
+                    cells.set(i, i % 3 == 0 || i % 11 == 0);
                 }
             }
             3 => {

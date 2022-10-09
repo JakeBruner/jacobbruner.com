@@ -14,7 +14,7 @@
   let ticknum = 0;
   let now: number, then: number, delta: number;
 
-  let animate: number;
+  let animate: number | null;
 
   let memory: ArrayBuffer;
 
@@ -117,13 +117,15 @@
 
   const reset = (mode: number) => {
     // universe = Universe.new(width, height, 0, density);
-    updateWidthHeight();
+    // updateWidthHeight();
     universe = Universe.new(width, height, mode, density);
     const universe_width = universe.width();
     const universe_height = universe.height();
     canvas.height = (CELL_SIZE + 1) * universe_height + 1;
     canvas.width = (CELL_SIZE + 1) * universe_width + 1;
     ticknum = 0;
+    drawGrid();
+    drawCells(memory);
   };
 
   const start = () => {
@@ -131,9 +133,14 @@
     requestAnimationFrame(renderLoop);
   };
   const stop = () => {
-    cancelAnimationFrame(animate);
+    cancelAnimationFrame(animate!);
+    animate = null;
+    // im just so enthusiastic with this exclamation mark...
   };
 
+  $: isPaused = animate == undefined;
+
+  // $: console.log("isPaused", isPaused);
   const updateWidthHeight = () => {
     width = Math.floor(window_width / (CELL_SIZE + 1));
     height = Math.floor((window_height * (3.5 / 5)) / (CELL_SIZE + 1));
@@ -194,18 +201,26 @@
 
 <div class=" pt-5 text-center">
   <div class="flex flex-row justify-center space-x-3">
+    <style>
+      .disabled {
+        pointer-events: none;
+        opacity: 0.5;
+      }
+    </style>
     <button
       class=" bg-amber-500 hover:bg-amber-600 text-white font-bold py-1 px-2 rounded-md"
+      class:disabled={isPaused}
       on:click={stop}
     >
       Stop
     </button>
     <button
-      class=" bg-sky-400 hover:bg-sky-600 text-white font-bold py-1 px-2 rounded-md"
+      class=" bg-lime-500 hover:bg-lime-600 text-white font-bold py-1 px-2 rounded-md"
+      class:disabled={!isPaused}
       on:click={start}>Start</button
     >
     <button
-      class=" bg-primary hover:bg-primary/60 text-white font-bold py-1 px-2 rounded-md"
+      class=" bg-primary hover:brightness-[80%] text-white font-bold py-1 px-2 rounded-md"
       on:click={() => reset(mode)}>Reset</button
     >
   </div>
