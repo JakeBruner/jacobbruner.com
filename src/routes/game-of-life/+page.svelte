@@ -1,9 +1,7 @@
 <script lang="ts">
-  import init, { Universe, Cell } from "game-of-life";
+  import init, { Universe } from "game-of-life";
   import { onMount } from "svelte";
-  // const width = 64;
 
-  const CELL_SIZE = 10; // px
   const GRID_COLOR = "#CCCCCC";
   const DEAD_COLOR = "#FFFFFF";
   const ALIVE_COLOR = "#27272A"; // zinc-800
@@ -16,112 +14,151 @@
   let ticknum = 0;
   let now: number, then: number, delta: number;
 
+  let animate: number | null;
+
+  let memory: ArrayBuffer;
+
   onMount(() => {
     //* ensure canvas is mounted
     init().then((instance) => {
       //* ensure wasm is loaded
       // const tick = instance.exports.tick as CallableFunction;
       // console.log(instance.memory);
-
-      universe = Universe.new();
+      updateWidthHeight();
+      universe = Universe.new(width, height, mode, density);
       ctx = canvas.getContext("2d")!; // ignore null union type
       // instance.exports.
+      memory = instance.memory.buffer;
 
       if (canvas && ctx) {
-        const width = universe.width();
-        const height = universe.height();
+        const universe_width = universe.width();
+        const universe_height = universe.height();
 
-        canvas.height = (CELL_SIZE + 1) * height + 1;
-        canvas.width = (CELL_SIZE + 1) * width + 1;
+        canvas.height = (CELL_SIZE + 1) * universe_height + 1;
+        canvas.width = (CELL_SIZE + 1) * universe_width + 1;
 
         //* helper functions
         // (in this scope becuase they mutate global state which fucks with null checking)
-        const drawGrid = () => {
-          ctx.beginPath();
-          ctx.strokeStyle = GRID_COLOR;
-
-          // Vertical lines.
-          for (let i = 0; i <= width; i++) {
-            ctx.moveTo(i * (CELL_SIZE + 1) + 1, 0);
-            ctx.lineTo(i * (CELL_SIZE + 1) + 1, (CELL_SIZE + 1) * height + 1);
-          }
-
-          // Horizontal lines.
-          for (let j = 0; j <= height; j++) {
-            ctx.moveTo(0, j * (CELL_SIZE + 1) + 1);
-            ctx.lineTo((CELL_SIZE + 1) * width + 1, j * (CELL_SIZE + 1) + 1);
-          }
-
-          ctx.stroke();
-        };
-        const getIndex = (row: number, column: number) => {
-          return row * width + column;
-        };
-        const drawCells = () => {
-          const cellsPtr = universe.cells();
-
-          const cells = new Uint8Array(instance.memory.buffer, cellsPtr, width * height);
-
-          ctx.beginPath();
-
-          for (let row = 0; row < height; row++) {
-            for (let col = 0; col < width; col++) {
-              const idx = getIndex(row, col);
-
-              ctx.fillStyle = cells[idx] === Cell.Dead ? DEAD_COLOR : ALIVE_COLOR;
-
-              ctx.fillRect(
-                col * (CELL_SIZE + 1) + 1,
-                row * (CELL_SIZE + 1) + 1,
-                CELL_SIZE,
-                CELL_SIZE
-              );
-            }
-          }
-
-          ctx.stroke();
-        };
 
         //* render loop
-        const renderLoop = () => {
-          now = Date.now();
-          delta = now - then;
 
-          if (delta > ms) {
-            ticknum++;
-            then = now - (delta % ms);
-
-            universe.tick();
-            drawGrid();
-            drawCells();
-          }
-
-          requestAnimationFrame(renderLoop);
-        };
-
-        drawGrid();
-        drawCells();
         requestAnimationFrame(renderLoop);
+        drawGrid();
+        drawCells(memory);
       }
 
-      universe = Universe.new();
-
-      then = Date.now();
+      then = performance.now();
     });
   }); // onMount
 
-  const reset = () => {
-    universe = Universe.new();
-    ticknum = 0;
+  const renderLoop = () => {
+    now = performance.now();
+    delta = now - then;
+
+    if (delta > ms) {
+      ticknum++;
+      then = now - (delta % ms);
+
+      // debugger;
+      universe.tick();
+      drawGrid();
+      drawCells(memory);
+    }
+
+    animate = requestAnimationFrame(renderLoop);
+    // return
   };
 
-  // const start = () => {
-  //   requestAnimationFrame(() => {
-  //     universe.tick();
-  //   });
-  // };
+  const drawGrid = () => {
+    ctx.beginPath();
+    ctx.strokeStyle = GRID_COLOR;
+
+    // Vertical lines.
+    for (let i = 0; i <= width; i++) {
+      ctx.moveTo(i * (CELL_SIZE + 1) + 1, 0);
+      ctx.lineTo(i * (CELL_SIZE + 1) + 1, (CELL_SIZE + 1) * height + 1);
+    }
+
+    // Horizontal lines.
+    for (let j = 0; j <= height; j++) {
+      ctx.moveTo(0, j * (CELL_SIZE + 1) + 1);
+      ctx.lineTo((CELL_SIZE + 1) * width + 1, j * (CELL_SIZE + 1) + 1);
+    }
+
+    ctx.stroke();
+  };
+  const getIndex = (row: number, column: number) => {
+    return row * width + column;
+  };
+  const bitIsSet = (n: number, arr: Uint8Array) => {
+    const byte = Math.floor(n / 8);
+    const mask = 1 << n % 8;
+    return (arr[byte] & mask) === mask;
+  };
+  const drawCells = (memory: ArrayBuffer) => {
+    const cellsPtr = universe.cells(); // usize pointer to cells
+
+    const cells = new Uint8Array(memory, cellsPtr, (width * height) / 8); // 8 bits per byte
+
+    ctx.beginPath();
+
+    for (let row = 0; row < height; row++) {
+      for (let col = 0; col < width; col++) {
+        const idx = getIndex(row, col);
+
+        ctx.fillStyle = bitIsSet(idx, cells) ? ALIVE_COLOR : DEAD_COLOR;
+
+        ctx.fillRect(col * (CELL_SIZE + 1) + 1, row * (CELL_SIZE + 1) + 1, CELL_SIZE, CELL_SIZE);
+      }
+    }
+
+    ctx.stroke();
+  };
+
+  const reset = (mode: number) => {
+    // universe = Universe.new(width, height, 0, density);
+    // updateWidthHeight();
+    universe = Universe.new(width, height, mode, density);
+    const universe_width = universe.width();
+    const universe_height = universe.height();
+    canvas.height = (CELL_SIZE + 1) * universe_height + 1;
+    canvas.width = (CELL_SIZE + 1) * universe_width + 1;
+    ticknum = 0;
+    drawGrid();
+    drawCells(memory);
+  };
+
+  const start = () => {
+    //TODO start doesn't work
+    requestAnimationFrame(renderLoop);
+  };
+  const stop = () => {
+    cancelAnimationFrame(animate!);
+    animate = null;
+    // im just so enthusiastic with this exclamation mark...
+  };
+
+  $: isPaused = animate == undefined;
+
+  // $: console.log("isPaused", isPaused);
+  const updateWidthHeight = () => {
+    width = Math.floor(window_width / (CELL_SIZE + 1));
+    height = Math.floor((window_height * (3.5 / 5)) / (CELL_SIZE + 1));
+  }; // yes, this has to mutate global state.
+
+  // $: reset(mode);
+
   let tps = 20;
   $: ms = 1000 / tps;
+
+  const CELL_SIZE = 8; // px
+  let window_height: number; // see svelte:window
+  let window_width: number;
+  let width: number;
+  let height: number;
+  let mode: number; // default set on the dropdown menu below
+  let density = 0.5;
+  // $: console.log("density", density);
 </script>
 
 <svelte:head>
@@ -136,20 +173,22 @@
   />
 </svelte:head>
 
+<svelte:window bind:innerHeight={window_height} bind:innerWidth={window_width} on:resize />
+
 <div class="pt-5 text-center">
   <h1>Conway's Game of Life</h1>
   <h2 class="text-xl">Running with Rust + Webassembly</h2>
   <p class="pt-3">
     Tick: {ticknum} running at tps:
     <input
-      class="bg-zinc-200 rounded-md p-0.5 pl-1 dark:bg-zinc-700 w-14"
+      class="bg-zinc-200 rounded p-0.5 pl-1.5 dark:bg-zinc-700 w-14 shadow-inner"
       type="text"
       bind:value={tps}
     />
   </p>
 </div>
 
-<!-- <pre
+<!-- <!-- <pre
   bind:this={pre}
   class="mx-auto overflow-x-auto pt-5 md:leading-[0.92rem] leading-[0.6rem] text-sm md:text-lg inset-0 w-full h-full flex flex-col items-center justify-center"
 /> -->
@@ -160,11 +199,57 @@
 
 <!-- bind:this isnt working -->
 
-<div class=" pt-5 text-center underline">
-  <button
-    class="bg-primary hover:bg-primary/60 text-white font-bold py-1 px-2 rounded"
-    on:click={reset}>Reset</button
-  >
+<div class=" pt-5 text-center">
+  <div class="flex flex-row justify-center space-x-3">
+    <style>
+      .disabled {
+        pointer-events: none;
+        opacity: 0.5;
+      }
+    </style>
+    <button
+      class=" bg-amber-500 hover:bg-amber-600 text-white font-bold py-1 px-2 rounded-md"
+      class:disabled={isPaused}
+      on:click={stop}
+    >
+      Stop
+    </button>
+    <button
+      class=" bg-lime-500 hover:bg-lime-600 text-white font-bold py-1 px-2 rounded-md"
+      class:disabled={!isPaused}
+      on:click={start}>Start</button
+    >
+    <button
+      class=" bg-primary hover:brightness-[80%] text-white font-bold py-1 px-2 rounded-md"
+      on:click={() => reset(mode)}>Reset</button
+    >
+  </div>
+  <!-- {mode} -->
+
+  <div class="pt-5 !no-underline">
+    <label for="mode">Mode:</label>
+    <select
+      class="bg-zinc-200 rounded-md p-2 pl-1 dark:bg-zinc-700 shadow-inner"
+      bind:value={mode}
+      on:change={() => reset(mode)}
+    >
+      <option selected value="1">Random</option>
+      <option value="2">Math Pattern</option>
+      <option value="3">Spawn Glider</option>
+      <option value="4">Spawn Glider Gun</option>
+    </select>
+
+    {#if mode == 1}
+      <p class="pt-3">
+        Density (0.0 - 1.0):
+        <input
+          class="bg-zinc-200 rounded p-0.5 pl-1.5 dark:bg-zinc-700 w-14 shadow-inner"
+          type="text"
+          on:change={() => reset(mode)}
+          bind:value={density}
+        />
+      </p>{/if}
+  </div>
   <br />
   <br />
 
@@ -182,3 +267,10 @@
     beautiful and interesting from a simple set of rules.
   </p>
 </div>
+
+<style>
+  button {
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+  }
+</style>
