@@ -188,7 +188,7 @@
   </p>
 </div>
 
-<!-- <pre
+<!-- <!-- <pre
   bind:this={pre}
   class="mx-auto overflow-x-auto pt-5 md:leading-[0.92rem] leading-[0.6rem] text-sm md:text-lg inset-0 w-full h-full flex flex-col items-center justify-center"
 /> -->

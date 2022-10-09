@@ -23,6 +23,7 @@ export const isPrime = function (n: number): boolean {
 };
 
 // this is some of the sexiest code ive written
+// no its not you were lying to yourself.
 
 export class FiniteField {
   readonly characteristic: number;
@@ -35,8 +36,8 @@ export class FiniteField {
     }
     this.characteristic = char;
 
-    let sqrt: number[] = [];
-    let inv: number[] = []; //
+    const sqrt: number[] = [];
+    const inv: number[] = []; //
 
     for (let i = 0; i < this.characteristic; i++) {
       sqrt[i] = -1;
@@ -70,9 +71,9 @@ export class FiniteField {
 // const Id = new Point()
 
 export class EllipticCurve extends FiniteField {
-  a: number;
-  b: number;
-  points: Point[];
+  readonly a: number;
+  readonly b: number;
+  readonly points: Point[];
   constructor(a: number, b: number, p: number) {
     super(p);
     this.a = a;
@@ -81,7 +82,7 @@ export class EllipticCurve extends FiniteField {
   }
 
   get kRationalPoints(): Point[] {
-    let points: Point[] = [];
+    const points: Point[] = [];
     points.push(new Point(this)); // identity
     for (let i = 0; i < this.characteristic; i++) {
       for (let j = 0; j <= this.characteristic / 2; j++) {
@@ -100,7 +101,9 @@ export class EllipticCurve extends FiniteField {
   }
 
   get getCayleyTable(): Point[][] {
-    let table: Point[][] = [[new Point(this)]]; // not technically the identity element
+    const table: Point[][] = [[new Point(this)]]; // not technically the identity element
+    // note that constructing the table is O(n^2)
+    // also note const still allows for array mutation
 
     const len = this.points.length;
 
@@ -177,6 +180,7 @@ export class RawPoint {
 //! This is likely unnessecary and memory-heavy
 export class Point extends RawPoint {
   private _curve: EllipticCurve; //! this was a mistake
+  //TODO rewrite this
   // i need this so .plus() can be a method on class Point
   // this allows Point to pass the monad context of the underlying curve under it's methods that make new Points
 
@@ -269,7 +273,7 @@ export class Point extends RawPoint {
 }
 
 export const getSubgroup = (point: RawPoint, curve: EllipticCurve): RawPoint[] => {
-  let subgroup: RawPoint[] = [point];
+  const subgroup: RawPoint[] = [point];
   // console.log(subgroup);
 
   if (!(curve instanceof EllipticCurve)) {
@@ -346,7 +350,7 @@ export const getSubgroup = (point: RawPoint, curve: EllipticCurve): RawPoint[] =
 
 export const getFactors = (num: number): number[] => {
   const half = num / 2 + 1;
-  let factors = [];
+  const factors = [];
   for (let i = 2; i < half; i++) {
     if (num % i === 0) {
       factors.push(i);

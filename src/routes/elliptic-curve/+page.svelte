@@ -96,7 +96,7 @@
     content="Elliptic curves are a special type of algebraic curve that have a well-defined group structure
     on them by drawing secants through points. Over a finite field, however, they posess different
     properties that make them suitable for use in cryptography. To attempt to understand their group
-    struture, I've built a program that calculates the number of points on the curve and generates
+    structure, I've built a program that calculates the number of points on the curve and generates
     the cayley table."
     name="description"
   />
@@ -284,7 +284,7 @@
   {/if}
 </div>
 
-<div class="sm:px-40 px-10 pt-5 sm:pt-10 text-2xl">
+<div class="sm:px-40 px-10 pt-5 sm:pt-10">
   <p class="font-light text-lg">
     Some quick notes about the group structure on an elliptic curve: The elliptic curve group 𝐸(𝔽<sub
       >𝑞</sub
@@ -295,8 +295,21 @@
     groups (by the fund. thm. finitely generated abelian groups). This means 𝐸(𝔽<sub>𝑞</sub>) ≅ ℤ/𝑝<sup
       >𝛼</sup
     >ℤ ⨉ ℤ/𝑝<sup>𝛽</sup>ℤ with this product being taken over the primes dividing the order of the
-    group, i.e., it is isomorphic to a product of p-primary groups. All of these facts can be proved
-    quite easily with Sylow's thms. for instance.
+    group, i.e., it is isomorphic to a product of p-primary groups.
+    <br />
+    Importantly, this group structure is markedly more complex than plain cyclic groups ℤ/𝑝<sup
+      >𝛼</sup
+    >ℤ, which are employed cryptosystems such as RSA and ElGamal—requiring much larger keys to
+    achieve the same level of security (as compared to elliptic curve cryptosystems). In this
+    respect, elliptic curve cryptography achieves a beautiful balance between security and
+    efficiency. Who said pure math didn't have real-world applications? :3
+    <br />
+    <br />
+    <span class="text-zinc-500 italic text-base ">
+      For a good introduction to the number theory and group theory behind cryptography, I have to
+      reccomend "A Course in Number Theory and Cryptography" by Neal Koblitz—its quite approachable
+      without many prerequisites.
+    </span>
   </p>
 </div>
 
