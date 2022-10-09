@@ -18,9 +18,10 @@
 
   let width = 64;
   let height = 64;
-  let mode = 4;
+  let mode: number; // default set on the dropdown menu below
   let density = 0.5;
 
+  let stopped: boolean = false;
   onMount(() => {
     //* ensure canvas is mounted
     init().then((instance) => {
@@ -96,17 +97,23 @@
         const renderLoop = () => {
           now = Date.now();
           delta = now - then;
+          if (!stopped) {
+            if (delta > ms) {
+              ticknum++;
+              then = now - (delta % ms);
 
-          if (delta > ms) {
-            ticknum++;
-            then = now - (delta % ms);
+              universe.tick();
+              drawGrid();
+              drawCells();
+            }
 
-            universe.tick();
-            drawGrid();
-            drawCells();
+            requestAnimationFrame(renderLoop);
+          } else {
+            if (delta > ms) {
+              then = now - (delta % ms);
+            }
           }
-
-          requestAnimationFrame(renderLoop);
+          // return
         };
 
         drawGrid();
@@ -118,16 +125,22 @@
     });
   }); // onMount
 
-  const reset = () => {
+  const reset = (mode: number) => {
+    universe = Universe.new(width, height, 0, density);
     universe = Universe.new(width, height, mode, density);
     ticknum = 0;
   };
 
-  // const start = () => {
-  //   requestAnimationFrame(() => {
-  //     universe.tick();
-  //   });
-  // };
+  const start = () => {
+    //TODO start doesn't work
+    stopped = false;
+  };
+  const stop = () => {
+    stopped = true;
+  };
+
+  // $: reset(mode);
+
   let tps = 20;
   $: ms = 1000 / tps;
 </script>
@@ -150,7 +163,7 @@
   <p class="pt-3">
     Tick: {ticknum} running at tps:
     <input
-      class="bg-zinc-200 rounded-md p-0.5 pl-1 dark:bg-zinc-700 w-14"
+      class="bg-zinc-200 rounded-md-md p-0.5 pl-1 dark:bg-zinc-700 w-14"
       type="text"
       bind:value={tps}
     />
@@ -169,10 +182,55 @@
 <!-- bind:this isnt working -->
 
 <div class=" pt-5 text-center underline">
-  <button
-    class="bg-primary hover:bg-primary/60 text-white font-bold py-1 px-2 rounded"
-    on:click={reset}>Reset</button
-  >
+  <div class="flex flex-row justify-center space-x-3" style="text-decoration: underline;">
+    <button
+      class=" bg-amber-500 hover:bg-amber-600 text-white font-bold py-1 px-2 rounded-md"
+      on:click={stop}><span>Stop</span></button
+    >
+    <button
+      class=" bg-sky-400 hover:bg-sky-600 text-white font-bold py-1 px-2 rounded-md"
+      on:click={start}><span style="text-decoration: underline;">Start</span></button
+    >
+    <button
+      class=" bg-primary hover:bg-primary/60 text-white font-bold py-1 px-2 rounded-md"
+      on:click={() => reset(mode)}><span class="!no-underline!">Reset</span></button
+    >
+  </div>
+  {mode}
+
+  <div class="pt-5">
+    <select class="bg-zinc-200 rounded-md p-1 pl-1 dark:bg-zinc-700" bind:value={mode}>
+      <option
+        on:change={() => {
+          console.log("nofuknway");
+          reset(mode);
+        }}
+        selected
+        value="1">Random</option
+      >
+      <option
+        on:change={() => {
+          console.log("nofuknway");
+          reset(mode);
+        }}
+        value="2">Math Pattern</option
+      >
+      <option
+        on:change={() => {
+          console.log("nofuknway");
+          reset(mode);
+        }}
+        value="2">Spawn Glider</option
+      >
+      <option
+        on:change={() => {
+          console.log("nofuknway");
+          reset(mode);
+        }}
+        value="3">Spawn Glider Gun</option
+      >
+    </select>
+  </div>
   <br />
   <br />
 
@@ -190,3 +248,13 @@
     beautiful and interesting from a simple set of rules.
   </p>
 </div>
+
+<style>
+  button {
+    font: inherit;
+    transition: all 0.2s ease-in-out;
+  }
+  span {
+    text-decoration: none !important;
+  }
+</style>

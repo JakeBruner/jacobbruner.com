@@ -7,6 +7,9 @@ use fixedbitset::FixedBitSet;
 // use fixedbitset::FixedBitSet;
 use wasm_bindgen::prelude::*;
 
+// how to raise error
+// https://rustwasm.github.io/docs/wasm-bindgen/reference/throwing-and-catching-exceptions.html
+
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
 #[allow(unused)]
@@ -136,9 +139,8 @@ impl Universe {
             }
             2 => {
                 // math generated
-                for i in 0..size {
-                    cells.set(i, i == 0 % 2 || i == 0 % 7)
-                }
+                //TODO implement
+                panic!("not implemented");
             }
             3 => {
                 // glider
@@ -303,4 +305,9 @@ impl Display for Universe {
         }
         Ok(())
     }
+}
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
 }
