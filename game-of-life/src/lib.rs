@@ -139,8 +139,10 @@ impl Universe {
             }
             2 => {
                 // math generated
-                //TODO implement
-                panic!("not implemented");
+                // if congruent to 0 mod 2 or mod 7, then alive
+                for i in 0..size {
+                    cells.set(i, i % 2 == 0 || i % 7 == 0);
+                }
             }
             3 => {
                 // glider
