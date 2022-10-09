@@ -17,6 +17,11 @@ use wasm_bindgen::prelude::*;
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
+// extern crate web_sys;
+// macro_rules! console_log {
+//     ($($t:tt)*) => (web_sys::console::log_1(&format_args!($($t)*).to_string().into()))
+// }
+
 #[wasm_bindgen]
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -89,13 +94,13 @@ impl Universe {
     }
 
     pub fn new(width: u32, height: u32, mode: u8, density: f64) -> Universe {
+        utils::set_panic_hook();
         // * constructor
         // I assume density is inputted even if mode is not 2
 
         let size = (width * height) as usize;
         let mut cells = FixedBitSet::with_capacity(size);
 
-        utils::set_panic_hook();
         assert!(mode <= 4, "mode must be between 0 and 4");
 
         // if mode == 2 {
@@ -223,52 +228,6 @@ impl Universe {
             }
         }
 
-        // let cells = match mode {
-        //     0 => (0..width * height).map(|_| Cell::Dead).collect(),
-        //     1 => (0..width * height)
-        //         .map(|i| {
-        //             if i % 2 == 0 || i % 11 == 0 {
-        //                 Cell::Alive
-        //             } else {
-        //                 Cell::Dead
-        //             }
-        //         })
-        //         .collect(),
-        //     2 => (0..width * height)
-        //         .map(|_| {
-        //             if js_sys::Math::random() < density {
-        //                 Cell::Alive
-        //             } else {
-        //                 Cell::Dead
-        //             }
-        //         })
-        //         .collect(),
-        //     //* mode 3 is a glider
-        //     3 => {
-        //         let mut temp: Vec<Cell> = (0..width * height).map(|_| Cell::Dead).collect();
-        //         let glider = [(1, 0), (2, 1), (0, 2), (1, 2), (2, 2)];
-        //         // display in middle of screen
-        //         let offset = (width / 2 - 1, height / 2 - 1);
-
-        //         for (row, col) in glider.iter().cloned() {
-        //             let idx = Universe::get_index(
-        //                 &Universe {
-        //                     width,
-        //                     height,
-        //                     cells: temp.clone(),
-        //                 },
-        //                 row + offset.0,
-        //                 col + offset.1,
-        //             );
-        //             temp[idx] = Cell::Alive;
-        //         }
-        //         temp
-        //     } // this a bit hacky
-        //     _ => (0..width * height).map(|_| Cell::Dead).collect(),
-        // };
-
-        // // glider
-
         Universe {
             width,
             height,
@@ -290,6 +249,30 @@ impl Universe {
 
     pub fn cells(&self) -> *const u32 {
         self.cells.as_slice().as_ptr() // a pointer to the vec
+    }
+
+    // pub fn set_width(&mut self, width: u32) {
+    //     self.width = width;
+    //     self.cells = FixedBitSet::with_capacity((width * self.height) as usize);
+    // }
+
+    // pub fn set_height(&mut self, height: u32) {
+    //     self.height = height;
+    //     self.cells = FixedBitSet::with_capacity((self.width * height) as usize);
+    // }
+}
+
+// private methods
+impl Universe {
+    pub fn get_cells(&self) -> &FixedBitSet {
+        &self.cells
+    }
+
+    pub fn set_cells(&mut self, cells: &[(u32, u32)]) {
+        for (row, col) in cells.iter().cloned() {
+            let idx = Universe::get_index(self, row, col);
+            self.cells.set(idx, true);
+        }
     }
 }
 

@@ -6,6 +6,7 @@
     "setup": "npm install && npm run build:wasm",
     "build:wasm": "wasm-pack build ./game-of-life --target web && python3 ./scripts/fixwasm.py",
     "watch:wasm": "cd game-of-life && cargo watch -i .gitignore -i \"pkg/*\" -i \"target/*\" -s \"wasm-pack build --target web --dev\"",
+    "test:wasm": "cd game-of-life && wasm-pack test --firefox",
     "dev": "vite",
     "build": "vite build",
     "package": "vite package",

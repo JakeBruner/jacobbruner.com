@@ -59,6 +59,7 @@
       ticknum++;
       then = now - (delta % ms);
 
+      // debugger;
       universe.tick();
       drawGrid();
       drawCells(memory);
