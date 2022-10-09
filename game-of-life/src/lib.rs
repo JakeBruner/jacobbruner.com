@@ -3,6 +3,7 @@ mod utils;
 // extern crate fixedbitset;
 extern crate js_sys;
 
+use fixedbitset::FixedBitSet;
 // use fixedbitset::FixedBitSet;
 use wasm_bindgen::prelude::*;
 
@@ -25,7 +26,7 @@ pub enum Cell {
 pub struct Universe {
     width: u32,
     height: u32,
-    cells: Vec<Cell>, // this will implement std::fmt::Display
+    cells: FixedBitSet, // this will implement std::fmt::Display
 }
 
 impl Universe {
@@ -67,22 +68,16 @@ impl Universe {
                 let idx = self.get_index(row, col);
                 let cell = self.cells[idx];
                 let live_neighbors = self.live_neighbor_count(row, col);
-
-                let next_cell = match (cell, live_neighbors) {
-                    // 1: Any live cell with fewer than two live neighbours dies
-                    (Cell::Alive, x) if x < 2 => Cell::Dead,
-                    // 2: Any live cell with two or three live neighbours lives on
-                    (Cell::Alive, 2) | (Cell::Alive, 3) => Cell::Alive,
-                    // 3: Any live cell with more than three live neighbours dies
-                    (Cell::Alive, x) if x > 3 => Cell::Dead,
-                    // 4: Any dead cell with exactly three live neighbours becomes a live cell
-                    (Cell::Dead, 3) => Cell::Alive,
-
-                    // All other cells remain in the same state.
-                    (otherwise, _) => otherwise,
-                };
-
-                next[idx] = next_cell;
+                next.set(
+                    idx,
+                    match (cell, live_neighbors) {
+                        (true, x) if x < 2 => false,
+                        (true, 2) | (true, 3) => true,
+                        (true, x) if x > 3 => false,
+                        (false, 3) => true,
+                        (otherwise, _) => otherwise,
+                    },
+                );
             }
         }
         // i forgot this last statement causing me an hour of headache :(
@@ -94,56 +89,179 @@ impl Universe {
         // * constructor
         // I assume density is inputted even if mode is not 2
 
+        let size = (width * height) as usize;
+        let mut cells = FixedBitSet::with_capacity(size);
+
         utils::set_panic_hook();
-        assert!(mode <= 3, "mode must be between 0 and 2");
+        assert!(mode <= 4, "mode must be between 0 and 4");
 
         // if mode == 2 {
         //     assert!(density.is_some() && density.unwrap() > 0.0 && density.unwrap() < 1.0);
         // };
 
-        let cells = match mode {
-            0 => (0..width * height).map(|_| Cell::Dead).collect(),
-            1 => (0..width * height)
-                .map(|i| {
-                    if i % 2 == 0 || i % 11 == 0 {
-                        Cell::Alive
-                    } else {
-                        Cell::Dead
-                    }
-                })
-                .collect(),
-            2 => (0..width * height)
-                .map(|_| {
-                    if js_sys::Math::random() < density {
-                        Cell::Alive
-                    } else {
-                        Cell::Dead
-                    }
-                })
-                .collect(),
-            //* mode 3 is a glider
+        //* macro to update the entire array
+        // for (row, col) in glider.iter().cloned() {
+        //     let idx = Universe::get_index(&Universe { width, height, cells: cells.clone() }, row, col);
+        //     cells.set(idx, true);
+        // }
+        // macro_rules! set_cells {
+        //     ($cells:expr, $pattern:expr) => {
+        //         for (row, col) in $pattern.iter().cloned() {
+        //             let idx = Universe::get_index(
+        //                 &Universe {
+        //                     width,
+        //                     height,
+        //                     cells: $cells.clone(),
+        //                 }, // in the middle of the scene
+        //                 row + height / 2,
+        //                 col + width / 2,
+        //             );
+        //             $cells.set(idx, true);
+        //         }
+        //     };
+        // }
+
+        match mode {
+            0 => {
+                // empty
+                for i in 0..size {
+                    cells.set(i, false);
+                }
+            }
+            1 => {
+                // random
+                for i in 0..size {
+                    cells.set(i, js_sys::Math::random() < density);
+                }
+            }
+            2 => {
+                // math generated
+                for i in 0..size {
+                    cells.set(i, i == 0 % 2 || i == 0 % 7)
+                }
+            }
             3 => {
-                let mut temp: Vec<Cell> = (0..width * height).map(|_| Cell::Dead).collect();
+                // glider
                 let glider = [(1, 0), (2, 1), (0, 2), (1, 2), (2, 2)];
-                // display in middle of screen
-                let offset = (width / 2 - 1, height / 2 - 1);
 
                 for (row, col) in glider.iter().cloned() {
                     let idx = Universe::get_index(
                         &Universe {
                             width,
                             height,
-                            cells: temp.clone(),
-                        },
-                        row + offset.0,
-                        col + offset.1,
+                            cells: cells.clone(),
+                        }, // in the middle of the scene
+                        row + height / 2,
+                        col + width / 2,
                     );
-                    temp[idx] = Cell::Alive;
+                    cells.set(idx, true);
                 }
-                temp
-            } // this a bit hacky
-            _ => (0..width * height).map(|_| Cell::Dead).collect(),
-        };
+            }
+            4 => {
+                // glider gun
+                let gun = [
+                    (1, 25),
+                    (2, 23),
+                    (2, 25),
+                    (3, 13),
+                    (3, 14),
+                    (3, 21),
+                    (3, 22),
+                    (3, 35),
+                    (3, 36),
+                    (4, 12),
+                    (4, 16),
+                    (4, 21),
+                    (4, 22),
+                    (4, 35),
+                    (4, 36),
+                    (5, 1),
+                    (5, 2),
+                    (5, 11),
+                    (5, 17),
+                    (5, 21),
+                    (5, 22),
+                    (6, 1),
+                    (6, 2),
+                    (6, 11),
+                    (6, 15),
+                    (6, 17),
+                    (6, 18),
+                    (6, 23),
+                    (6, 25),
+                    (7, 11),
+                    (7, 17),
+                    (7, 25),
+                    (8, 12),
+                    (8, 16),
+                    (9, 13),
+                    (9, 14),
+                ];
+
+                for (row, col) in gun.iter().cloned() {
+                    let idx = Universe::get_index(
+                        &Universe {
+                            width,
+                            height,
+                            cells: cells.clone(),
+                        }, // in the middle of the scene
+                        row,
+                        col,
+                    );
+                    cells.set(idx, true);
+                }
+            }
+            _ => {
+                // empty
+                for i in 0..size {
+                    cells.set(i, false);
+                }
+            }
+        }
+
+        // let cells = match mode {
+        //     0 => (0..width * height).map(|_| Cell::Dead).collect(),
+        //     1 => (0..width * height)
+        //         .map(|i| {
+        //             if i % 2 == 0 || i % 11 == 0 {
+        //                 Cell::Alive
+        //             } else {
+        //                 Cell::Dead
+        //             }
+        //         })
+        //         .collect(),
+        //     2 => (0..width * height)
+        //         .map(|_| {
+        //             if js_sys::Math::random() < density {
+        //                 Cell::Alive
+        //             } else {
+        //                 Cell::Dead
+        //             }
+        //         })
+        //         .collect(),
+        //     //* mode 3 is a glider
+        //     3 => {
+        //         let mut temp: Vec<Cell> = (0..width * height).map(|_| Cell::Dead).collect();
+        //         let glider = [(1, 0), (2, 1), (0, 2), (1, 2), (2, 2)];
+        //         // display in middle of screen
+        //         let offset = (width / 2 - 1, height / 2 - 1);
+
+        //         for (row, col) in glider.iter().cloned() {
+        //             let idx = Universe::get_index(
+        //                 &Universe {
+        //                     width,
+        //                     height,
+        //                     cells: temp.clone(),
+        //                 },
+        //                 row + offset.0,
+        //                 col + offset.1,
+        //             );
+        //             temp[idx] = Cell::Alive;
+        //         }
+        //         temp
+        //     } // this a bit hacky
+        //     _ => (0..width * height).map(|_| Cell::Dead).collect(),
+        // };
 
         // // glider
 
@@ -166,18 +284,19 @@ impl Universe {
         self.height
     }
 
-    pub fn cells(&self) -> *const Cell {
-        self.cells.as_ptr() // a pointer to the vec
+    pub fn cells(&self) -> *const u32 {
+        self.cells.as_slice().as_ptr() // a pointer to the vec
     }
 }
 
 // to make this as a string, we implement std::fmt::Display
 use std::fmt::Display;
 impl Display for Universe {
+    // fixed bit size
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         for line in self.cells.as_slice().chunks(self.width as usize) {
             for &cell in line {
-                let symbol = if cell == Cell::Dead { '◻' } else { '◼' };
+                let symbol = if cell == 0 { '◻' } else { '◼' };
                 write!(f, "{}", symbol)?;
             }
             write!(f, "\n")?;
