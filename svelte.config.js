@@ -9,12 +9,12 @@ const config = {
   extensions: [".svelte", ...mdsvexConfig.extensions],
   preprocess: [
     preprocess({
-      postcss: true,
+      postcss: true
     }),
-    mdsvex(mdsvexConfig),
+    mdsvex(mdsvexConfig)
   ],
   kit: {
-    adapter: adapter(),
+    adapter: adapter()
     // vite: {
     //   plugins: [
     //     wasmPack('./game-of-life/pkg',
@@ -33,7 +33,7 @@ const config = {
     //     exclude: ['game-of-life'],
     //   },
     // },
-  },
+  }
 };
 
 export default config;

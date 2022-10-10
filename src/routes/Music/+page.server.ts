@@ -14,7 +14,7 @@ export async function load(): Promise<{ p: PostInfo[] }> {
   // });
 
   return {
-    p: await allposts,
+    p: await allposts
   };
   // return has to be object type, not array
   // ? this solution is confusing, but necessary for this to behave as type PostInfo[]
