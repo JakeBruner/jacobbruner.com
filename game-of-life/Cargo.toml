@@ -13,12 +13,8 @@ default = ["console_error_panic_hook"]
 [dependencies]
 wasm-bindgen = "0.2.63"
 js-sys = "0.3.60"
-fixedbitset = "0.4.0"
-
-
-
 #* as far as I know, i believe this creates a smaller code size than the rand crate
-
+fixedbitset = "0.4.0"
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
@@ -41,5 +37,5 @@ features = [
 wasm-bindgen-test = "0.3.13"
 
 [profile.release]
-# Tell `rustc` to optimize for small code size.
-opt-level = "s"
+opt-level = "z" # agressive optimization
+lto = true

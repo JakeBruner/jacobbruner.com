@@ -30,6 +30,15 @@ pub enum Cell {
     Alive = 1,
 }
 
+// impl Cell {
+//     fn toggle(&mut self) {
+//         *self = match *self {
+//             Cell::Dead => Cell::Alive,
+//             Cell::Alive => Cell::Dead,
+//         };
+//     }
+// }
+
 #[wasm_bindgen]
 pub struct Universe {
     width: u32,
@@ -43,23 +52,69 @@ impl Universe {
     } // formula for the index after 'array'ifying the matrix
 
     //* primary GOL functionality
-    fn live_neighbor_count(&self, row: u32, column: u32) -> u8 {
-        let mut count: u8 = 0;
-        for delta_row in [self.height - 1, 0, 1].iter().cloned() {
-            // deep copy an iterator
-            for delta_col in [self.width - 1, 0, 1].iter().cloned() {
-                if delta_row == 0 && delta_col == 0 {
-                    // skip the current cell
-                    continue;
-                }
+    // fn live_neighbor_count(&self, row: u32, column: u32) -> u8 {
+    //     let mut count: u8 = 0;
+    //     for delta_row in [self.height - 1, 0, 1].iter().cloned() {
+    //         // deep copy an iterator
+    //         for delta_col in [self.width - 1, 0, 1].iter().cloned() {
+    //             if delta_row == 0 && delta_col == 0 {
+    //                 // skip the current cell
+    //                 continue;
+    //             }
 
-                let neighbor_row = (row + delta_row) % self.height; // no overflow if > height
-                let neighbor_col = (column + delta_col) % self.width;
-                let idx = self.get_index(neighbor_row, neighbor_col);
-                // this seems unnecessarily verbose...
-                count += self.cells[idx] as u8;
-            }
-        }
+    //             let neighbor_row = (row + delta_row) % self.height; // no overflow if > height
+    //             let neighbor_col = (column + delta_col) % self.width;
+    //             let idx = self.get_index(neighbor_row, neighbor_col);
+    //             // this seems unnecessarily verbose...
+    //             count += self.cells[idx] as u8;
+    //         }
+    //     }
+
+    //     count
+    // }
+    //* a more performant implementation since % is expensive
+    fn live_neighbor_count(&self, row: u32, column: u32) -> u8 {
+        let mut count = 0;
+
+        let north = if row == 0 { self.height - 1 } else { row - 1 };
+
+        let south = if row == self.height - 1 { 0 } else { row + 1 };
+
+        let west = if column == 0 {
+            self.width - 1
+        } else {
+            column - 1
+        };
+
+        let east = if column == self.width - 1 {
+            0
+        } else {
+            column + 1
+        };
+
+        let nw = self.get_index(north, west);
+        count += self.cells[nw] as u8;
+
+        let n = self.get_index(north, column);
+        count += self.cells[n] as u8;
+
+        let ne = self.get_index(north, east);
+        count += self.cells[ne] as u8;
+
+        let w = self.get_index(row, west);
+        count += self.cells[w] as u8;
+
+        let e = self.get_index(row, east);
+        count += self.cells[e] as u8;
+
+        let sw = self.get_index(south, west);
+        count += self.cells[sw] as u8;
+
+        let s = self.get_index(south, column);
+        count += self.cells[s] as u8;
+
+        let se = self.get_index(south, east);
+        count += self.cells[se] as u8;
 
         count
     }
@@ -260,6 +315,67 @@ impl Universe {
     // pub fn set_height(&mut self, height: u32) {
     //     self.height = height;
     //     self.cells = FixedBitSet::with_capacity((self.width * height) as usize);
+    // }
+
+    pub fn toggle_cell(&mut self, row: u32, col: u32) {
+        // assert!(row < self.height && col < self.width);
+        let idx = self.get_index(row, col);
+        self.cells.toggle(idx);
+    }
+
+    pub fn add_glider(&mut self, inrow: u32, incol: u32) {
+        let glider = [(1, 0), (2, 1), (0, 2), (1, 2), (2, 2)];
+
+        for (row, col) in glider.iter().cloned() {
+            let idx = self.get_index(row + inrow, col + incol);
+            self.cells.set(idx, true);
+        }
+    }
+
+    // pub fn add_gun(&mut self, inrow: u32, incol: u32) {
+    //     let gun = [
+    //         (1, 25),
+    //         (2, 23),
+    //         (2, 25),
+    //         (3, 13),
+    //         (3, 14),
+    //         (3, 21),
+    //         (3, 22),
+    //         (3, 35),
+    //         (3, 36),
+    //         (4, 12),
+    //         (4, 16),
+    //         (4, 21),
+    //         (4, 22),
+    //         (4, 35),
+    //         (4, 36),
+    //         (5, 1),
+    //         (5, 2),
+    //         (5, 11),
+    //         (5, 17),
+    //         (5, 21),
+    //         (5, 22),
+    //         (6, 1),
+    //         (6, 2),
+    //         (6, 11),
+    //         (6, 15),
+    //         (6, 17),
+    //         (6, 18),
+    //         (6, 23),
+    //         (6, 25),
+    //         (7, 11),
+    //         (7, 17),
+    //         (7, 25),
+    //         (8, 12),
+    //         (8, 16),
+    //         (9, 13),
+    //         (9, 14),
+    //     ];
+
+    //     for (row, col) in gun.iter().cloned() {
+    //         let idx = self.get_index(row + inrow, col + incol);
+    //         self.cells.set(idx, true);
+    //     }
     // }
 }
 

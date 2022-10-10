@@ -24,6 +24,7 @@
       //* ensure wasm is loaded
       // const tick = instance.exports.tick as CallableFunction;
       // console.log(instance.memory);
+
       updateWidthHeight();
       universe = Universe.new(width, height, mode, density);
       ctx = canvas.getContext("2d")!; // ignore null union type
@@ -102,13 +103,26 @@
 
     ctx.beginPath();
 
+    // alive
+    ctx.fillStyle = ALIVE_COLOR;
     for (let row = 0; row < height; row++) {
       for (let col = 0; col < width; col++) {
         const idx = getIndex(row, col);
 
-        ctx.fillStyle = bitIsSet(idx, cells) ? ALIVE_COLOR : DEAD_COLOR;
+        if (bitIsSet(idx, cells)) {
+          ctx.fillRect(col * (CELL_SIZE + 1) + 1, row * (CELL_SIZE + 1) + 1, CELL_SIZE, CELL_SIZE);
+        }
+      }
+    }
+    // dead
+    ctx.fillStyle = DEAD_COLOR;
+    for (let row = 0; row < height; row++) {
+      for (let col = 0; col < width; col++) {
+        const idx = getIndex(row, col);
 
-        ctx.fillRect(col * (CELL_SIZE + 1) + 1, row * (CELL_SIZE + 1) + 1, CELL_SIZE, CELL_SIZE);
+        if (!bitIsSet(idx, cells)) {
+          ctx.fillRect(col * (CELL_SIZE + 1) + 1, row * (CELL_SIZE + 1) + 1, CELL_SIZE, CELL_SIZE);
+        }
       }
     }
 
@@ -145,6 +159,42 @@
     width = Math.floor(window_width / (CELL_SIZE + 1));
     height = Math.floor((window_height * (3.5 / 5)) / (CELL_SIZE + 1));
   }; // yes, this has to mutate global state.
+
+  const toggleCell = (e: MouseEvent) => {
+    const boundingRect = canvas.getBoundingClientRect();
+
+    const scaleX = canvas.width / boundingRect.width;
+    const scaleY = canvas.height / boundingRect.height;
+
+    const canvasLeft = (e.clientX - boundingRect.left) * scaleX;
+    const canvasTop = (e.clientY - boundingRect.top) * scaleY;
+
+    const row = Math.min(Math.floor(canvasTop / (CELL_SIZE + 1)), height - 1);
+    const col = Math.min(Math.floor(canvasLeft / (CELL_SIZE + 1)), width - 1);
+
+    universe.toggle_cell(row, col);
+
+    drawGrid();
+    drawCells(memory);
+  };
+
+  // const addGliderClick = (e: MouseEvent) => {
+  //   const boundingRect = canvas.getBoundingClientRect();
+
+  //   const scaleX = canvas.width / boundingRect.width;
+  //   const scaleY = canvas.height / boundingRect.height;
+
+  //   const canvasLeft = (e.clientX - boundingRect.left) * scaleX;
+  //   const canvasTop = (e.clientY - boundingRect.top) * scaleY;
+
+  //   const row = Math.min(Math.floor(canvasTop / (CELL_SIZE + 1)), height - 1);
+  //   const col = Math.min(Math.floor(canvasLeft / (CELL_SIZE + 1)), width - 1);
+
+  //   universe.add_glider(row, col);
+
+  //   drawGrid();
+  //   drawCells(memory);
+  // };
 
   // $: reset(mode);
 
@@ -183,6 +233,7 @@
     <input
       class="bg-zinc-200 rounded p-0.5 pl-1.5 dark:bg-zinc-700 w-14 shadow-inner"
       type="text"
+      min="0"
       bind:value={tps}
     />
   </p>
@@ -193,8 +244,10 @@
   class="mx-auto overflow-x-auto pt-5 md:leading-[0.92rem] leading-[0.6rem] text-sm md:text-lg inset-0 w-full h-full flex flex-col items-center justify-center"
 /> -->
 <canvas
-  class="mx-auto overflow-x-auto mt-5 bortder-zinc-600 border-2 rounded-sm"
+  class="mx-auto overflow-x-auto mt-5 border-zinc-300 border-2 rounded-sm"
   bind:this={canvas}
+  on:click={toggleCell}
+  class:paused={isPaused}
 />
 
 <!-- bind:this isnt working -->
@@ -234,6 +287,8 @@
       on:change={() => reset(mode)}
     >
       <option selected value="1">Random</option>
+      <option value="0">Clear Canvas</option>
+
       <option value="2">Math Pattern</option>
       <option value="3">Spawn Glider</option>
       <option value="4">Spawn Glider Gun</option>
@@ -245,10 +300,13 @@
         <input
           class="bg-zinc-200 rounded p-0.5 pl-1.5 dark:bg-zinc-700 w-14 shadow-inner"
           type="text"
+          min="0"
+          max="1"
           on:change={() => reset(mode)}
           bind:value={density}
         />
-      </p>{/if}
+      </p>
+    {/if}
   </div>
   <br />
   <br />
@@ -272,5 +330,8 @@
   button {
     text-decoration: none;
     transition: all 0.2s ease-in-out;
+  }
+  .paused {
+    filter: brightness(95%);
   }
 </style>
