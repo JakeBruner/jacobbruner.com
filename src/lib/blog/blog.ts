@@ -65,7 +65,7 @@ export const getPostsInfo = async (subject: BlogType): Promise<PostInfo[]> => {
         excerpt: metadata?.excerpt,
         date: utcdate.valueOf(), // quick fix for sveltekit 1.0.0-next.422 requiring json serialization
         datestring: convertDateToString(utcdate),
-        thumbnailpath: metadata?.thumbnailpath ? metadata.thumbnailpath : null,
+        thumbnailpath: metadata?.thumbnailpath ? metadata.thumbnailpath : null
         // TODO this isnt type safe i dont think. I need errorhandeling for when not all these properties exist
       };
     })
@@ -130,7 +130,7 @@ export const convertDateToString = (date: Date): string => {
     "September",
     "October",
     "November",
-    "December",
+    "December"
   ];
 
   const day = date.getDate();

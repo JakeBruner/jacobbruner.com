@@ -22,7 +22,7 @@ export class Universe {
    */
   static new(width: number, height: number, mode: number, density: number): Universe;
   /**
-   * @returns {number}
+   * @returns {string}
    */
   render(): string;
   /**
@@ -37,6 +37,16 @@ export class Universe {
    * @returns {number}
    */
   cells(): number;
+  /**
+   * @param {number} row
+   * @param {number} col
+   */
+  toggle_cell(row: number, col: number): void;
+  /**
+   * @param {number} inrow
+   * @param {number} incol
+   */
+  add_glider(inrow: number, incol: number): void;
 }
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
@@ -50,6 +60,8 @@ export interface InitOutput {
   readonly universe_width: (a: number) => number;
   readonly universe_height: (a: number) => number;
   readonly universe_cells: (a: number) => number;
+  readonly universe_toggle_cell: (a: number, b: number, c: number) => void;
+  readonly universe_add_glider: (a: number, b: number, c: number) => void;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
   readonly __wbindgen_free: (a: number, b: number) => void;
   readonly __wbindgen_malloc: (a: number) => number;

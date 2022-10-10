@@ -294,7 +294,7 @@
     but its quite easy to see that 𝐸(𝔽<sub>𝑞</sub>) is necessarily a direct product/sum of cyclic
     groups (by the fund. thm. finitely generated abelian groups). This means 𝐸(𝔽<sub>𝑞</sub>) ≅ ℤ/𝑝<sup
       >𝛼</sup
-    >ℤ ⨉ ℤ/𝑝<sup>𝛽</sup>ℤ with this product being taken over the primes dividing the order of the
+    >ℤ x ℤ/𝑝<sup>𝛽</sup>ℤ with this product being taken over the primes dividing the order of the
     group, i.e., it is isomorphic to a product of p-primary groups.
     <br />
     Importantly, this group structure is markedly more complex than plain cyclic groups ℤ/𝑝<sup

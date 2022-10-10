@@ -83,7 +83,7 @@ export const initBuffers = (gl: WebGLRenderingContext) => {
 
   return {
     position: positionBuffer,
-    color: colorBuffer,
+    color: colorBuffer
   };
 };
 

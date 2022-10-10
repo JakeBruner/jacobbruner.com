@@ -16,17 +16,17 @@ module.exports = {
           600: "#c16690",
           700: "#964f70",
           800: "#6b3950",
-          900: "#562d40",
+          900: "#562d40"
         },
         // this doesn't work I dont think
         primary: "#d772a1",
         primary_translucent: "rgba(215, 114, 161, 0.8)",
-        white_translucent: "rgba(255, 255, 255, 0.8)",
+        white_translucent: "rgba(255, 255, 255, 0.8)"
       },
       fontFamily: {
         sans: ["Helvetica", ...defaultTheme.fontFamily.sans],
         serif: ["sprat", ...defaultTheme.fontFamily.serif],
-        mono: ["Courier", "Vazirmatn", ...defaultTheme.fontFamily.mono],
+        mono: ["Courier", "Vazirmatn", ...defaultTheme.fontFamily.mono]
       },
       aspectRatio: {
         auto: "auto",
@@ -34,12 +34,12 @@ module.exports = {
         video: "16 / 9",
         22: "22",
         17: "17",
-        8.5: "8.5",
-      },
-    },
+        8.5: "8.5"
+      }
+    }
   },
   corePlugins: {
-    aspectRatio: false,
+    aspectRatio: false
   },
-  plugins: [require("@tailwindcss/aspect-ratio"), require("@tailwindcss/typography")],
+  plugins: [require("@tailwindcss/aspect-ratio"), require("@tailwindcss/typography")]
 };
