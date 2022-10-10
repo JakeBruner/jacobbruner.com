@@ -2,9 +2,10 @@
   import init, { Universe } from "game-of-life";
   import { onMount } from "svelte";
 
-  const GRID_COLOR = "#CCCCCC";
-  const DEAD_COLOR = "#FFFFFF";
-  const ALIVE_COLOR = "#27272A"; // zinc-800
+  // LIGHTMODE
+  let GRID_COLOR = "#CCCCCC";
+  let DEAD_COLOR = "#FFFFFF";
+  let ALIVE_COLOR = "#27272A"; // zinc-800
 
   let universe: Universe;
   // let pre: HTMLPreElement;
@@ -20,6 +21,15 @@
 
   onMount(() => {
     //* ensure canvas is mounted
+    // check for darkmode
+    let darkmode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (darkmode) {
+      // DARKMODE
+      GRID_COLOR = "#52525B"; // zinc-600
+      DEAD_COLOR = "#18181B"; // zinc-900
+      ALIVE_COLOR = "#D4D4D8"; // zinc-100
+    }
+
     init().then((instance) => {
       //* ensure wasm is loaded
       // const tick = instance.exports.tick as CallableFunction;
@@ -223,7 +233,7 @@
   />
 </svelte:head>
 
-<svelte:window bind:innerHeight={window_height} bind:innerWidth={window_width} on:resize />
+<svelte:window bind:innerHeight={window_height} bind:innerWidth={window_width} />
 
 <div class="pt-5 text-center">
   <h1>Conway's Game of Life</h1>
@@ -244,7 +254,7 @@
   class="mx-auto overflow-x-auto pt-5 md:leading-[0.92rem] leading-[0.6rem] text-sm md:text-lg inset-0 w-full h-full flex flex-col items-center justify-center"
 /> -->
 <canvas
-  class="mx-auto overflow-x-auto mt-5 border-zinc-300 border-2 rounded-sm"
+  class="mx-auto overflow-x-auto mt-5 border-zinc-300 dark:border-zinc-600 border-2 rounded-sm"
   bind:this={canvas}
   on:click={toggleCell}
   class:paused={isPaused}
