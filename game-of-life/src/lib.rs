@@ -73,6 +73,7 @@ impl Universe {
     //     count
     // }
     //* a more performant implementation since % is expensive
+    // changing this doesn't solve the windows/firefox issue
     fn live_neighbor_count(&self, row: u32, column: u32) -> u8 {
         let mut count = 0;
 

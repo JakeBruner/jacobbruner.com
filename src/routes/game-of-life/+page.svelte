@@ -30,6 +30,24 @@
       ALIVE_COLOR = "#D4D4D8"; // zinc-100
     }
 
+    // check if using firefox windows
+    let isFirefox = navigator.userAgent.toLowerCase().indexOf("firefox") > -1;
+    let isWindows = navigator.platform.indexOf("Win") > -1;
+    if (isFirefox && isWindows) {
+      // firefox windows
+      alert(
+        "Firefox on Windows has a bug that causes the game to run incorrectly. Sorry about that :L"
+      );
+    }
+
+    // check for wasm
+    if (!WebAssembly) {
+      alert(
+        "Your browser does not support WebAssembly! Perhaps update to something less ancient :P"
+      );
+      return;
+    }
+
     init().then((instance) => {
       //* ensure wasm is loaded
       // const tick = instance.exports.tick as CallableFunction;
@@ -166,7 +184,7 @@
 
   // $: console.log("isPaused", isPaused);
   const updateWidthHeight = () => {
-    width = Math.floor(window_width / (CELL_SIZE + 1));
+    width = 0.96 * Math.floor(window_width / (CELL_SIZE + 1));
     height = Math.floor((window_height * (3.5 / 5)) / (CELL_SIZE + 1));
   }; // yes, this has to mutate global state.
 
@@ -239,7 +257,7 @@
   <h1>Conway's Game of Life</h1>
   <h2 class="text-xl">Running with Rust + Webassembly</h2>
   <p class="pt-3">
-    Tick: {ticknum} running at tps:
+    Tick: {ticknum} attempting to run at tps:
     <input
       class="bg-zinc-200 rounded p-0.5 pl-1.5 dark:bg-zinc-700 w-14 shadow-inner"
       type="text"
