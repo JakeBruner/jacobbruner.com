@@ -76,8 +76,15 @@
         The work of Jacob Bruner
       </h2>
       <div>
+        <!-- scroll to next section -->
         <button
           class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-blue-400/80 lg:px-7 lg:py-2 rounded-xl hover:bg-blue-400 hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
+          on:click={() => {
+            window.scrollTo({
+              top: window.innerHeight - 64,
+              behavior: "smooth"
+            });
+          }}
         >
           About Me
         </button>
@@ -192,7 +199,9 @@
           style="background-image: url('/thumbnails/gameoflife.png')"
         />
         <div class="bg-zinc-100 dark:bg-zinc-800 rounded-b-lg p-4 self-end">
-          <p class="text-xl font-medium dark:text-zinc-100 text-zinc-800">Conway's Game of Life</p>
+          <p class="text-xl font-medium dark:text-zinc-100 text-zinc-800">
+            Conway's Game of Life: Cellular Automaton Simulation
+          </p>
         </div>
       </a>
     </div>
@@ -207,7 +216,7 @@
         />
         <div class="bg-zinc-100 dark:bg-zinc-800 rounded-b-lg p-4 self-end">
           <p class="text-xl font-medium dark:text-zinc-100 text-zinc-800">
-            Hypixel Guess the Build
+            Hypixel 'Guess the Build' Solver Cheat
           </p>
         </div>
       </a>
