@@ -30,15 +30,15 @@
       ALIVE_COLOR = "#D4D4D8"; // zinc-100
     }
 
-    // check if using firefox windows
-    let isFirefox = navigator.userAgent.toLowerCase().indexOf("firefox") > -1;
-    let isWindows = navigator.platform.indexOf("Win") > -1;
-    if (isFirefox && isWindows) {
-      // firefox windows
-      alert(
-        "Firefox on Windows has a bug that causes the game to run incorrectly. Sorry about that :L"
-      );
-    }
+    // // check if using firefox windows
+    // let isFirefox = navigator.userAgent.toLowerCase().indexOf("firefox") > -1;
+    // let isWindows = navigator.platform.indexOf("Win") > -1;
+    // if (isFirefox && isWindows) {
+    //   // firefox windows
+    //   alert(
+    //     "Firefox on Windows has a bug that causes the game to run incorrectly. Sorry about that :L"
+    //   );
+    // }
 
     // check for wasm
     if (!WebAssembly) {
@@ -54,6 +54,7 @@
       // console.log(instance.memory);
 
       updateWidthHeight();
+      console.log("width", width, "height", height);
       universe = Universe.new(width, height, mode, density);
       ctx = canvas.getContext("2d")!; // ignore null union type
       // instance.exports.
@@ -184,7 +185,7 @@
 
   // $: console.log("isPaused", isPaused);
   const updateWidthHeight = () => {
-    width = 0.96 * Math.floor(window_width / (CELL_SIZE + 1));
+    width = Math.floor(0.96 * (window_width / (CELL_SIZE + 1)));
     height = Math.floor((window_height * (3.5 / 5)) / (CELL_SIZE + 1));
   }; // yes, this has to mutate global state.
 
