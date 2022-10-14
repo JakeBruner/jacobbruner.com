@@ -3,6 +3,7 @@ import type { UserConfig } from "vite";
 // import wasmPack from "vite-plugin-wasm-pack";
 import wasm from "vite-plugin-wasm";
 import topLevelAwait from "vite-plugin-top-level-await";
+import { threeMinifier } from "@yushijinhun/three-minifier-rollup";
 import path from "path";
 
 /** @type {import('vite').UserConfig} */
@@ -15,6 +16,7 @@ const config: UserConfig = {
         if (options.ssr) return code.replace(/import .animate\.css.*$/gm, "");
       } // gets rid of the import
     },
+    { ...threeMinifier(), enforce: "pre" },
     sveltekit(),
     wasm(),
     // wasmPack(["./game-of-life"]),
@@ -34,6 +36,8 @@ const config: UserConfig = {
     host: "localhost",
     port: 4000,
     fs: {
+      // Allow wasm files to be served
+      allow: [".wasm"],
       //! this should be changed to only include specific paths
       strict: false
     }
