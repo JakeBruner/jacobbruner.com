@@ -99,34 +99,38 @@
   </div>
 </section>
 
-<section class="my-24 px-6">
+<section class="mt-16 mb-2 px-6 xl:px-30">
   <!-- MD IS MY BREAKPOINT FOR THIS TO BE A COLUMN -->
   <div
-    class="flex md:flex-row flex-col lg:px-20 md:px-30 justify-center content-center md:space-x-12"
+    class="md:flex md:flex-row lg:px-20 md:pb-20 md:px-30 justify-center content-center align-middle"
   >
-    <div
-      class="mx-auto flex-initial shadow-lg shadow-zinc-300 dark:shadow-zinc-700 sm:p-7 p-5 rounded-md "
-    >
-      <img
-        class="w-[400px] md:h-full object-cover overflow-hidden top-0 min-w-[200px]"
-        src="/images/schoolphoto2.jpg"
-        alt="Jacob Bruner"
-      />
+    <div class="md:w-1/2 md:h-full flex align-middle">
+      <div
+        class="w-[350px] lg:w-[420px] mx-auto p-5 shadow-lg shadow-zinc-300 dark:shadow-zinc-700 rounded-md "
+      >
+        <img
+          class="md:shrink-0 h-full object-cover overflow-hidden top-0"
+          src="/images/schoolphoto2.jpg"
+          alt="Jacob Bruner"
+        />
+      </div>
     </div>
 
-    <div class="flex-1 md:basis-1/2">
-      <p
-        class="2xl:leading-loose lg:text-2xl leading-relaxed sm:text-xl text-lg inset-0 pt-8 md:px-10 px-2 font-light dark:text-zinc-300"
-      >
-        Jacob Bruner is a 17 year-old student at The Dwight School in New York City. During his
-        junior year in high-school, he is exploring his various creative interests through his
-        out-of-school self-study and projects. Beyond his class' curriculum, he spends his free time
-        learning new things. He would best describe himself as an interdisciplinary thinker, who
-        thrives on his inability to stick to one thing. The culmination of these efforts is a wide
-        variety of projects demonstrating his ability and understanding across a range of fields,
-        including some more STEM-oriented and some more humanities oriented. Explore this website to
-        find out more!
-      </p>
+    <div class="flex md:w-1/2 align-middle">
+      <div class="w-full my-auto">
+        <p
+          class="xl:leading-relaxed xl:text-2xl lg:text-xl text-justify leading-snug text-lg py-10 md:py-5 md:px-10 px-3 font-light dark:text-zinc-300"
+        >
+          Jacob Bruner is a 17 year-old student at The Dwight School in New York City. During his
+          junior year in high-school, he is exploring his various creative interests through his
+          out-of-school self-study and projects. Beyond his class' curriculum, he spends his free
+          time learning new things. He would best describe himself as an interdisciplinary thinker,
+          who thrives on his inability to stick to one thing. The culmination of these efforts is a
+          wide variety of projects demonstrating his ability and understanding across a range of
+          fields, including some more STEM-oriented and some more humanities oriented. Explore this
+          website to find out more!
+        </p>
+      </div>
     </div>
   </div>
 </section>

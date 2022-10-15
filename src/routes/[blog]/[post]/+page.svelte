@@ -18,7 +18,7 @@
     J
   </div> -->
   <div class=" mx-auto max-w-[100ch] py-16 px-4 sm:px-6 lg:px-8">
-    <span
+    <button
       class="group cursor-pointer"
       on:click={() => {
         history.back();
@@ -36,7 +36,7 @@
       </svg>
       <p class="inline group-hover:-translate-x-5">back</p>
       <!-- why wont this work? -->
-    </span>
+    </button>
     <h2 class="my-4 text-4xl font-semibold">{data.title}</h2>
     <p class="my-4 text-zinc-500 dark:text-zinc-400">{data.date}</p>
     {#if data?.videoid}
@@ -72,3 +72,9 @@
     </div>
   </div>
 </article>
+
+<style>
+  button {
+    all: unset;
+  }
+</style>
