@@ -21,10 +21,21 @@
   const randomlink: string = featuredposts[rand(featuredposts.length)];
 
   // if ios mobile
+  const isiOS = () => {
+    return (
+      ["iPad Simulator", "iPhone Simulator", "iPod Simulator", "iPad", "iPhone", "iPod"].includes(
+        navigator.platform
+      ) ||
+      // iPad on iOS 13 detection
+      (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+    );
+  };
+
   let ios = false;
   onMount(() => {
-    ios = /iPhone/i.test(navigator.userAgent);
+    ios = isiOS();
   });
+
   let y: number;
 
   // let canvas: HTMLCanvasElement;
@@ -71,10 +82,8 @@
 
 <section class="-mt-[60px] inset-0">
   <div
-    class="codybowl ios bg-[url('/images/codybowl.jpg')] dark:bg-[url('/images/jacksonstars.jpg')] bg-fixed h-screen min-h-screen bg-cover bg-center flex flex-col justify-center items-center"
-    style="{ios
-      ? `height: ${y};`
-      : ''} -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover;"
+    class="codybowl ios bg-[url('/images/codybowl.jpg')] dark:bg-[url('/images/jacksonstars.jpg')] md:bg-fixed h-screen min-h-screen bg-cover bg-center flex flex-col justify-center items-center"
+    style={ios ? `height: ${y}px; background-attachment: scroll !important;` : ""}
   >
     <div class="absolute items-center flex flex-col">
       <h1
@@ -94,7 +103,7 @@
           class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-blue-400/80 lg:px-7 lg:py-2 rounded-xl hover:bg-blue-400 hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
           on:click={() => {
             window.scrollTo({
-              top: window.innerHeight - 64,
+              top: y - 64,
               behavior: "smooth"
             });
           }}
@@ -134,8 +143,8 @@
         <p
           class="xl:leading-relaxed xl:text-2xl lg:text-xl text-justify leading-snug text-lg py-10 md:py-5 md:px-10 px-3 font-light dark:text-zinc-300"
         >
-          Jacob Bruner is a 17 year-old student at The Dwight School in New York City. During his
-          junior year in high-school, he is exploring his various creative interests through his
+          Jacob Bruner is a 18 year-old student at The Dwight School in New York City. During his
+          senior year in high-school, he is exploring his various creative interests through his
           out-of-school self-study and projects. Beyond his class' curriculum, he spends his free
           time learning new things. He would best describe himself as an interdisciplinary thinker,
           who thrives on his inability to stick to one thing. The culmination of these efforts is a

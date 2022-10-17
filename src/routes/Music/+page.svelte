@@ -20,7 +20,9 @@
       <h2 class="text-3xl tracking-tight font-semibold  sm:text-4xl">{subject}</h2>
     </div>
     <div class="pt-10 ">
-      <h2 class="pl-4 text-zinc-700 dark:text-zinc-300 font-bold">Performances:</h2>
+      <h2 class="pl-2 md:pl-4 text-xl md:text-2xl text-zinc-700 dark:text-zinc-300 font-bold">
+        Performances:
+      </h2>
       <div class="max-w-md lg:max-w-2xl xl:max-w-3xl 2xl:max-w-4xl mx-auto mt-8 block pb-10">
         <div class="relative aspect-w-16 aspect-h-9">
           <iframe
@@ -35,7 +37,7 @@
         <p class="w-full text-center italic">Gaspard de la Nuit: 1. Ondine — Maurice Ravel</p>
       </div>
     </div>
-    <h2 class="pl-4 text-zinc-700 dark:text-zinc-300 font-bold -mb-6">
+    <h2 class="pl-2 md:pl-4 text-xl md:text-2xl text-zinc-700 dark:text-zinc-300 font-bold -mb-6">
       Compositions and Analysis:
     </h2>
     <PostsGrid {subject} posts={data.p} />
