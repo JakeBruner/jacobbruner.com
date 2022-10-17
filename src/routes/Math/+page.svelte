@@ -13,9 +13,9 @@
   <title>{subject}</title>
 </svelte:head>
 <div class="bg-zinc-800 group">
-  <div class="w-full -mt-[64px] h-auto bg-zinc-800 flex flex-col ">
+  <div class="w-full -mt-[60px] h-auto bg-zinc-800 flex flex-col px-2">
     <video
-      class="flex bg-inherit px-5 pt-16 w-full lg:w-1/2 md:w-2/3 mx-auto"
+      class="flex bg-inherit pt-16 w-full lg:w-1/2 md:w-2/3 mx-auto"
       autoplay
       playsinline
       loop

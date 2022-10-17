@@ -58,7 +58,7 @@
   <title>Home</title>
 </svelte:head>
 
-<section class="-mt-[64px] inset-0">
+<section class="-mt-[60px] inset-0">
   <div
     class="codybowl ios bg-[url('/images/codybowl.jpg')] dark:bg-[url('/images/jacksonstars.jpg')] bg-fixed h-screen min-h-screen bg-cover bg-center flex flex-col justify-center items-center"
     style="height: -webkit-fill-available; min-height: -webkit-fill-available;"
