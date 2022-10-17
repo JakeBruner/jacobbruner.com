@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+
   export const prerender = true;
   const featuredposts = [
     "/Math/ComplexNumbers",
@@ -17,6 +19,13 @@
   //TODO look into https://vercel.com/templates/svelte/sveltekit-edge-functions
 
   const randomlink: string = featuredposts[rand(featuredposts.length)];
+
+  // if ios mobile
+  let ios = false;
+  onMount(() => {
+    ios = /iPhone/i.test(navigator.userAgent);
+  });
+  let y: number;
 
   // let canvas: HTMLCanvasElement;
   // let ctx: CanvasRenderingContext2D;
@@ -58,10 +67,14 @@
   <title>Home</title>
 </svelte:head>
 
+<svelte:window bind:innerHeight={y} />
+
 <section class="-mt-[60px] inset-0">
   <div
     class="codybowl ios bg-[url('/images/codybowl.jpg')] dark:bg-[url('/images/jacksonstars.jpg')] bg-fixed h-screen min-h-screen bg-cover bg-center flex flex-col justify-center items-center"
-    style="height: -webkit-fill-available; min-height: -webkit-fill-available;"
+    style="{ios
+      ? `height: ${y};`
+      : ''} -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover;"
   >
     <div class="absolute items-center flex flex-col">
       <h1
@@ -106,10 +119,10 @@
   >
     <div class="md:w-1/2 md:h-full flex align-middle">
       <div
-        class="w-[350px] lg:w-[420px] mx-auto p-5 shadow-lg shadow-zinc-300 dark:shadow-zinc-700 rounded-md "
+        class="w-[350px] h-auto lg:w-[420px] mx-auto p-5 shadow-lg shadow-zinc-300 dark:shadow-zinc-800 rounded-md"
       >
         <img
-          class="md:shrink-0 h-full object-cover overflow-hidden top-0"
+          class="md:shrink-0 max-h-full object-cover overflow-hidden top-0"
           src="/images/schoolphoto2.jpg"
           alt="Jacob Bruner"
         />

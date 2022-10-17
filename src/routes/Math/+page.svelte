@@ -28,7 +28,7 @@
     <p
       class="self-end justify-self-end -mb-[27px] italic dark:text-zinc-300/70 text-zinc-700 group-hover:-translate-x-2 transition-all duration-300 ease-out text-xs md:text-md lg:text-lg pb-2 lg:pb-0"
     >
-      Discrete Complex Fourier Transform of my initials as a 2d path
+      Discrete Complex Fourier Series of my initials as a 2d path
     </p>
   </div>
 </div>
