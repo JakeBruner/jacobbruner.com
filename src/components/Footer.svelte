@@ -17,8 +17,7 @@
         <div class="basis-[37.5%] md:px-7 px-7 xl:px-16">
           <h4 class="pb-4 font-bold text-primary">Website</h4>
           <p class="leading-relaxed font-light dark:text-zinc-300">
-            Hand-coded by Jacob using Svelte, Rust, Typescript and many, many hours. Please note, I
-            have never taken a comp-sci class; I have <i>absolutely</i> no idea what I'm doing.
+            Hand-coded by Jacob using Svelte, Rust, Typescript and many, many hours :).
           </p>
         </div>
         <div class="basis-[37.5%] md:px-9 px-7 xl:px-16">
@@ -51,7 +50,7 @@
         </small>
         <div class="flex flex-row gap-6 justify-center py-4">
           <div class="text-primary">
-            <a href="https://www.instagram.com/jake.bruner/"
+            <a href="https://www.instagram.com/jake.bruner/" aria-label="Instagram"
               ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="50" viewBox="0 0 512 512">
                 <path
                   style="fill:currentColor"
@@ -66,7 +65,7 @@
             >
           </div>
           <div class="relative top-2 text-primary">
-            <a href="https://t.snapchat.com/MuAktGcB"
+            <a href="https://t.snapchat.com/MuAktGcB" aria-label="Snapchat"
               ><svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="32"
@@ -82,7 +81,7 @@
             >
           </div>
           <div class=" text-primary">
-            <a href="https://github.com/JakeBruner/sveltekit"
+            <a href="https://github.com/JakeBruner/sveltekit" aria-label="Github"
               ><svg
                 width="32"
                 height="50"

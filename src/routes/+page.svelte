@@ -1,13 +1,14 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
-  export const prerender = true;
   const featuredposts = [
     "/Math/ComplexNumbers",
     "/Math/EulerExploration",
     "/Computer-Science/Guess The Build Solver",
     "/Writing/PublicDefenders",
-    "/Computer-Science/EllipticCurve"
+    "/Computer-Science/EllipticCurve",
+    "/Music",
+    "/Photography"
   ];
   // let w: number;
   // let h: number;
@@ -37,41 +38,6 @@
   });
 
   let y: number;
-
-  // let canvas: HTMLCanvasElement;
-  // let ctx: CanvasRenderingContext2D;
-  // let imageData: ImageData;
-  // let data: Uint8ClampedArray;
-
-  // const getMousePos = (e: MouseEvent): [number, number] => {
-  //   const rect = canvas.getBoundingClientRect();
-  //   const x = e.clientX - rect.left;
-  //   const y = e.clientY - rect.top;
-  //   return [x, y];
-  // };
-
-  // const update = (e: MouseEvent): void => {
-  //   const [x, y] = getMousePos(e);
-  //   const i = (x + y * w) * 4;
-  //   data[i] = 255;
-  //   data[i + 1] = 255;
-  //   data[i + 2] = 255;
-  //   data[i + 3] = 255;
-  //   ctx.putImageData(imageData, 0, 0);
-  // };
-
-  // const init = (): void => {
-  //   w = canvas.width;
-  //   h = canvas.height;
-  //   ctx = canvas.getContext("2d");
-  //   imageData = ctx.getImageData(0, 0, w, h);
-  //   data = imageData.data;
-  //   canvas.addEventListener("mousemove", update);
-  // };
-
-  // onMount(() => {
-  //   init();
-  // });
 </script>
 
 <svelte:head>
@@ -103,16 +69,18 @@
           class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-blue-400/80 lg:px-7 lg:py-2 rounded-xl hover:bg-blue-400 hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
           on:click={() => {
             window.scrollTo({
-              top: y - 64,
+              top: y - 60,
               behavior: "smooth"
             });
           }}
+          aria-label="Scroll to next section"
         >
           About Me
         </button>
         <a href={randomlink}>
           <button
             class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-primary/80 lg:px-7 lg:py-2 rounded-xl hover:bg-primary hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
+            aria-label="Random Post"
             data-svelte-prefetch>Random Post</button
           ></a
         >
@@ -132,7 +100,7 @@
       >
         <img
           class="md:shrink-0 max-h-full object-cover overflow-hidden top-0"
-          src="/images/schoolphoto2.jpg"
+          src="/images/websitephoto.jpg"
           alt="Jacob Bruner"
         />
       </div>
