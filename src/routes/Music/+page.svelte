@@ -27,10 +27,10 @@
         <div class="relative aspect-w-16 aspect-h-9">
           <iframe
             class="rounded-md caption"
-            src="https://www.youtube-nocookie.com/embed/2Yg0VeePZXo"
+            src="https://www.youtube-nocookie.com/embed/LcVxi56DaYY"
             title="YouTube video player"
             frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allow="clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen
           />
         </div>
