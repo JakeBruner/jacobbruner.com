@@ -3,6 +3,7 @@ import adapter from "@sveltejs/adapter-auto";
 import preprocess from "svelte-preprocess";
 import { mdsvex } from "mdsvex";
 import mdsvexConfig from "./mdsvex.config.js";
+// import path from "path";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -14,7 +15,7 @@ const config = {
     mdsvex(mdsvexConfig)
   ],
   kit: {
-    adapter: adapter()
+    adapter: adapter(),
     // vite: {
     //   plugins: [
     //     wasmPack('./game-of-life/pkg',

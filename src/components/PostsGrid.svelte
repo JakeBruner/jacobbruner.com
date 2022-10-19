@@ -1,5 +1,6 @@
 <script lang="ts">
-  import type { PostInfo } from "./blog";
+  import type { PostInfo } from "$lib/blog/blog";
+  import Post from "$components/Post.svelte";
   export let subject: string;
   export let posts: PostInfo[];
 </script>
@@ -9,7 +10,7 @@
     <div
       class="group border border-zinc-300 dark:border-zinc-700 rounded-lg flex flex-col justify-between self-center transition ease-in-out duration-200 shadow-sm dark:shadow-white/5 hover:shadow-lg hover:dark:shadow-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-800/25 hover:scale-[101%]"
     >
-      <a href="/{subject}/{post.slug}" data-svelte-prefetch>
+      <a href="/{subject}/{post.slug}">
         {#if post.thumbnailpath}
           <div
             class="group-hover:contrast-[90%] rounded-t-lg aspect-w-16 lg:aspect-h-9 aspect-h-7 w-full bg-cover bg-center min-w-full transition ease-in-out duration-200  border-b border-zinc-100 dark:border-zinc-800"
@@ -27,5 +28,8 @@
         </div>
       </a>
     </div>
+  {/each}
+  {#each posts as post}
+    <Post {post} {subject} />
   {/each}
 </div>
