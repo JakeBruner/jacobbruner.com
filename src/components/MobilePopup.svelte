@@ -8,6 +8,11 @@
   style:visibility={hidePopup ? "hidden" : "visible"}
   transition:fade
   on:click={() => (hidePopup = true)}
+  on:keypress={(e) => {
+    if (e.key === "Escape") {
+      hidePopup = true;
+    }
+  }}
 >
   <div class="m-5 mt-20">
     <div class="w-full flex flex-col p-3 rounded-lg bg-white dark:bg-zinc-800 shadow-xl">

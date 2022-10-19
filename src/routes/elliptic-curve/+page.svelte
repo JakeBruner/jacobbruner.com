@@ -263,6 +263,10 @@
                   const pt = table[x][y].getRawPoint;
                   selected = pt;
                 }}
+                on:keypress={() => {
+                  const pt = table[x][y].getRawPoint;
+                  selected = pt;
+                }}
                 class="x{j} first:hover:!bg-white/90"
                 class:active2={y === i}
                 class:active={x === j}
