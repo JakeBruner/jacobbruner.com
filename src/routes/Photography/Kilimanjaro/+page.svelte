@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import { fade } from "svelte/transition";
   // import { onMount } from "svelte";
 
@@ -14,9 +15,14 @@
     alt: ""
   };
 
-  const selectMe = (e: MouseEvent): void => {
-    selected.src = e.target.getAttribute("src");
-    selected.alt = e.target.getAttribute("alt");
+  type Input = MouseEvent | KeyboardEvent;
+
+  const selectMe = (e: Input): void => {
+    const target = e.target as HTMLImageElement;
+    selected = {
+      src: target.src,
+      alt: target.alt
+    };
     fullscreen = true;
     document.body.classList.add("noscroll");
   };
@@ -26,19 +32,18 @@
     document.body.classList.remove("noscroll");
   };
 
-  // let srclist: string[] = [];
-  // onMount(() => {
-  //   if ("getElementsByTagName" in document) {
-  //     console.log(hi);
-  //   }
-  //   const images = document.images.getElementsByTagName("img");
-  //   images.map((e) => e.src);
-
-  // });
-
-  // for (let i = 0, len = allImages.length; i < len; i++) {
-
-  // }
+  onMount(() => {
+    // add event listener for keypress (A11Y) and mouse click on all images
+    const images = document.querySelectorAll("img");
+    images.forEach((image) => {
+      image.addEventListener("click", selectMe);
+      image.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          selectMe(e);
+        }
+      });
+    });
+  });
 </script>
 
 <svelte:body class:overflow-y={fullscreen ? "hidden" : "auto"} />
@@ -54,6 +59,7 @@
     class="overflow-y-hidden flex mx-auto fixed inset-0 z-30 h-full w-full bg-zinc-800/70 dark:bg-zinc-800/70 items-center "
     transition:fade={{ duration: 100 }}
     on:click={() => deselectMe()}
+    on:keypress={deselectMe}
   >
     <img
       src={selected.src}
@@ -72,7 +78,6 @@
           alt="looking towards the receding 'Rebman Glacier' from the summit"
           class="img"
           src="/images/kili/kilimanjaro-2465.jpg"
-          on:click={selectMe}
         />
       </div>
 
@@ -82,7 +87,6 @@
             alt="group pic at one of our first camps"
             class="img"
             src="/images/kili/kilimanjaro-1747.jpg"
-            on:click={selectMe}
           />
         </div>
         <div class="w-1/2 photoframe">
@@ -90,7 +94,6 @@
             alt="our family friends from jackson hole looking cheerful"
             class="img"
             src="/images/kili/kilimanjaro-2058.jpg"
-            on:click={selectMe}
           />
         </div>
         <div class="w-full photoframe">
@@ -98,26 +101,19 @@
             alt="looking up towards the long summit hike from School Hut camp"
             class="img"
             src="/images/kili/kilimanjaro-2433.jpg"
-            on:click={selectMe}
           />
         </div>
       </div>
 
       <div class="flex flex-wrap md:w-1/2 w-full">
         <div class="w-full photoframe">
-          <img
-            alt="some kind of cool bird"
-            class="img"
-            src="/images/kili/kilimanjaro-2258.jpg"
-            on:click={selectMe}
-          />
+          <img alt="some kind of cool bird" class="img" src="/images/kili/kilimanjaro-2258.jpg" />
         </div>
         <div class="w-1/2 photoframe">
           <img
             alt="the start of our summit trek at ~12 midnight"
             class="img"
             src="/images/kili/kilimanjaro-2447.jpg"
-            on:click={selectMe}
           />
         </div>
         <div class="w-1/2 photoframe">
@@ -125,18 +121,12 @@
             alt="early morning sunrise from the first campsite on the mountain's plateau"
             class="img"
             src="/images/kili/kilimanjaro-1983.jpg"
-            on:click={selectMe}
           />
         </div>
       </div>
 
       <div class="w-full photoframe">
-        <img
-          alt="me at the summit"
-          class="img"
-          src="/images/kili/kilimanjaro-jake.jpg"
-          on:click={selectMe}
-        />
+        <img alt="me at the summit" class="img" src="/images/kili/kilimanjaro-jake.jpg" />
       </div>
 
       <div class="flex flex-wrap md:w-1/2 w-full">
@@ -145,7 +135,6 @@
             alt="sunrise coming up as we make our final steps to the summit sign"
             class="img"
             src="/images/kili/kilimanjaro-2461.jpg"
-            on:click={selectMe}
           />
         </div>
         <div class="w-1/2 photoframe">
@@ -153,7 +142,6 @@
             alt="one of our mountain guides ontop a rock"
             class="img"
             src="/images/kili/kilimanjaro-2080.jpg"
-            on:click={selectMe}
           />
         </div>
         <div class="w-1/2 photoframe">
@@ -161,7 +149,6 @@
             alt="me and our sick guide Dominique on a side-hike"
             class="img"
             src="/images/kili/kilimanjaro-2190.jpg"
-            on:click={selectMe}
           />
         </div>
       </div>
@@ -172,7 +159,6 @@
             alt="our group getting ready to hike in the morning from the breakfast tent"
             class="img"
             src="/images/kili/kilimanjaro-2248.jpg"
-            on:click={selectMe}
           />
         </div>
 
@@ -181,7 +167,6 @@
             alt="sunrise over kilimanjaro on one of our far-out Northern-Circuit route camps"
             class="img"
             src="/images/kili/kilimanjaro-2344.jpg"
-            on:click={selectMe}
           />
         </div>
       </div>
@@ -191,7 +176,6 @@
           alt="milky way overtop one of our plateau campsites early in the morning"
           class="img"
           src="/images/kili/kilimanjaro-1942.jpg"
-          on:click={selectMe}
         />
       </div>
 
@@ -201,7 +185,6 @@
             alt="a typical trail on kilimanjaro from the rainforest to the plateau zone"
             class="img"
             src="/images/kili/kilimanjaro-1827.jpg"
-            on:click={selectMe}
           />
         </div>
       </div>
@@ -211,7 +194,6 @@
             alt="the view of the melting snowpack about 300 yards from the summit sign"
             class="img"
             src="/images/kili/kilimanjaro-2464.jpg"
-            on:click={selectMe}
           />
         </div>
         <div class="w-1/2 photoframe">
@@ -219,7 +201,6 @@
             alt="the final steps to our 3rd to summit campsite"
             class="img"
             src="/images/kili/kilimanjaro-2282.jpg"
-            on:click={selectMe}
           />
         </div>
         <div class="w-full photoframe">
@@ -227,7 +208,6 @@
             alt="late night gathering for dinner within the food tent"
             class="img"
             src="/images/kili/kilimanjaro-1753.jpg"
-            on:click={selectMe}
           />
         </div>
       </div>
@@ -237,7 +217,6 @@
           alt="first group to reach the top at 6:30 am. I'm on the bottom left!"
           class="img"
           src="/images/kili/kilimanjaro-.jpg"
-          on:click={selectMe}
         />
       </div>
       <!-- end gallery container -->
