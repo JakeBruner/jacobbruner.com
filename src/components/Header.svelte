@@ -9,7 +9,6 @@
     { title: "Photography", path: "/Photography" },
     { title: "CS", path: "/Computer-Science" },
     { title: "Writing", path: "/Writing" },
-    { title: "Contact", path: "/about" }
   ];
 
   let menuOpen = false;

@@ -3,10 +3,9 @@
     { title: "Home", path: "/" },
     { title: "Music", path: "/Music" },
     { title: "Math", path: "/Math" },
-    { title: "Photography", path: "/about" },
+    { title: "Photography", path: "/Photography" },
     { title: "CS", path: "/Computer-Science" },
     { title: "Writing", path: "/Writing" },
-    { title: "Contact", path: "/Photography" }
   ];
 </script>
 
