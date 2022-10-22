@@ -38,6 +38,32 @@
   });
 
   let y: number;
+
+  import type { PostInfo } from "$lib/blog/blog";
+  import Post from "$components/Post.svelte";
+  const projectList = [
+    {
+      slug: "/elliptic-curve",
+      title: "Elliptic Curve Cayley Table Generator",
+      date: 1, // yes I know this is abuse of my functionality
+      datestring: "March 30th, 2022",
+      thumbnailpath: "/thumbnails/ellipticcurve.jpg",
+    },
+    {
+      slug: "/game-of-life",
+      title: "Conway's Game of Life: Cellular Automaton Simulation",
+      date: 2,
+      datestring: "October 10th, 2022",
+      thumbnailpath: "/thumbnails/gameoflife.png",
+    },
+    {
+      slug: "/guess-the-build-solver",
+      title: "Hypixel 'Guess the Build' Game Solver",
+      date: 3,
+      datestring: "July 30th, 2022",
+      thumbnailpath: "/thumbnails/guessthebuild.jpg",
+    }
+  ] as PostInfo[];
 </script>
 
 <svelte:head>
@@ -80,7 +106,6 @@
         <a href={randomlink}>
           <button
             class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-primary/80 lg:px-7 lg:py-2 rounded-xl hover:bg-primary hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
-            aria-label="Random Post"
             data-svelte-prefetch>Random Post</button
           ></a
         >
@@ -128,6 +153,7 @@
 <!-- Interactive stuff on this website :) -->
 <!-- TODO these should be svelte components -->
 <section class="bg-primary items-center pt-10 pb-20 px-4 sm:px-6 lg:pt-16 lg:pb-28 lg:px-8">
+    <!-- TODO -->
   <!-- <style>
     .anim {
       /* text-shadow: 0.03em 0.03em 0 hsla(230, 40%, 50%, 1); */
@@ -162,59 +188,14 @@
       }
     }
   </style> -->
-  <!-- TODO -->
   <h1 class="anim text-6xl text-zinc-50 dark:text-zinc-800 italic text-center">
     Interactive Projects!
   </h1>
-
+ <!-- look at how neat this is! -->
   <div class="mt-12 grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12 content-center">
-    <div
-      class="group border border-zinc-300 dark:border-zinc-700 rounded-lg flex flex-col justify-between self-center transition ease-in-out duration-200 shadow-lg dark:shadow-white/5 hover:shadow-xl hover:dark:shadow-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-800/25 hover:scale-[101%]"
-    >
-      <a href="/elliptic-curve" data-svelte-prefetch>
-        <div
-          class="group-hover:contrast-[90%] rounded-t-lg aspect-w-16 lg:aspect-h-9 aspect-h-7 w-full bg-cover bg-center min-w-full transition ease-in-out duration-200  border-b border-zinc-100 dark:border-zinc-800"
-          style="background-image: url('/thumbnails/ellipticcurve.jpg')"
-        />
-        <div class="bg-zinc-100 dark:bg-zinc-800 rounded-b-lg p-4 self-end">
-          <p class="text-xl font-medium dark:text-zinc-100 text-zinc-800">
-            Elliptic Curve Cayley Table Generator
-          </p>
-        </div>
-      </a>
-    </div>
-
-    <div
-      class="group border border-zinc-300 dark:border-zinc-700 rounded-lg flex flex-col justify-between self-center transition ease-in-out duration-200 shadow-lg dark:shadow-white/5 hover:shadow-xl hover:dark:shadow-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-800/25 hover:scale-[101%]"
-    >
-      <a href="/game-of-life" data-svelte-prefetch>
-        <div
-          class="group-hover:contrast-[90%] rounded-t-lg aspect-w-16 lg:aspect-h-9 aspect-h-7 w-full bg-cover bg-center min-w-full transition ease-in-out duration-200  border-b border-zinc-100 dark:border-zinc-800"
-          style="background-image: url('/thumbnails/gameoflife.png')"
-        />
-        <div class="bg-zinc-100 dark:bg-zinc-800 rounded-b-lg p-4 self-end">
-          <p class="text-xl font-medium dark:text-zinc-100 text-zinc-800">
-            Conway's Game of Life: Cellular Automaton Simulation
-          </p>
-        </div>
-      </a>
-    </div>
-
-    <div
-      class="group border border-zinc-300 dark:border-zinc-700 rounded-lg flex flex-col justify-between self-center transition ease-in-out duration-200 shadow-lg dark:shadow-white/5 hover:shadow-xl hover:dark:shadow-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-800/25 hover:scale-[101%]"
-    >
-      <a href="/guess-the-build-solver" data-svelte-prefetch>
-        <div
-          class="group-hover:contrast-[90%] rounded-t-lg aspect-w-16 lg:aspect-h-9 aspect-h-7 w-full bg-cover bg-center min-w-full transition ease-in-out duration-200  border-b border-zinc-100 dark:border-zinc-800"
-          style="background-image: url('/thumbnails/guessthebuild.jpg')"
-        />
-        <div class="bg-zinc-100 dark:bg-zinc-800 rounded-b-lg p-4 self-end">
-          <p class="text-xl font-medium dark:text-zinc-100 text-zinc-800">
-            Hypixel 'Guess the Build' Solver Cheat
-          </p>
-        </div>
-      </a>
-    </div>
+    {#each projectList as post}
+      <Post {post} />
+    {/each}
   </div>
 </section>
 
