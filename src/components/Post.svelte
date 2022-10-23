@@ -8,7 +8,7 @@
   class="group rounded-lg bg-white dark:bg-zinc-900 flex flex-col justify-between shadow-md hover:shadow-lg self-center transition ease-in-out duration-200 dark:shadow-white/5 hover:dark:shadow-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-800/25 hover:scale-[100.5%] hover:-translate-y-1"
 >
   <!--* if there is no subject, link directly to the slug -->
-  <a href={"/" + subject ? subject + "/" + post.slug : post.slug}>
+  <a href="{subject ? subject + "/" + post.slug : post.slug}">
     {#if post.thumbnailpath}
       <div
         class="group-hover:contrast-[90%] border-b-2 border-zinc-100 rounded-t-lg aspect-w-16 lg:aspect-h-9 aspect-h-7 w-full bg-cover bg-center min-w-full transition ease-in-out duration-200"
