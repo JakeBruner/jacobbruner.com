@@ -59,6 +59,7 @@
   "type": "module",
   "dependencies": {
     "animate.css": "^4.1.1",
+    "web-vitals": "^2.1.4",
     "cookie": "^0.5.0",
     "svelte-inview": "^3.0.1"
   }

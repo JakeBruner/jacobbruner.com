@@ -20,6 +20,9 @@ const config: UserConfig = {
     // wasmPack(["./game-of-life"]),
     topLevelAwait()
   ],
+  define: {
+    "import.meta.env.VERCEL_ANALYTICS_ID": JSON.stringify(process.env.VERCEL_ANALYTICS_ID)
+  },
   optimizeDeps: {
     exclude: ["./game-of-life"]
   },
