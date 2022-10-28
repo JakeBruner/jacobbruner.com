@@ -17,13 +17,14 @@
   });
 </script>
 
+<!-- 
 {#if !loaded && !error}
-  <div class="w-full h-full bg-zinc-100 rounded-lg shadow-sm animate-pulse" />
-{/if}
+  <div class="w-full h-full bg-zinc-100 rounded-lg shadow-sm " />
+{/if} -->
 
 {#if loaded}
   <img
-    class="block object-cover object-center w-full h-full rounded-lg shadow-sm"
+    class="object-cover object-center w-full h-full rounded-lg shadow-sm"
     {src}
     {alt}
     usemap="#image-map"
@@ -31,8 +32,6 @@
     class:loaded
     bind:this={image}
   />
-{/if}
-
-{#if error}
+{:else}
   <div class="w-full h-full rounded-lg shadow-sm bg-zinc-100" />
 {/if}

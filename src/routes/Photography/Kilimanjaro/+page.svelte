@@ -61,13 +61,13 @@
       }
     };
     // log src and alt of all images
-    let test = [];
-    images.forEach((image) => {
-      // get rid of https://127.0.0.1:4000/
+    // let test = [];
+    // images.forEach((image) => {
+    //   // get rid of https://127.0.0.1:4000/
 
-      const src = image.src.replace("http://127.0.0.1:4000", "");
-      console.log(`src: "${src}", alt: "${image.alt}"`);
-    });
+    //   const src = image.src.replace("http://127.0.0.1:4000", "");
+    //   console.log(`src: "${src}", alt: "${image.alt}"`);
+    // });
   });
 
   const photoList: Photo[] = [
@@ -171,25 +171,13 @@
 
       <div class="flex flex-wrap md:w-1/2 w-full">
         <div class="w-1/2 photoframe">
-          <img
-            alt="group pic at one of our first camps"
-            class="img"
-            src="/images/kili/kilimanjaro-1747.webp"
-          />
+          <LazyImage src={photoList[1].src} alt={photoList[1].alt} />
         </div>
         <div class="w-1/2 photoframe">
-          <img
-            alt="our family friends from jackson hole looking cheerful"
-            class="img"
-            src="/images/kili/kilimanjaro-2058.webp"
-          />
+          <LazyImage src={photoList[2].src} alt={photoList[2].alt} />
         </div>
         <div class="w-full photoframe">
-          <img
-            alt="looking up towards the long summit hike from School Hut camp"
-            class="img"
-            src="/images/kili/kilimanjaro-2433.webp"
-          />
+          <LazyImage src={photoList[3].src} alt={photoList[3].alt} />
         </div>
       </div>
 
