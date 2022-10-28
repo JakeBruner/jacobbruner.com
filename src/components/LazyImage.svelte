@@ -23,10 +23,10 @@
 {#if observe}
   <img
     use:lazyImage={src}
-    src="/images/placeholder.gif"
+    src="/images/placeholder.png"
     {alt}
     class:error
-    class="object-cover object-center w-full h-full rounded-lg shadow-sm animate-pulse transition-all"
+    class="object-cover object-center w-full h-full rounded-lg shadow-sm animate-pulse"
     bind:this={image}
   />
 {:else}

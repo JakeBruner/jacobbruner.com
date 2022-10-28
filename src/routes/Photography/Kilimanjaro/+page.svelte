@@ -21,11 +21,16 @@
   type Input = MouseEvent | KeyboardEvent;
 
   const selectMe = (e: Input): void => {
-    const target = e.target as HTMLImageElement;
+    // get image child
+    const target = e.target as Element;
+    const image = target.closest("img");
+    if (!image) return;
+
     selected = {
-      src: target.src,
-      alt: target.alt
+      src: image.src,
+      alt: image.alt
     };
+
     fullscreen = true;
     document.body.style.overflow = "hidden";
   };
@@ -36,15 +41,11 @@
   };
 
   onMount(() => {
-    // add event listener for keypress (A11Y) and mouse click on all images
-    const images = document.querySelectorAll("img");
-    images.forEach((image) => {
-      image.addEventListener("click", selectMe);
-      image.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") {
-          selectMe(e);
-        }
-      });
+    // add event listener for keypress (A11Y) and mouse click on all divs with class photoframe
+    const photoframes = document.querySelectorAll<HTMLDivElement>(".photoframe");
+    photoframes.forEach((div) => {
+      div.addEventListener("click", selectMe);
+      div.addEventListener("keypress", selectMe);
     });
 
     // check if webp is supported
@@ -301,8 +302,7 @@
 
 <style>
   .photoframe {
-    @apply transition-all ease-out hover:brightness-90 hover:contrast-[90%] hover:scale-[100.5%];
-    @apply p-1 md:p-2;
+    @apply transition-all ease-out hover:brightness-90 hover:contrast-[90%] hover:scale-[100.5%] p-1 md:p-2;
   }
   .img {
     @apply block object-cover object-center w-full h-full rounded-lg shadow-sm;
