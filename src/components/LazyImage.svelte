@@ -26,7 +26,7 @@
     src="/images/placeholder.png"
     {alt}
     class:error
-    class="object-cover object-center w-full h-full rounded-lg shadow-sm animate-pulse"
+    class="object-cover select-none object-center w-full h-full rounded-lg shadow-sm animate-pulse"
     bind:this={image}
   />
 {:else}
@@ -34,7 +34,7 @@
     {src}
     {alt}
     class:error
-    class="object-cover object-center w-full h-full rounded-lg shadow-sm"
+    class="object-cover select-none object-center w-full h-full rounded-lg shadow-sm"
     bind:this={image}
   />
 {/if}

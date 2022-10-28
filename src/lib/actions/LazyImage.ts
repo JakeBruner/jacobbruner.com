@@ -1,16 +1,16 @@
 // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
 let options = {
   root: null,
-  rootMargin: "0px",
-  threshold: 0.1
+  rootMargin: "-20px",
+  threshold: 0.0
 };
 
 export const lazyImage = (image: HTMLImageElement, src: string) => {
   const loaded = () => {
     observer.unobserve(image);
     image.removeEventListener("load", loaded);
-    // animate none
     image.style.animation = "none";
+    //TODO: add animation
   };
 
   const observer = new IntersectionObserver((entries) => {

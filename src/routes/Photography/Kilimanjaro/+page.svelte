@@ -3,9 +3,6 @@
   import { fade } from "svelte/transition";
   import LazyImage from "$components/LazyImage.svelte";
 
-  // intersection observer
-  let observer: IntersectionObserver;
-
   let fullscreen: boolean = false;
 
   interface Photo {
@@ -145,7 +142,7 @@
 </div>
 {#if fullscreen}
   <div
-    class="overflow-y-hidden flex mx-auto fixed inset-0 z-30 h-full w-full bg-zinc-800/70 dark:bg-zinc-800/70 items-center "
+    class="overflow-y-hidden select-none flex mx-auto fixed inset-0 z-30 h-full w-full bg-zinc-800/70 dark:bg-zinc-800/70 items-center "
     transition:fade={{ duration: 100 }}
     on:click={deselectMe}
     on:keypress={deselectMe}
@@ -180,121 +177,69 @@
 
       <div class="flex flex-wrap md:w-1/2 w-full">
         <div class="w-full photoframe">
-          <img alt="some kind of cool bird" class="img" src="/images/kili/kilimanjaro-2258.webp" />
+          <LazyImage src={photoList[4].src} alt={photoList[4].alt} />
         </div>
         <div class="w-1/2 photoframe">
-          <img
-            alt="the start of our summit trek at ~12 midnight"
-            class="img"
-            src="/images/kili/kilimanjaro-2447.webp"
-          />
+          <LazyImage src={photoList[5].src} alt={photoList[5].alt} />
         </div>
         <div class="w-1/2 photoframe">
-          <img
-            alt="early morning sunrise from the first campsite on the mountain's plateau"
-            class="img"
-            src="/images/kili/kilimanjaro-1983.webp"
-          />
+          <LazyImage src={photoList[6].src} alt={photoList[6].alt} />
         </div>
       </div>
 
       <div class="w-full photoframe">
-        <img alt="me at the summit" class="img" src="/images/kili/kilimanjaro-jake.webp" />
+        <LazyImage src={photoList[7].src} alt={photoList[7].alt} />
       </div>
 
       <div class="flex flex-wrap md:w-1/2 w-full">
         <div class="w-full photoframe">
-          <img
-            alt="sunrise coming up as we make our final steps to the summit sign"
-            class="img"
-            src="/images/kili/kilimanjaro-2461.webp"
-          />
+          <LazyImage src={photoList[8].src} alt={photoList[8].alt} />
         </div>
         <div class="w-1/2 photoframe">
-          <img
-            alt="one of our mountain guides ontop a rock"
-            class="img"
-            src="/images/kili/kilimanjaro-2080.webp"
-          />
+          <LazyImage src={photoList[9].src} alt={photoList[9].alt} />
         </div>
         <div class="w-1/2 photoframe">
-          <img
-            alt="me and our sick guide Dominique on a side-hike"
-            class="img"
-            src="/images/kili/kilimanjaro-2190.webp"
-          />
+          <LazyImage src={photoList[10].src} alt={photoList[10].alt} />
         </div>
       </div>
 
       <div class="flex flex-wrap md:w-1/2 w-full">
         <div class="w-full photoframe">
-          <img
-            alt="our group getting ready to hike in the morning from the breakfast tent"
-            class="img"
-            src="/images/kili/kilimanjaro-2248.webp"
-          />
+          <LazyImage src={photoList[11].src} alt={photoList[11].alt} />
         </div>
 
         <div class="w-full photoframe">
-          <img
-            alt="sunrise over kilimanjaro on one of our far-out Northern-Circuit route camps"
-            class="img"
-            src="/images/kili/kilimanjaro-2344.webp"
-          />
+          <LazyImage src={photoList[12].src} alt={photoList[12].alt} />
         </div>
       </div>
 
       <div class="w-full photoframe">
-        <img
-          alt="milky way overtop one of our plateau campsites early in the morning"
-          class="img"
-          src="/images/kili/kilimanjaro-1942.webp"
-        />
+        <LazyImage src={photoList[13].src} alt={photoList[13].alt} />
       </div>
 
       <div class="flex flex-wrap md:w-1/2 w-full">
         <div class="w-full photoframe">
-          <img
-            alt="a typical trail on kilimanjaro from the rainforest to the plateau zone"
-            class="img"
-            src="/images/kili/kilimanjaro-1827.webp"
-          />
+          <LazyImage src={photoList[14].src} alt={photoList[14].alt} />
         </div>
       </div>
       <div class="flex flex-wrap md:w-1/2 w-full">
         <div class="w-1/2 photoframe">
-          <img
-            alt="the view of the melting snowpack about 300 yards from the summit sign"
-            class="img"
-            src="/images/kili/kilimanjaro-2464.webp"
-          />
+          <LazyImage src={photoList[15].src} alt={photoList[15].alt} />
         </div>
         <div class="w-1/2 photoframe">
-          <img
-            alt="the final steps to our 3rd to summit campsite"
-            class="img"
-            src="/images/kili/kilimanjaro-2282.webp"
-          />
+          <LazyImage src={photoList[16].src} alt={photoList[16].alt} />
         </div>
         <div class="w-full photoframe">
-          <img
-            alt="late night gathering for dinner within the food tent"
-            class="img"
-            src="/images/kili/kilimanjaro-1753.webp"
-          />
+          <LazyImage src={photoList[17].src} alt={photoList[17].alt} />
         </div>
       </div>
 
       <div class="w-full photoframe">
-        <img
-          alt="first group to reach the top at 6:30 am. I'm on the bottom left!"
-          class="img"
-          src="/images/kili/kilimanjaro-.webp"
-        />
+        <LazyImage src={photoList[18].src} alt={photoList[18].alt} />
       </div>
       <!-- end gallery container -->
     </div>
-    <h5 class="pt-4 text-sm italic dark:text-zinc-500">
+    <h5 class="pt-4 text-sm italic dark:text-zinc-400">
       Photos taken with a Sony A7RII and my Sony FE 24-105mm f4.0 lens :)
     </h5>
   </div>
@@ -303,8 +248,5 @@
 <style>
   .photoframe {
     @apply transition-all ease-out hover:brightness-90 hover:contrast-[90%] hover:scale-[100.5%] p-1 md:p-2;
-  }
-  .img {
-    @apply block object-cover object-center w-full h-full rounded-lg shadow-sm;
   }
 </style>
