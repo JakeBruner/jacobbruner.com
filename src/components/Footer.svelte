@@ -5,7 +5,7 @@
     { title: "Math", path: "/Math" },
     { title: "Photography", path: "/Photography" },
     { title: "CS", path: "/Computer-Science" },
-    { title: "Writing", path: "/Writing" },
+    { title: "Writing", path: "/Writing" }
   ];
 </script>
 
@@ -24,7 +24,7 @@
           <p class="flex md:grid md:grid-cols-2 flex-col leading-relaxed font-light">
             {#each navitems as item}
               <a
-                class="hover:text-stone-900 dark:text-zinc-200 dark:hover:text-zinc-50 transition ease-in-out duration-300"
+                class="leading-[1.8] hover:text-stone-900 dark:text-zinc-200 dark:hover:text-zinc-50 transition ease-in-out duration-300"
                 href={item.path}
                 >{item.title}
               </a>
@@ -103,6 +103,3 @@
     </div>
   </div>
 </footer>
-
-<style>
-</style>

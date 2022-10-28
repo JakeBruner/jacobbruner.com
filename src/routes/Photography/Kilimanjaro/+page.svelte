@@ -24,12 +24,12 @@
       alt: target.alt
     };
     fullscreen = true;
-    document.body.classList.add("noscroll");
+    document.body.style.overflow = "hidden";
   };
 
   const deselectMe = (): void => {
     fullscreen = false;
-    document.body.classList.remove("noscroll");
+    document.body.style.overflow = "auto";
   };
 
   onMount(() => {
@@ -43,6 +43,20 @@
         }
       });
     });
+
+    // check if webp is supported
+    const webp = new Image();
+    webp.onload = webp.onerror = () => {
+      if (webp.height !== 2) {
+        // webp is not supported
+        const images = document.querySelectorAll("img");
+        images.forEach((image) => {
+          const src = image.src;
+          const newSrc = src.replace(".webp", ".jpg");
+          image.src = newSrc;
+        });
+      }
+    };
   });
 </script>
 
@@ -58,13 +72,13 @@
   <div
     class="overflow-y-hidden flex mx-auto fixed inset-0 z-30 h-full w-full bg-zinc-800/70 dark:bg-zinc-800/70 items-center "
     transition:fade={{ duration: 100 }}
-    on:click={() => deselectMe()}
+    on:click={deselectMe}
     on:keypress={deselectMe}
   >
     <img
       src={selected.src}
       alt={selected.alt}
-      class=" !rounded-none content-center object-contain object-center md:scale-95 shadow-md pointer-events-none"
+      class="rounded-sm content-center object-contain object-center md:scale-95 shadow-md pointer-events-none"
     />
   </div>
 {/if}
@@ -77,7 +91,7 @@
         <img
           alt="looking towards the receding 'Rebman Glacier' from the summit"
           class="img"
-          src="/images/kili/kilimanjaro-2465.jpg"
+          src="/images/kili/kilimanjaro-2465.webp"
         />
       </div>
 
@@ -86,47 +100,47 @@
           <img
             alt="group pic at one of our first camps"
             class="img"
-            src="/images/kili/kilimanjaro-1747.jpg"
+            src="/images/kili/kilimanjaro-1747.webp"
           />
         </div>
         <div class="w-1/2 photoframe">
           <img
             alt="our family friends from jackson hole looking cheerful"
             class="img"
-            src="/images/kili/kilimanjaro-2058.jpg"
+            src="/images/kili/kilimanjaro-2058.webp"
           />
         </div>
         <div class="w-full photoframe">
           <img
             alt="looking up towards the long summit hike from School Hut camp"
             class="img"
-            src="/images/kili/kilimanjaro-2433.jpg"
+            src="/images/kili/kilimanjaro-2433.webp"
           />
         </div>
       </div>
 
       <div class="flex flex-wrap md:w-1/2 w-full">
         <div class="w-full photoframe">
-          <img alt="some kind of cool bird" class="img" src="/images/kili/kilimanjaro-2258.jpg" />
+          <img alt="some kind of cool bird" class="img" src="/images/kili/kilimanjaro-2258.webp" />
         </div>
         <div class="w-1/2 photoframe">
           <img
             alt="the start of our summit trek at ~12 midnight"
             class="img"
-            src="/images/kili/kilimanjaro-2447.jpg"
+            src="/images/kili/kilimanjaro-2447.webp"
           />
         </div>
         <div class="w-1/2 photoframe">
           <img
             alt="early morning sunrise from the first campsite on the mountain's plateau"
             class="img"
-            src="/images/kili/kilimanjaro-1983.jpg"
+            src="/images/kili/kilimanjaro-1983.webp"
           />
         </div>
       </div>
 
       <div class="w-full photoframe">
-        <img alt="me at the summit" class="img" src="/images/kili/kilimanjaro-jake.jpg" />
+        <img alt="me at the summit" class="img" src="/images/kili/kilimanjaro-jake.webp" />
       </div>
 
       <div class="flex flex-wrap md:w-1/2 w-full">
@@ -134,21 +148,21 @@
           <img
             alt="sunrise coming up as we make our final steps to the summit sign"
             class="img"
-            src="/images/kili/kilimanjaro-2461.jpg"
+            src="/images/kili/kilimanjaro-2461.webp"
           />
         </div>
         <div class="w-1/2 photoframe">
           <img
             alt="one of our mountain guides ontop a rock"
             class="img"
-            src="/images/kili/kilimanjaro-2080.jpg"
+            src="/images/kili/kilimanjaro-2080.webp"
           />
         </div>
         <div class="w-1/2 photoframe">
           <img
             alt="me and our sick guide Dominique on a side-hike"
             class="img"
-            src="/images/kili/kilimanjaro-2190.jpg"
+            src="/images/kili/kilimanjaro-2190.webp"
           />
         </div>
       </div>
@@ -158,7 +172,7 @@
           <img
             alt="our group getting ready to hike in the morning from the breakfast tent"
             class="img"
-            src="/images/kili/kilimanjaro-2248.jpg"
+            src="/images/kili/kilimanjaro-2248.webp"
           />
         </div>
 
@@ -166,7 +180,7 @@
           <img
             alt="sunrise over kilimanjaro on one of our far-out Northern-Circuit route camps"
             class="img"
-            src="/images/kili/kilimanjaro-2344.jpg"
+            src="/images/kili/kilimanjaro-2344.webp"
           />
         </div>
       </div>
@@ -175,7 +189,7 @@
         <img
           alt="milky way overtop one of our plateau campsites early in the morning"
           class="img"
-          src="/images/kili/kilimanjaro-1942.jpg"
+          src="/images/kili/kilimanjaro-1942.webp"
         />
       </div>
 
@@ -184,7 +198,7 @@
           <img
             alt="a typical trail on kilimanjaro from the rainforest to the plateau zone"
             class="img"
-            src="/images/kili/kilimanjaro-1827.jpg"
+            src="/images/kili/kilimanjaro-1827.webp"
           />
         </div>
       </div>
@@ -193,21 +207,21 @@
           <img
             alt="the view of the melting snowpack about 300 yards from the summit sign"
             class="img"
-            src="/images/kili/kilimanjaro-2464.jpg"
+            src="/images/kili/kilimanjaro-2464.webp"
           />
         </div>
         <div class="w-1/2 photoframe">
           <img
             alt="the final steps to our 3rd to summit campsite"
             class="img"
-            src="/images/kili/kilimanjaro-2282.jpg"
+            src="/images/kili/kilimanjaro-2282.webp"
           />
         </div>
         <div class="w-full photoframe">
           <img
             alt="late night gathering for dinner within the food tent"
             class="img"
-            src="/images/kili/kilimanjaro-1753.jpg"
+            src="/images/kili/kilimanjaro-1753.webp"
           />
         </div>
       </div>
@@ -216,7 +230,7 @@
         <img
           alt="first group to reach the top at 6:30 am. I'm on the bottom left!"
           class="img"
-          src="/images/kili/kilimanjaro-.jpg"
+          src="/images/kili/kilimanjaro-.webp"
         />
       </div>
       <!-- end gallery container -->
