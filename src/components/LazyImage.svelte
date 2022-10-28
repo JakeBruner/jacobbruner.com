@@ -1,37 +1,46 @@
 <script lang="ts">
+  import { lazyImage } from "$lib/actions/LazyImage";
   export let src: string;
   export let alt: string;
+  export let observe = true;
+
   import { onMount } from "svelte";
-  import { fade } from "svelte/transition";
 
   let image: HTMLImageElement;
   let loaded = false;
   let error = false;
   onMount(() => {
-    image.onload = () => {
+    // check if loaded
+    if (image.complete) {
       loaded = true;
-    };
-    image.onerror = () => {
-      error = true;
-    };
+    }
   });
+  $: if (error) {
+    console.log("error");
+  }
 </script>
 
-<!-- 
-{#if !loaded && !error}
-  <div class="w-full h-full bg-zinc-100 rounded-lg shadow-sm " />
-{/if} -->
-
-{#if loaded}
+{#if observe}
   <img
-    class="object-cover object-center w-full h-full rounded-lg shadow-sm"
-    {src}
+    use:lazyImage={src}
+    src="/images/placeholder.gif"
     {alt}
-    usemap="#image-map"
-    transition:fade
-    class:loaded
+    class:error
+    class="object-cover object-center w-full h-full rounded-lg shadow-sm animate-pulse transition-all"
     bind:this={image}
   />
 {:else}
-  <div class="w-full h-full rounded-lg shadow-sm bg-zinc-100" />
+  <img
+    {src}
+    {alt}
+    class:error
+    class="object-cover object-center w-full h-full rounded-lg shadow-sm"
+    bind:this={image}
+  />
 {/if}
+
+<style>
+  .error {
+    @apply bg-red-300;
+  }
+</style>

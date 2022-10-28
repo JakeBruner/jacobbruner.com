@@ -51,12 +51,8 @@
     const webp = new Image();
     webp.onload = webp.onerror = () => {
       if (webp.height !== 2) {
-        // webp is not supported
-        const images = document.querySelectorAll("img");
-        images.forEach((image) => {
-          const src = image.src;
-          const newSrc = src.replace(".webp", ".jpg");
-          image.src = newSrc;
+        photoList.forEach((photo) => {
+          photo.src = photo.src.replace(".webp", ".jpg");
         });
       }
     };
@@ -70,7 +66,7 @@
     // });
   });
 
-  const photoList: Photo[] = [
+  let photoList: Photo[] = [
     {
       src: "/images/kili/kilimanjaro-2465.webp",
       alt: "looking towards the receding 'Rebman Glacier' from the summit"
@@ -166,7 +162,7 @@
     <div class="flex flex-wrap -m-1.5 md:-m-3">
       <!-- gallery container -->
       <div class="w-full photoframe">
-        <LazyImage src={photoList[0].src} alt={photoList[0].alt} />
+        <LazyImage src={photoList[0].src} alt={photoList[0].alt} observe={false} />
       </div>
 
       <div class="flex flex-wrap md:w-1/2 w-full">
