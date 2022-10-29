@@ -31,7 +31,7 @@
     "@tsconfig/svelte": "^3.0.0",
     "@types/three": "^0.144.0",
     "@types/webgl2": "^0.0.6",
-    "@typescript-eslint/eslint-plugin": "^5.40.1",
+    "@typescript-eslint/eslint-plugin": "^5.41.0",
     "@typescript-eslint/parser": "^5.40.1",
     "autoprefixer": "^10.4.12",
     "cookie": "^0.5.0",
