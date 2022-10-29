@@ -11,6 +11,6 @@
   <h3
     class="text-lg font-light text-grey-300 dark:text-zinc-600 text-center pt-5 italic yesthisissanitized"
   >
-    [{$page.status}] {$page.error.message}
+    [{$page.status}] {$page?.error?.message}
   </h3>
 </div>

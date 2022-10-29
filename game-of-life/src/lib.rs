@@ -203,7 +203,7 @@ impl Universe {
                 // math generated
                 // if congruent to 0 mod 2 or mod 7, then alive
                 for i in 0..size {
-                    cells.set(i, i % 3 == 0 || i % 11 == 0);
+                    cells.set(i, i % 3 == 0 || i % 7 == 0);
                 }
             }
             3 => {

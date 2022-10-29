@@ -1,13 +1,16 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
-  export const prerender = true;
+  // import { Text } from "troika-three-text";
+
   const featuredposts = [
     "/Math/ComplexNumbers",
     "/Math/EulerExploration",
     "/Computer-Science/Guess The Build Solver",
     "/Writing/PublicDefenders",
-    "/Computer-Science/EllipticCurve"
+    "/Computer-Science/EllipticCurve",
+    "/Music",
+    "/Photography"
   ];
   // let w: number;
   // let h: number;
@@ -38,40 +41,49 @@
 
   let y: number;
 
-  // let canvas: HTMLCanvasElement;
-  // let ctx: CanvasRenderingContext2D;
-  // let imageData: ImageData;
-  // let data: Uint8ClampedArray;
+  import type { PostInfo } from "$lib/blog/blog";
+  import Post from "$components/Post.svelte";
+  import { fly } from "svelte/transition";
+  const projectList = [
+    {
+      slug: "/elliptic-curve",
+      title: "Elliptic Curve Cayley Table Generator",
+      date: 1, // yes I know this is abuse of my functionality
+      datestring: "March 30th, 2022",
+      thumbnailpath: "/thumbnails/ellipticcurve.jpg"
+    },
+    {
+      slug: "/game-of-life",
+      title: "Conway's Game of Life: Cellular Automaton Simulation",
+      date: 2,
+      datestring: "October 10th, 2022",
+      thumbnailpath: "/thumbnails/gameoflife.png"
+    },
+    {
+      slug: "/guess-the-build-solver",
+      title: "Hypixel 'Guess the Build' Game Solver",
+      date: 3,
+      datestring: "July 30th, 2022",
+      thumbnailpath: "/thumbnails/guessthebuild.jpg"
+    }
+  ] as PostInfo[];
 
-  // const getMousePos = (e: MouseEvent): [number, number] => {
-  //   const rect = canvas.getBoundingClientRect();
-  //   const x = e.clientX - rect.left;
-  //   const y = e.clientY - rect.top;
-  //   return [x, y];
-  // };
+  import { inview } from "svelte-inview";
+  import type { ObserverEventDetails, Options } from "svelte-inview";
 
-  // const update = (e: MouseEvent): void => {
-  //   const [x, y] = getMousePos(e);
-  //   const i = (x + y * w) * 4;
-  //   data[i] = 255;
-  //   data[i + 1] = 255;
-  //   data[i + 2] = 255;
-  //   data[i + 3] = 255;
-  //   ctx.putImageData(imageData, 0, 0);
-  // };
+  let isInView: boolean[] = new Array(3).fill(false);
+  $: console.log("isInView", isInView);
 
-  // const init = (): void => {
-  //   w = canvas.width;
-  //   h = canvas.height;
-  //   ctx = canvas.getContext("2d");
-  //   imageData = ctx.getImageData(0, 0, w, h);
-  //   data = imageData.data;
-  //   canvas.addEventListener("mousemove", update);
-  // };
+  const options: Options = {
+    rootMargin: "-50px",
+    unobserveOnEnter: true
+  };
 
-  // onMount(() => {
-  //   init();
-  // });
+  const handleChange = ({ detail }: CustomEvent<ObserverEventDetails>) => {
+    const node = detail.node;
+    isInView[+node.id] = detail.inView;
+    // scrollDirection = detail.scrollDirection;
+  };
 </script>
 
 <svelte:head>
@@ -85,37 +97,76 @@
     class="codybowl ios bg-[url('/images/codybowl.jpg')] dark:bg-[url('/images/jacksonstars.jpg')] md:bg-fixed h-screen min-h-screen bg-cover bg-center flex flex-col justify-center items-center"
     style={ios ? `height: ${y}px; background-attachment: scroll !important;` : ""}
   >
+    <style>
+      .fadeInDown {
+        animation: fadeinDown 10s;
+      }
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          -webkit-transform: translate3d(0, -100%, 0);
+          transform: translate3d(0, -100%, 0);
+        }
+
+        to {
+          opacity: 1;
+          -webkit-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+        }
+      }
+    </style>
     <div class="absolute items-center flex flex-col">
-      <h1
-        class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[53px] text-4xl text-zinc-700 dark:text-zinc-300 font-light py-3 sm:pb-[13px] sm:pt-[17px] px-2 my-2 sm:my-4 fadeInDown text-center"
-      >
-        Learning as a Hobby
-        <!-- Learning is a skill -->
-      </h1>
-      <h2
-        class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[25px] text-xl text-zinc-600 dark:text-zinc-300 italic py-0.1 px-1.5 font-normal fadeInDown"
-      >
-        The work of Jacob Bruner
-      </h2>
-      <div>
+      <style>
+        .animate {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+      </style>
+      <div use:inview={options} on:change={handleChange} id="0">
+        {#if isInView[0]}
+          <h1
+            class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[53px] text-4xl text-zinc-700 dark:text-zinc-300 font-light py-3 sm:pb-[13px] sm:pt-[17px] px-2 my-2 sm:my-4 text-center"
+            transition:fly={{ x: 0, y: -100, duration: 1000, opacity: 0 }}
+          >
+            Learning as a Hobby
+            <!-- Learning is a skill -->
+          </h1>
+        {/if}
+      </div>
+      <div use:inview={options} on:change={handleChange} id="1">
+        {#if isInView[1]}
+          <h2
+            class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[25px] text-xl text-zinc-600 dark:text-zinc-300 italic py-0.1 px-1.5 font-normal"
+            transition:fly={{ x: 0, y: -60, duration: 1000, delay: 200, opacity: 0 }}
+          >
+            The work of Jacob Bruner
+          </h2>
+        {/if}
+      </div>
+      <div use:inview={options} on:change={handleChange} id="2">
         <!-- scroll to next section -->
-        <button
-          class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-blue-400/80 lg:px-7 lg:py-2 rounded-xl hover:bg-blue-400 hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
-          on:click={() => {
-            window.scrollTo({
-              top: y - 64,
-              behavior: "smooth"
-            });
-          }}
-        >
-          About Me
-        </button>
-        <a href={randomlink}>
-          <button
-            class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-primary/80 lg:px-7 lg:py-2 rounded-xl hover:bg-primary hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
-            data-svelte-prefetch>Random Post</button
-          ></a
-        >
+        {#if isInView[2]}
+          <div transition:fly={{ x: 0, y: 40, duration: 1200, delay: 300, opacity: 0 }}>
+            <button
+              class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-blue-400/80 lg:px-7 lg:py-2 rounded-xl hover:bg-blue-400 hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
+              on:click={() => {
+                window.scrollTo({
+                  top: y - 60,
+                  behavior: "smooth"
+                });
+              }}
+              aria-label="Scroll to next section"
+            >
+              About Me
+            </button>
+            <a href={randomlink}>
+              <button
+                class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-primary/80 lg:px-7 lg:py-2 rounded-xl hover:bg-primary hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
+                data-svelte-prefetch>Random Post</button
+              ></a
+            >
+          </div>
+        {/if}
       </div>
     </div>
   </div>
@@ -132,7 +183,7 @@
       >
         <img
           class="md:shrink-0 max-h-full object-cover overflow-hidden top-0"
-          src="/images/schoolphoto2.jpg"
+          src="/images/websitephoto.jpg"
           alt="Jacob Bruner"
         />
       </div>
@@ -157,96 +208,77 @@
   </div>
 </section>
 
-<!-- Interactive stuff on this website :) -->
-<!-- TODO these should be svelte components -->
-<section class="bg-primary items-center pt-10 pb-20 px-4 sm:px-6 lg:pt-16 lg:pb-28 lg:px-8">
-  <!-- <style>
-    .anim {
-      /* text-shadow: 0.03em 0.03em 0 hsla(230, 40%, 50%, 1); */
-    }
-    .anim:after {
-      content: "Interactive Projects!";
-      position: relative;
-      top: 0.06em;
-      left: 0.06em;
-      z-index: -1;
-      text-shadow: none;
-      background-image: linear-gradient(
-        45deg,
-        transparent 80%,
-        hsla(48, 20%, 90%, 1) 45%,
-        hsla(48, 20%, 90%, 1) 55%,
-        transparent 0
-      );
-      background-size: 0.05em 0.05em;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-
-      animation: shad-anim 15s linear infinite;
-    }
-
-    @keyframes shad-anim {
-      0% {
-        background-position: 0 0;
-      }
-      0% {
-        background-position: 100% -100%;
-      }
-    }
-  </style> -->
+<section class="bg-primary items-center pt-10 pb-20 px-4 sm:px-6 lg:pt-16 lg:pb-28 lg:px-8 w-full">
   <!-- TODO -->
-  <h1 class="anim text-6xl text-zinc-50 dark:text-zinc-800 italic text-center">
-    Interactive Projects!
-  </h1>
+  <style>
+    /* .anim {
+      position: absolute;
+      left: 50%;
+      top: {y};
+      transform: translate(-50%, -50%);
+      display: block;
+      color: #cf1b1b;
+      font-size: 124px;
+      letter-spacing: 8px;
+      cursor: pointer;
+    }
 
+    .anim::before {
+      content: "Interactive Projects!";
+      position: absolute;
+      color: transparent;
+      background-image: repeating-linear-gradient(
+        45deg,
+        transparent 0,
+        transparent 2px,
+        white 2px,
+        white 4px
+      );
+      -webkit-background-clip: text;
+      top: 0px;
+      left: 0;
+      z-index: -1;
+      transition: 1s;
+    }
+
+    .anim::after {
+      content: "Interactive Projects!";
+      position: absolute;
+      color: transparent;
+      background-image: repeating-linear-gradient(
+        135deg,
+        transparent 0,
+        transparent 2px,
+        white 2px,
+        white 4px
+      );
+      -webkit-background-clip: text;
+      top: 0px;
+      left: 0px;
+      transition: 1s;
+    }
+
+    .anim:hover:before {
+      top: 10px;
+      left: 10px;
+    }
+
+    .anim:hover:after {
+      top: -10px;
+      left: -10px;
+    } */
+  </style>
+  <div class="text-center">
+    <h1 class="anim text-6xl text-zinc-50 dark:text-zinc-800 italic">
+      <span>Interactive Projects!</span>
+    </h1>
+  </div>
+
+  <!-- look at how neat this is! -->
   <div class="mt-12 grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12 content-center">
-    <div
-      class="group border border-zinc-300 dark:border-zinc-700 rounded-lg flex flex-col justify-between self-center transition ease-in-out duration-200 shadow-lg dark:shadow-white/5 hover:shadow-xl hover:dark:shadow-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-800/25 hover:scale-[101%]"
-    >
-      <a href="/elliptic-curve" data-svelte-prefetch>
-        <div
-          class="group-hover:contrast-[90%] rounded-t-lg aspect-w-16 lg:aspect-h-9 aspect-h-7 w-full bg-cover bg-center min-w-full transition ease-in-out duration-200  border-b border-zinc-100 dark:border-zinc-800"
-          style="background-image: url('/thumbnails/ellipticcurve.jpg')"
-        />
-        <div class="bg-zinc-100 dark:bg-zinc-800 rounded-b-lg p-4 self-end">
-          <p class="text-xl font-medium dark:text-zinc-100 text-zinc-800">
-            Elliptic Curve Cayley Table Generator
-          </p>
-        </div>
-      </a>
-    </div>
-
-    <div
-      class="group border border-zinc-300 dark:border-zinc-700 rounded-lg flex flex-col justify-between self-center transition ease-in-out duration-200 shadow-lg dark:shadow-white/5 hover:shadow-xl hover:dark:shadow-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-800/25 hover:scale-[101%]"
-    >
-      <a href="/game-of-life" data-svelte-prefetch>
-        <div
-          class="group-hover:contrast-[90%] rounded-t-lg aspect-w-16 lg:aspect-h-9 aspect-h-7 w-full bg-cover bg-center min-w-full transition ease-in-out duration-200  border-b border-zinc-100 dark:border-zinc-800"
-          style="background-image: url('/thumbnails/gameoflife.png')"
-        />
-        <div class="bg-zinc-100 dark:bg-zinc-800 rounded-b-lg p-4 self-end">
-          <p class="text-xl font-medium dark:text-zinc-100 text-zinc-800">
-            Conway's Game of Life: Cellular Automaton Simulation
-          </p>
-        </div>
-      </a>
-    </div>
-
-    <div
-      class="group border border-zinc-300 dark:border-zinc-700 rounded-lg flex flex-col justify-between self-center transition ease-in-out duration-200 shadow-lg dark:shadow-white/5 hover:shadow-xl hover:dark:shadow-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-800/25 hover:scale-[101%]"
-    >
-      <a href="/guess-the-build-solver" data-svelte-prefetch>
-        <div
-          class="group-hover:contrast-[90%] rounded-t-lg aspect-w-16 lg:aspect-h-9 aspect-h-7 w-full bg-cover bg-center min-w-full transition ease-in-out duration-200  border-b border-zinc-100 dark:border-zinc-800"
-          style="background-image: url('/thumbnails/guessthebuild.jpg')"
-        />
-        <div class="bg-zinc-100 dark:bg-zinc-800 rounded-b-lg p-4 self-end">
-          <p class="text-xl font-medium dark:text-zinc-100 text-zinc-800">
-            Hypixel 'Guess the Build' Solver Cheat
-          </p>
-        </div>
-      </a>
-    </div>
+    {#each projectList as post}
+      <Post {post} />
+    {/each}
   </div>
 </section>
 

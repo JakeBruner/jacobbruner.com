@@ -7,12 +7,17 @@
   <meta name="keywords" content="Jacob Bruner, Jake Bruner, Jacob, Jake, Math, Music, Dwight School" />
   <link rel="icon" href="%sveltekit.assets%/favicon.svg" />
   <link rel="apple-touch-icon" href="%sveltekit.assets%/apple-touch-icon.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+  <meta name="theme-color" content="#ffffff">
   %sveltekit.head%
 </head>
 
-<body class="bg-white dark:bg-zinc-900 font-sans selection:bg-primary">
+<body class="bg-white dark:bg-zinc-900 selection:bg-primary">
   <div>%sveltekit.body%</div>
 </body>
+
+<script>
+  const colorSchemeQueryList = window.matchMedia("(prefers-color-scheme: dark)"), setColorTheme = e => { e.matches ? document.querySelector('meta[name="theme-color"]').setAttribute("content", "#18181b") : document.querySelector('meta[name="theme-color"]').setAttribute("content", "#ffffff"); }; setColorTheme(colorSchemeQueryList), colorSchemeQueryList.addEventListener("change", setColorTheme);
+</script>
 
 </html>

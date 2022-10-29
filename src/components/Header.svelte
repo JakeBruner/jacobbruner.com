@@ -9,7 +9,6 @@
     { title: "Photography", path: "/Photography" },
     { title: "CS", path: "/Computer-Science" },
     { title: "Writing", path: "/Writing" },
-    { title: "Contact", path: "/about" }
   ];
 
   let menuOpen = false;
@@ -60,7 +59,11 @@
       >
 
       <!-- MOBILE HAMBURGER ICON -->
-      <button class="z-51 flex md:hidden" on:click={() => (menuOpen = !menuOpen)}>
+      <button
+        class="z-51 flex md:hidden"
+        on:click={() => (menuOpen = !menuOpen)}
+        aria-label="Collapse Pop-out Menu"
+      >
         <!-- svg with 3 lines -->
         <svg
           width="28"

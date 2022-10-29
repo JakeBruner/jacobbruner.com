@@ -4,6 +4,12 @@
   import Header from "$components/Header.svelte";
   import Footer from "$components/Footer.svelte";
 
+ 
+  import { webVitals } from "$lib/vitals";
+  import { browser } from "$app/environment";
+  import { page } from "$app/stores";
+
+
   import { fade } from "svelte/transition";
 
   import { navigating } from "$app/stores";
@@ -14,6 +20,15 @@
   // onmount was giving vite a headache
 
   //TODO: make another layout without the header and footer
+  let analyticsId = import.meta.env.VERCEL_ANALYTICS_ID;
+
+  $: if (browser && analyticsId) {
+    webVitals({
+      path: $page.url.pathname,
+      params: $page.params,
+      analyticsId
+    });
+  }
 </script>
 
 <Header />

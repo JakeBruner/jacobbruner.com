@@ -2,7 +2,7 @@
 export interface PostInfo {
   slug: string;
   title: string;
-  excerpt: string;
+  excerpt?: string;
   date: number;
   datestring: string;
   thumbnailpath?: string;
@@ -69,8 +69,9 @@ export const getPostsInfo = async (subject: BlogType): Promise<PostInfo[]> => {
         // TODO this isnt type safe i dont think. I need errorhandeling for when not all these properties exist
       };
     })
-  );
+  )!;
 
+  // sort with null check
   postlist.sort((a, b) => b.date - a.date);
 
   // there should be logic to handle queries here
@@ -104,7 +105,7 @@ export const getPostsInfo = async (subject: BlogType): Promise<PostInfo[]> => {
 export interface FullPost {
   title: string;
   date: string;
-  content: any; //! hmm
+  content: string; //! hmm
   videoid?: string;
   audiopath?: string;
   pdfpath?: string;
@@ -113,7 +114,7 @@ export interface FullPost {
 
 // * Helper Functions *
 
-const getPath = (path: string) => path.split("/").at(-1).replace(".md", "");
+const getPath = (path: string) => path.split("/").at(-1)?.replace(".md", "");
 // sexy little monadic design pattern
 // TODO make this function take both types
 

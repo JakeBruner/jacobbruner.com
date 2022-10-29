@@ -263,6 +263,10 @@
                   const pt = table[x][y].getRawPoint;
                   selected = pt;
                 }}
+                on:keypress={() => {
+                  const pt = table[x][y].getRawPoint;
+                  selected = pt;
+                }}
                 class="x{j} first:hover:!bg-white/90"
                 class:active2={y === i}
                 class:active={x === j}
@@ -307,7 +311,7 @@
     <br />
     <span class="text-zinc-500 italic text-base ">
       For a good introduction to the number theory and group theory behind cryptography, I have to
-      reccomend "A Course in Number Theory and Cryptography" by Neal Koblitz—its quite approachable
+      reccomend "A Course in Number Theory and Cryptography" by Neal Koblitz—it's quite approachable
       without many prerequisites.
     </span>
   </p>
