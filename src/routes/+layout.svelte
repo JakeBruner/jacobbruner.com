@@ -3,11 +3,12 @@
 
   import Header from "$components/Header.svelte";
   import Footer from "$components/Footer.svelte";
-  // import "animate.css";
 
+ 
   import { webVitals } from "$lib/vitals";
   import { browser } from "$app/environment";
   import { page } from "$app/stores";
+
 
   import { fade } from "svelte/transition";
 
