@@ -1,7 +1,7 @@
 // https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
 const options = {
   root: null,
-  rootMargin: "-5px",
+  rootMargin: "10px",
   threshold: 0.0
 };
 

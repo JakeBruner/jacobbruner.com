@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
+  import { Text } from "troika-three-text";
+
   const featuredposts = [
     "/Math/ComplexNumbers",
     "/Math/EulerExploration",
@@ -41,6 +43,7 @@
 
   import type { PostInfo } from "$lib/blog/blog";
   import Post from "$components/Post.svelte";
+  import { slide } from "svelte/transition";
   const projectList = [
     {
       slug: "/elliptic-curve",
@@ -64,6 +67,22 @@
       thumbnailpath: "/thumbnails/guessthebuild.jpg"
     }
   ] as PostInfo[];
+
+  import { inview } from "svelte-inview";
+  import type { ObserverEventDetails, Options } from "svelte-inview";
+
+  let isInView: boolean = false;
+  $: console.log("isInView", isInView);
+
+  const options: Options = {
+    rootMargin: "-50px"
+    // unobserveOnEnter: true
+  };
+
+  const handleChange = ({ detail }: CustomEvent<ObserverEventDetails>) => {
+    isInView = detail.inView;
+    // scrollDirection = detail.scrollDirection;
+  };
 </script>
 
 <svelte:head>
@@ -77,15 +96,48 @@
     class="codybowl ios bg-[url('/images/codybowl.jpg')] dark:bg-[url('/images/jacksonstars.jpg')] md:bg-fixed h-screen min-h-screen bg-cover bg-center flex flex-col justify-center items-center"
     style={ios ? `height: ${y}px; background-attachment: scroll !important;` : ""}
   >
+    <style>
+      .animate {
+        animation: fadeinDown 10s;
+      }
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          -webkit-transform: translate3d(0, -100%, 0);
+          transform: translate3d(0, -100%, 0);
+        }
+
+        to {
+          opacity: 1;
+          -webkit-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+        }
+      }
+      .animate__fadeInDown {
+        -webkit-animation-name: fadeInDown;
+        animation-name: fadeInDown;
+      }
+    </style>
     <div class="absolute items-center flex flex-col">
-      <h1
-        class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[53px] text-4xl text-zinc-700 dark:text-zinc-300 font-light py-3 sm:pb-[13px] sm:pt-[17px] px-2 my-2 sm:my-4 fadeInDown text-center"
-      >
-        Learning as a Hobby
-        <!-- Learning is a skill -->
-      </h1>
+      <style>
+        .animate {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+      </style>
+      <div use:inview={options} on:change={handleChange}>
+        {#if isInView}
+          <h1
+            class="bg-white_translucent animate dark:bg-zinc-900/70 sm:text-[53px] text-4xl text-zinc-700 dark:text-zinc-300 font-light py-3 sm:pb-[13px] sm:pt-[17px] px-2 my-2 sm:my-4 text-center"
+            transition:slide={{ duration: 1000 }}
+          >
+            Learning as a Hobby
+            <!-- Learning is a skill -->
+          </h1>
+        {/if}
+      </div>
       <h2
-        class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[25px] text-xl text-zinc-600 dark:text-zinc-300 italic py-0.1 px-1.5 font-normal fadeInDown"
+        class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[25px] text-xl text-zinc-600 dark:text-zinc-300 italic py-0.1 px-1.5 font-normal"
       >
         The work of Jacob Bruner
       </h2>
@@ -150,47 +202,72 @@
   </div>
 </section>
 
-<!-- Interactive stuff on this website :) -->
-<!-- TODO these should be svelte components -->
-<section class="bg-primary items-center pt-10 pb-20 px-4 sm:px-6 lg:pt-16 lg:pb-28 lg:px-8">
+<section class="bg-primary items-center pt-10 pb-20 px-4 sm:px-6 lg:pt-16 lg:pb-28 lg:px-8 w-full">
   <!-- TODO -->
-  <!-- <style>
-    .anim {
-      /* text-shadow: 0.03em 0.03em 0 hsla(230, 40%, 50%, 1); */
+  <style>
+    /* .anim {
+      position: absolute;
+      left: 50%;
+      top: {y};
+      transform: translate(-50%, -50%);
+      display: block;
+      color: #cf1b1b;
+      font-size: 124px;
+      letter-spacing: 8px;
+      cursor: pointer;
     }
-    .anim:after {
+
+    .anim::before {
       content: "Interactive Projects!";
-      position: relative;
-      top: 0.06em;
-      left: 0.06em;
-      z-index: -1;
-      text-shadow: none;
-      background-image: linear-gradient(
+      position: absolute;
+      color: transparent;
+      background-image: repeating-linear-gradient(
         45deg,
-        transparent 80%,
-        hsla(48, 20%, 90%, 1) 45%,
-        hsla(48, 20%, 90%, 1) 55%,
-        transparent 0
+        transparent 0,
+        transparent 2px,
+        white 2px,
+        white 4px
       );
-      background-size: 0.05em 0.05em;
       -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-
-      animation: shad-anim 15s linear infinite;
+      top: 0px;
+      left: 0;
+      z-index: -1;
+      transition: 1s;
     }
 
-    @keyframes shad-anim {
-      0% {
-        background-position: 0 0;
-      }
-      0% {
-        background-position: 100% -100%;
-      }
+    .anim::after {
+      content: "Interactive Projects!";
+      position: absolute;
+      color: transparent;
+      background-image: repeating-linear-gradient(
+        135deg,
+        transparent 0,
+        transparent 2px,
+        white 2px,
+        white 4px
+      );
+      -webkit-background-clip: text;
+      top: 0px;
+      left: 0px;
+      transition: 1s;
     }
-  </style> -->
-  <h1 class="anim text-6xl text-zinc-50 dark:text-zinc-800 italic text-center">
-    Interactive Projects!
-  </h1>
+
+    .anim:hover:before {
+      top: 10px;
+      left: 10px;
+    }
+
+    .anim:hover:after {
+      top: -10px;
+      left: -10px;
+    } */
+  </style>
+  <div class="text-center">
+    <h1 class="anim text-6xl text-zinc-50 dark:text-zinc-800 italic">
+      <span>Interactive Projects!</span>
+    </h1>
+  </div>
+
   <!-- look at how neat this is! -->
   <div class="mt-12 grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12 content-center">
     {#each projectList as post}
