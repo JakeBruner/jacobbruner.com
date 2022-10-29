@@ -3,7 +3,6 @@
 
   import Header from "$components/Header.svelte";
   import Footer from "$components/Footer.svelte";
-  import "animate.css";
 
   import { fade } from "svelte/transition";
 
