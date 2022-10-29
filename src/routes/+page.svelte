@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
-  import { Text } from "troika-three-text";
+  // import { Text } from "troika-three-text";
 
   const featuredposts = [
     "/Math/ComplexNumbers",
@@ -43,7 +43,7 @@
 
   import type { PostInfo } from "$lib/blog/blog";
   import Post from "$components/Post.svelte";
-  import { slide } from "svelte/transition";
+  import { fly } from "svelte/transition";
   const projectList = [
     {
       slug: "/elliptic-curve",
@@ -71,16 +71,17 @@
   import { inview } from "svelte-inview";
   import type { ObserverEventDetails, Options } from "svelte-inview";
 
-  let isInView: boolean = false;
+  let isInView: boolean[] = new Array(3).fill(false);
   $: console.log("isInView", isInView);
 
   const options: Options = {
-    rootMargin: "-50px"
-    // unobserveOnEnter: true
+    rootMargin: "-50px",
+    unobserveOnEnter: true
   };
 
   const handleChange = ({ detail }: CustomEvent<ObserverEventDetails>) => {
-    isInView = detail.inView;
+    const node = detail.node;
+    isInView[+node.id] = detail.inView;
     // scrollDirection = detail.scrollDirection;
   };
 </script>
@@ -97,7 +98,7 @@
     style={ios ? `height: ${y}px; background-attachment: scroll !important;` : ""}
   >
     <style>
-      .animate {
+      .fadeInDown {
         animation: fadeinDown 10s;
       }
       @keyframes fadeInDown {
@@ -113,10 +114,6 @@
           transform: translate3d(0, 0, 0);
         }
       }
-      .animate__fadeInDown {
-        -webkit-animation-name: fadeInDown;
-        animation-name: fadeInDown;
-      }
     </style>
     <div class="absolute items-center flex flex-col">
       <style>
@@ -125,42 +122,51 @@
           transform: translateY(-20px);
         }
       </style>
-      <div use:inview={options} on:change={handleChange}>
-        {#if isInView}
+      <div use:inview={options} on:change={handleChange} id="0">
+        {#if isInView[0]}
           <h1
-            class="bg-white_translucent animate dark:bg-zinc-900/70 sm:text-[53px] text-4xl text-zinc-700 dark:text-zinc-300 font-light py-3 sm:pb-[13px] sm:pt-[17px] px-2 my-2 sm:my-4 text-center"
-            transition:slide={{ duration: 1000 }}
+            class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[53px] text-4xl text-zinc-700 dark:text-zinc-300 font-light py-3 sm:pb-[13px] sm:pt-[17px] px-2 my-2 sm:my-4 text-center"
+            transition:fly={{ x: 0, y: -100, duration: 1000, opacity: 0 }}
           >
             Learning as a Hobby
             <!-- Learning is a skill -->
           </h1>
         {/if}
       </div>
-      <h2
-        class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[25px] text-xl text-zinc-600 dark:text-zinc-300 italic py-0.1 px-1.5 font-normal"
-      >
-        The work of Jacob Bruner
-      </h2>
-      <div>
+      <div use:inview={options} on:change={handleChange} id="1">
+        {#if isInView[1]}
+          <h2
+            class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[25px] text-xl text-zinc-600 dark:text-zinc-300 italic py-0.1 px-1.5 font-normal"
+            transition:fly={{ x: 0, y: -60, duration: 1000, delay: 200, opacity: 0 }}
+          >
+            The work of Jacob Bruner
+          </h2>
+        {/if}
+      </div>
+      <div use:inview={options} on:change={handleChange} id="2">
         <!-- scroll to next section -->
-        <button
-          class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-blue-400/80 lg:px-7 lg:py-2 rounded-xl hover:bg-blue-400 hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
-          on:click={() => {
-            window.scrollTo({
-              top: y - 60,
-              behavior: "smooth"
-            });
-          }}
-          aria-label="Scroll to next section"
-        >
-          About Me
-        </button>
-        <a href={randomlink}>
-          <button
-            class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-primary/80 lg:px-7 lg:py-2 rounded-xl hover:bg-primary hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
-            data-svelte-prefetch>Random Post</button
-          ></a
-        >
+        {#if isInView[2]}
+          <div transition:fly={{ x: 0, y: 40, duration: 1200, delay: 300, opacity: 0 }}>
+            <button
+              class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-blue-400/80 lg:px-7 lg:py-2 rounded-xl hover:bg-blue-400 hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
+              on:click={() => {
+                window.scrollTo({
+                  top: y - 60,
+                  behavior: "smooth"
+                });
+              }}
+              aria-label="Scroll to next section"
+            >
+              About Me
+            </button>
+            <a href={randomlink}>
+              <button
+                class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-primary/80 lg:px-7 lg:py-2 rounded-xl hover:bg-primary hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
+                data-svelte-prefetch>Random Post</button
+              ></a
+            >
+          </div>
+        {/if}
       </div>
     </div>
   </div>
