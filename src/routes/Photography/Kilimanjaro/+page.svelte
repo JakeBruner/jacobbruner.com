@@ -2,16 +2,19 @@
   import { onMount } from "svelte";
   import { fade } from "svelte/transition";
   import LazyImage from "$components/LazyImage.svelte";
+  import { lazyImage } from "$lib/actions/LazyImage";
 
   let fullscreen: boolean = false;
 
-  interface Photo {
+  type Photo = {
     src: string;
+    thumb: string;
     alt: string;
-  }
+  };
 
   let selected: Photo = {
     src: "",
+    thumb: "",
     alt: ""
   };
 
@@ -24,7 +27,8 @@
     if (!image) return;
 
     selected = {
-      src: image.src,
+      thumb: image.src,
+      src: image.src.replace("kili", "kilihighres"),
       alt: image.alt
     };
 
@@ -64,7 +68,7 @@
     // });
   });
 
-  let photoList: Photo[] = [
+  let photoList = [
     {
       src: "/images/kili/kilimanjaro-2465.webp",
       alt: "looking towards the receding 'Rebman Glacier' from the summit"
@@ -148,7 +152,8 @@
     on:keypress={deselectMe}
   >
     <img
-      src={selected.src}
+      use:lazyImage={selected.src}
+      src={selected.thumb}
       alt={selected.alt}
       class="rounded-sm content-center object-contain object-center md:scale-95 shadow-md pointer-events-none"
     />
