@@ -47,21 +47,21 @@
       title: "Elliptic Curve Cayley Table Generator",
       date: 1, // yes I know this is abuse of my functionality
       datestring: "March 30th, 2022",
-      thumbnailpath: "/thumbnails/ellipticcurve.jpg",
+      thumbnailpath: "/thumbnails/ellipticcurve.jpg"
     },
     {
       slug: "/game-of-life",
       title: "Conway's Game of Life: Cellular Automaton Simulation",
       date: 2,
       datestring: "October 10th, 2022",
-      thumbnailpath: "/thumbnails/gameoflife.png",
+      thumbnailpath: "/thumbnails/gameoflife.png"
     },
     {
       slug: "/guess-the-build-solver",
       title: "Hypixel 'Guess the Build' Game Solver",
       date: 3,
       datestring: "July 30th, 2022",
-      thumbnailpath: "/thumbnails/guessthebuild.jpg",
+      thumbnailpath: "/thumbnails/guessthebuild.jpg"
     }
   ] as PostInfo[];
 </script>
@@ -153,7 +153,7 @@
 <!-- Interactive stuff on this website :) -->
 <!-- TODO these should be svelte components -->
 <section class="bg-primary items-center pt-10 pb-20 px-4 sm:px-6 lg:pt-16 lg:pb-28 lg:px-8">
-    <!-- TODO -->
+  <!-- TODO -->
   <!-- <style>
     .anim {
       /* text-shadow: 0.03em 0.03em 0 hsla(230, 40%, 50%, 1); */
@@ -191,7 +191,7 @@
   <h1 class="anim text-6xl text-zinc-50 dark:text-zinc-800 italic text-center">
     Interactive Projects!
   </h1>
- <!-- look at how neat this is! -->
+  <!-- look at how neat this is! -->
   <div class="mt-12 grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12 content-center">
     {#each projectList as post}
       <Post {post} />
