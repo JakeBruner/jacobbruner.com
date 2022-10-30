@@ -10,7 +10,8 @@
     "/Writing/PublicDefenders",
     "/Computer-Science/EllipticCurve",
     "/Music",
-    "/Photography"
+    "/Photography",
+    "/Music/OrchestralPiece"
   ];
   // let w: number;
   // let h: number;
@@ -37,9 +38,15 @@
   let ios = false;
   onMount(() => {
     ios = isiOS();
+    if (ios) {
+      console.log("his");
+    }
   });
 
+  // // bound to window height below
   let y: number;
+  // // since phones have shit at the bottom, this makes it look more centered
+  // $: y2 = y - 44;
 
   import type { PostInfo } from "$lib/blog/blog";
   import Post from "$components/Post.svelte";
@@ -95,7 +102,7 @@
 <section class="-mt-[60px] inset-0">
   <div
     class="codybowl ios bg-[url('/images/codybowl.jpg')] dark:bg-[url('/images/jacksonstars.jpg')] md:bg-fixed h-screen min-h-screen bg-cover bg-center flex flex-col justify-center items-center"
-    style={ios ? `height: ${y}px; background-attachment: scroll !important;` : ""}
+    style={ios ? `background-attachment: scroll !important;` : ""}
   >
     <style>
       .fadeInDown {
