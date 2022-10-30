@@ -104,7 +104,7 @@
     class="codybowl ios bg-[url('/images/codybowl.jpg')] dark:bg-[url('/images/jacksonstars.jpg')] md:bg-fixed h-screen min-h-screen bg-cover bg-center flex flex-col justify-center items-center"
     style={ios ? `background-attachment: scroll !important;` : ""}
   >
-    <style>
+    <!-- <style>
       .fadeInDown {
         animation: fadeinDown 10s;
       }
@@ -121,14 +121,14 @@
           transform: translate3d(0, 0, 0);
         }
       }
-    </style>
+    </style> -->
     <div class="absolute items-center flex flex-col">
-      <style>
+      <!-- <style>
         .animate {
           opacity: 0;
           transform: translateY(-20px);
         }
-      </style>
+      </style> -->
       <div use:inview={options} on:change={handleChange} id="0">
         {#if isInView[0]}
           <h1
