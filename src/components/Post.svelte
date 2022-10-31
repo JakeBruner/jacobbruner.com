@@ -3,7 +3,7 @@
   import { fly } from "svelte/transition";
   export let post: PostInfo;
   export let subject = "";
-  export let id: number = 0;
+  export let id = 0;
 </script>
 
 <div
