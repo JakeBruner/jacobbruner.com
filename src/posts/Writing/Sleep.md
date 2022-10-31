@@ -3,7 +3,7 @@ title: "Among Teens, Sleep Deprivation: A Preventable Epidemic"
 date: 2022-1-17
 layout: blog
 excerpt: A deep-dive into the Public Defenders system reveals the systemic factors contributing to inequalities on socioeconomic lines. Completed as the final project for Constitutional Law.
-thumbnailpath: /images/minecraftworld.png
+thumbnailpath: /images/effectssleep.png
 ---
 Seventy-three percent of adolescents are not getting adequate sleep at night. But this surprises no one, right? Teens just lack the time-management and decision-making skills to go to sleep at a reasonable hour, right? It must be their addiction to phones, video games, and social media, right? The solution must be to educate kids about the importance of sleep and count on them to make good decisions… right?
 
