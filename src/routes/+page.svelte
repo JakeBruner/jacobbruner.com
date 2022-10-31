@@ -78,7 +78,7 @@
   import { inview } from "svelte-inview";
   import type { ObserverEventDetails, Options } from "svelte-inview";
 
-  let isInView: boolean[] = new Array(3).fill(false);
+  let isInView: boolean[] = new Array(7).fill(false);
   // $: console.log("isInView", isInView);
 
   const options: Options = {
@@ -144,36 +144,43 @@
         {#if isInView[1]}
           <h2
             class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[25px] text-xl text-zinc-600 dark:text-zinc-300 italic py-0.1 px-1.5 font-normal"
-            in:fly={{ x: 0, y: -60, duration: 1000, delay: 200, opacity: 0 }}
+            in:fly={{ x: 0, y: -60, duration: 1000, delay: 100, opacity: 0 }}
           >
             The work of Jacob Bruner
           </h2>
         {/if}
       </div>
-      <div use:inview={options} on:change={handleChange} id="2">
+      <div>
         <!-- scroll to next section -->
-        {#if isInView[2]}
-          <div in:fly={{ x: 0, y: 40, duration: 1200, delay: 300, opacity: 0 }}>
-            <button
-              class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-blue-400/80 lg:px-7 lg:py-2 rounded-xl hover:bg-blue-400 hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
-              on:click={() => {
-                window.scrollTo({
-                  top: y - 60,
-                  behavior: "smooth"
-                });
-              }}
-              aria-label="Scroll to next section"
-            >
-              About Me
-            </button>
-            <a href={randomlink}>
+        <div class="">
+          <div use:inview={options} on:change={handleChange} id="2" class="inline">
+            {#if isInView[2]}
               <button
-                class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-primary/80 lg:px-7 lg:py-2 rounded-xl hover:bg-primary hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
-                data-svelte-prefetch>Random Post</button
-              ></a
-            >
+                class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-blue-400/80 lg:px-7 lg:py-2 rounded-xl hover:bg-blue-400 hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
+                in:fly={{ x: 0, y: 40, duration: 1000, delay: 200, opacity: 0 }}
+                on:click={() => {
+                  window.scrollTo({
+                    top: y - 60,
+                    behavior: "smooth"
+                  });
+                }}
+                aria-label="Scroll to next section"
+              >
+                About Me
+              </button>
+            {/if}
           </div>
-        {/if}
+          <div use:inview={options} on:change={handleChange} id="3" class="inline">
+            {#if isInView[3]}
+              <button
+                href={randomlink}
+                class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-primary/80 lg:px-7 lg:py-2 rounded-xl hover:bg-primary hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
+                in:fly={{ x: 0, y: 40, duration: 1000, delay: 400, opacity: 0 }}
+                data-svelte-prefetch>Random Post</button
+              >
+            {/if}
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -283,8 +290,13 @@
 
   <!-- look at how neat this is! -->
   <div class="mt-12 grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12 content-center">
-    {#each projectList as post}
-      <Post {post} />
+    {#each projectList as post, i}
+      {@const arraypos = i + 4}
+      <div use:inview={options} on:change={handleChange} id={arraypos.toString()}>
+        {#if isInView[arraypos]}
+          <Post {post} id={i} />
+        {/if}
+      </div>
     {/each}
   </div>
 </section>

@@ -6,7 +6,8 @@
 
   import { inview } from "svelte-inview";
   import type { ObserverEventDetails, Options } from "svelte-inview";
-  import { fly } from "svelte/transition";
+  // import { fly } from "svelte/transition";
+  //* the animation here is done at the Post component level
 
   let isInView = new Array(posts.length).fill(false);
   const options: Options = {
