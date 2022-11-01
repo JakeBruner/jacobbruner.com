@@ -5,6 +5,10 @@
   import Footer from "$components/Footer.svelte";
 
   import { webVitals } from "$lib/vitals";
+  import { inject } from "@vercel/analytics";
+
+  inject();
+
   import { browser } from "$app/environment";
   import { page } from "$app/stores";
 
