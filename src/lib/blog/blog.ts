@@ -48,7 +48,7 @@ export const getPostsInfo = async (subject: BlogType): Promise<PostInfo[]> => {
   }
   // this should handle every possible 'error-prone' case
 
-  const iterableModules = Object.entries(modules)!;
+  const iterableModules = Object.entries(modules);
   // the type of this is [url, () => Promise]
 
   const postlist: PostInfo[] = await Promise.all(
@@ -66,10 +66,9 @@ export const getPostsInfo = async (subject: BlogType): Promise<PostInfo[]> => {
         date: utcdate.valueOf(), // quick fix for sveltekit 1.0.0-next.422 requiring json serialization
         datestring: convertDateToString(utcdate),
         thumbnailpath: metadata?.thumbnailpath ? metadata.thumbnailpath : null
-        // TODO this isnt type safe i dont think. I need errorhandeling for when not all these properties exist
       };
     })
-  )!;
+  );
 
   // sort with null check
   postlist.sort((a, b) => b.date - a.date);
@@ -113,10 +112,17 @@ export interface FullPost {
 }
 
 // * Helper Functions *
-
-const getPath = (path: string) => path.split("/").at(-1)?.replace(".md", "");
-// sexy little monadic design pattern
-// TODO make this function take both types
+// make this type safe
+// const getPath = (path: string) => path.split("/").at(-1)?.replace(".md", "");
+const getPath = (path: string): string => {
+  const split = path.split("/");
+  const filename = split.at(-1);
+  if (filename) {
+    return filename.replace(".md", "");
+  } else {
+    throw new Error("string passed to getPath was not transformed correctly");
+  }
+};
 
 export const convertDateToString = (date: Date): string => {
   const listmonths = [
@@ -134,7 +140,7 @@ export const convertDateToString = (date: Date): string => {
     "December"
   ];
 
-  const day = date.getDate();
+  const day = date.getDate() + 1;
   const month = date.getMonth();
   const year = date.getFullYear();
 
