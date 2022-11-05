@@ -1,12 +1,4 @@
 // PostInfo provides the nessecary information about a post to be displayed in the grid "blog homepage" layout
-export interface PostInfo {
-  slug: string;
-  title: string;
-  excerpt?: string;
-  date: number;
-  datestring: string;
-  thumbnailpath?: string;
-}
 
 // note that BlogType cant inherit from navigating because not all pages (e.g., /photography) have blogs
 // this 'type ailias' is really just for type safety on the functions below
@@ -15,6 +7,7 @@ export interface PostInfo {
 export type BlogType = "Computer-Science" | "Math" | "Music" | "Writing"; // "Computer-Science" | "Math" | "Music" | "Writing";
 // this type is used on [slug]/+page.server.ts endpoints to construct the glob path fed into the fn below
 
+/** Checks if parameter is a valid blog type */
 export const isValidBlogType = (string: string): string is BlogType => {
   return ["Computer-Science", "Math", "Music", "Writing"].includes(string);
 };
@@ -26,22 +19,21 @@ export const isValidBlogType = (string: string): string is BlogType => {
 
 // once i implement search parameters this should take in (query: SearchParamaters = {}, subject)
 export const getPostsInfo = async (subject: BlogType): Promise<PostInfo[]> => {
-  // TODO implement this function without <any> generic
-  // type should be Record<string, () => Promise<NodeModule>>
-  let modules: Record<string, () => Promise<any>>;
+  let modules: Record<string, () => Promise<ImportedPost>>;
 
   switch (subject) {
     case "Computer-Science":
-      modules = import.meta.glob<any>("/src/posts/Computer-Science/*.md", { eager: false });
+      // prettier-ignore
+      modules = import.meta.glob<ImportedPost>("/src/posts/Computer-Science/*.md", { eager: false });
       break;
     case "Math":
-      modules = import.meta.glob<any>("/src/posts/Math/*.md", { eager: false });
+      modules = import.meta.glob<ImportedPost>("/src/posts/Math/*.md", { eager: false });
       break;
     case "Music":
-      modules = import.meta.glob<any>("/src/posts/Music/*.md", { eager: false });
+      modules = import.meta.glob<ImportedPost>("/src/posts/Music/*.md", { eager: false });
       break;
     case "Writing":
-      modules = import.meta.glob<any>("/src/posts/Writing/*.md", { eager: false });
+      modules = import.meta.glob<ImportedPost>("/src/posts/Writing/*.md", { eager: false });
       break;
     default:
       throw new Error("i really dont know how we got here");
@@ -55,23 +47,33 @@ export const getPostsInfo = async (subject: BlogType): Promise<PostInfo[]> => {
     // mapping over the promise monad
     iterableModules.map(async ([url, module]) => {
       // .map just happens to do what i need
-      const { metadata } = await module();
+      const { metadata }: ImportedPost = await module();
 
-      const utcdate = new Date(metadata?.date);
+      const utcdate = new Date(metadata.date);
 
       return {
-        slug: getPath(url),
-        title: metadata?.title,
-        excerpt: metadata?.excerpt,
-        date: utcdate.valueOf(), // quick fix for sveltekit 1.0.0-next.422 requiring json serialization
-        datestring: convertDateToString(utcdate),
-        thumbnailpath: metadata?.thumbnailpath ? metadata.thumbnailpath : null
+        title: metadata.title,
+        excerpt: metadata.excerpt,
+        date: metadata.date,
+        formatteddate: convertDateToString(utcdate),
+        thumbnailpath: metadata.thumbnailpath,
+        slug: getPath(url) ?? "error",
+        utctimestamp: utcdate.getTime()
       };
+
+      // return {
+      //   slug: getPath(url) ?? "error",
+      //   title: metadata?.title,
+      //   excerpt: metadata?.excerpt,
+      //   date: utcdate,
+      //   datestring: convertDateToString(utcdate),
+      //   thumbnailpath: metadata?.thumbnailpath ? metadata.thumbnailpath : null
+      // };
     })
   );
 
   // sort with null check
-  postlist.sort((a, b) => b.date - a.date);
+  postlist.sort((a, b) => b.utctimestamp - a.utctimestamp);
 
   // there should be logic to handle queries here
 
@@ -99,31 +101,57 @@ export const getPostsInfo = async (subject: BlogType): Promise<PostInfo[]> => {
 //   './dir/bar.js': __glob__0_1
 // }
 
-// * Parametric Url Path Helpers *
+// * Types for blog
 
-export interface FullPost {
-  title: string;
-  date: string;
-  content: string; //! hmm
-  videoid?: string;
-  audiopath?: string;
-  pdfpath?: string;
-  // TODO thumbnail
+export interface ImportedPost {
+  metadata: {
+    title: string;
+    excerpt: string;
+    date: string;
+    thumbnailpath: string;
+    videoid?: string;
+    audiopath?: string;
+    pdfpath?: string;
+  };
+  default: {
+    render: () => {
+      // eek
+      html: string;
+    };
+  };
 }
 
-// * Helper Functions *
-// make this type safe
-// const getPath = (path: string) => path.split("/").at(-1)?.replace(".md", "");
-const getPath = (path: string): string => {
-  const split = path.split("/");
-  const filename = split.at(-1);
-  if (filename) {
-    return filename.replace(".md", "");
-  } else {
-    throw new Error("string passed to getPath was not transformed correctly");
-  }
+export type FullPost = Omit<
+  ImportedPost["metadata"],
+  keyof { excerpt: string; thumbnailpath: string }
+> & { formatteddate: string; html: string };
+
+// type Unwanted = {
+//   videoid?: string;
+//   audiopath?: string;
+//   pdfpath?: string;
+// };
+
+// export type PostInfo = Omit<ImportedPost["metadata"], keyof Unwanted> & {
+//   slug: string;
+//   datestring: string;
+//   utctimestamp: number;
+// };
+export type PostInfo = {
+  title: string;
+  excerpt: string;
+  date: string;
+  formatteddate: string;
+  thumbnailpath: string;
+  slug: string;
+  utctimestamp: number;
 };
 
+// * Helper Functions *
+/** removes everything from imported url except the name of post */
+const getPath = (path: string): string | undefined => path.split("/").at(-1)?.replace(".md", "");
+
+/** converts Date object to string `January 2nd, 2021` */
 export const convertDateToString = (date: Date): string => {
   const listmonths = [
     "January",

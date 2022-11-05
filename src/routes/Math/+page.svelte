@@ -3,7 +3,6 @@
 
   import PostsGrid from "$components/PostsGrid.svelte";
 
-  /** @type {import('./$types').PageData} */
   export let data: { p: PostInfo[] };
   const subject = "Math" as BlogType;
   // this is basically useless but makes it easier for me to copy paste for now :)

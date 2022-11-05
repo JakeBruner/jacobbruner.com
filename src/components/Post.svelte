@@ -25,7 +25,7 @@
       {/if}
       <div class="mt-6">
         <div class="text-sm dark:text-zinc-400/60 text-zinc-500">
-          <time>{post.datestring}</time>
+          <time>{post.formatteddate}</time>
         </div>
       </div>
     </div>

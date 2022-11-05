@@ -1,6 +1,6 @@
 ---
 title: Unreliability of Statistics – Ascombe's Quartet
-date: 2023-09-26
+date: 2022-09-26
 layout: blog
 excerpt: A short paper exploring the pitfalls of certain statistical analysis, using Ascombe's Quartet as an example.
 pdfpath: /pdfs/statisticsexploration.pdf

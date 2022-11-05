@@ -1,15 +1,17 @@
 <script lang="ts">
-  import type { FullPost } from "$lib/blog/blog";
+  import type { FullPost, BlogType } from "$lib/blog/blog";
   // import "/src/app.css"; // doesn't do this by default
-  export let data: FullPost;
-  // export let errors: any
+  export let data: [FullPost, BlogType];
+  const post: FullPost = data[0];
+  const title = post.title.concat("...");
+  // i love monads
 
-  // export let title: string;
-  // export let date: string;
-  // export let videoid: string;
-  // export let audiopath: string;
-  // export let pdfpath: string;
+  const subject = data[1];
 </script>
+
+<svelte:head>
+  <title>{subject} | {title}</title>
+</svelte:head>
 
 <article class="md:container md:mx-auto xl:px-40 lg:px-28 mx-auto py-6 md:py-16 px-4 sm:px-6 ">
   <!-- <div
@@ -41,12 +43,12 @@
         <!-- why wont this work? -->
       </button>
     </div>
-    <h2 class="my-4 text-3xl md:text-4xl font-semibold">{data.title}</h2>
-    <p class="my-4 text-zinc-500 dark:text-zinc-400">{data.date}</p>
-    {#if data?.videoid}
+    <h2 class="my-4 text-3xl md:text-4xl font-semibold">{post.title}</h2>
+    <p class="my-4 text-zinc-500 dark:text-zinc-400">{post.formatteddate}</p>
+    {#if post?.videoid}
       <div class="w-full mb-6 aspect-w-16 aspect-h-9">
         <embed
-          src="https://www.youtube.com/embed/{data?.videoid}"
+          src="https://www.youtube.com/embed/{post?.videoid}"
           frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen
@@ -55,23 +57,23 @@
         />
       </div>
     {/if}
-    {#if data?.audiopath}
+    {#if post?.audiopath}
       <div class="mb-4">
         <audio type="mp3" controls>
-          <source src={data?.audiopath} />
+          <source src={post?.audiopath} />
         </audio>
       </div>
     {/if}
-    {#if data?.pdfpath}
+    {#if post?.pdfpath}
       <div class="mb-8 relative aspect-h-11 aspect-w-8">
-        <iframe class="" title="Pdf file" src={data?.pdfpath} frameborder="0" />
+        <iframe class="" title="Pdf file" src={post?.pdfpath} frameborder="0" />
       </div>
     {/if}
     <div class="w-full relative prose max-w-none prose-lg lg:prose-xl prose-zinc dark:prose-invert">
       <!-- firstletter isnt working here... not sure why -->
 
-      {@html data.content}
-      <!-- <svelte:component this={data.content} /> -->
+      {@html post.html}
+      <!-- <svelte:component this={post.content} /> -->
     </div>
   </div>
 </article>
