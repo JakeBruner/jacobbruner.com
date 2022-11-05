@@ -6,7 +6,8 @@ function getConnectionSpeed() {
   return "connection" in navigator &&
     navigator["connection"] &&
     "effectiveType" in navigator["connection"]
-    ? // @ts-ignore
+    ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       navigator["connection"]["effectiveType"]
     : "";
 }

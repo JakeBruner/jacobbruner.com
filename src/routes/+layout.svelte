@@ -21,7 +21,7 @@
   // this ugly thing hacks an object into a bool
   // onmount was giving vite a headache
 
-  //TODO: make another layout without the header and footer
+  //TODO : make another layout without the header and footer
   let analyticsId = import.meta.env.VERCEL_ANALYTICS_ID;
 
   $: if (browser && analyticsId) {

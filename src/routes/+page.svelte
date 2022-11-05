@@ -55,22 +55,22 @@
     {
       slug: "/elliptic-curve",
       title: "Elliptic Curve Cayley Table Generator",
-      date: 1, // yes I know this is abuse of my functionality
-      datestring: "March 30th, 2022",
+      utctimestamp: 1, // yes I know this is abuse of my functionality
+      formatteddate: "March 30th, 2022",
       thumbnailpath: "/thumbnails/ellipticcurve.jpg"
     },
     {
       slug: "/game-of-life",
       title: "Conway's Game of Life: Cellular Automaton Simulation",
-      date: 2,
-      datestring: "October 10th, 2022",
+      utctimestamp: 2,
+      formatteddate: "October 10th, 2022",
       thumbnailpath: "/thumbnails/gameoflife.png"
     },
     {
       slug: "/guess-the-build-solver",
       title: "Hypixel 'Guess the Build' Game Solver",
-      date: 3,
-      datestring: "July 30th, 2022",
+      utctimestamp: 3,
+      formatteddate: "July 30th, 2022",
       thumbnailpath: "/thumbnails/guessthebuild.jpg"
     }
   ] as PostInfo[];
