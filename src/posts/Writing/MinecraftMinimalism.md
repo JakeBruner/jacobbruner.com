@@ -4,6 +4,7 @@ date: 2022-1-17
 layout: blog
 excerpt: A deep-dive into the Public Defenders system reveals the systemic factors contributing to inequalities on socioeconomic lines. Completed as the final project for Constitutional Law.
 thumbnailpath: /images/minecraftworld.png
+tags: Creative
 ---
 
 <div style="display:flex;flex-direction:column;margin:auto"><img src="/images/minecraftworld.png" alt="My minecraft house." style="border-radius:0.25rem;"/></div>

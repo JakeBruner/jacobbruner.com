@@ -8,17 +8,55 @@ export type BlogType = "Computer-Science" | "Math" | "Music" | "Writing"; // "Co
 // this type is used on [slug]/+page.server.ts endpoints to construct the glob path fed into the fn below
 
 /** Checks if parameter is a valid blog type */
-export const isValidBlogType = (string: string): string is BlogType => {
-  return ["Computer-Science", "Math", "Music", "Writing"].includes(string);
+export function isValidBlogType(string: string): asserts string is BlogType {
+  // https://github.com/microsoft/TypeScript/pull/33622, asserts can't be arrow functions
+  if (!["Computer-Science", "Math", "Music", "Writing"].includes(string)) {
+    throw new Error(`${string} is not a valid blog type.`);
+  }
+}
+
+// in lieu of an enum
+export const BlogTagColors = {
+  Video: "#EF4444" /** red-500 */,
+  MIDI: "#60A5FA" /** blue-400 */,
+  Interactive: "#d772a1" /** primary */,
+  LaTeX: "#008080" /** latex color */,
+  Python: "#DCA900" /** python colorx */,
+  Rust_WASM: "#ff4136" /** rust color */,
+  Composition: "#0D9488" /** teal-600 */,
+  Arrangement: "#65a30d" /** lime-600 */,
+  Audio: "#FB923C" /** amber-400 */,
+  Spotify: "#169c46" /** spotify color */,
+  PDF: "#71717a" /** zinc-500 */,
+  Essay: "#a855f7" /** purple-500 */,
+  Creative: "#f43f5e" /** rose-500 */,
+  News: "#0ea5e9" /** sky-500 */
+} as const;
+
+export type BlogTags = keyof typeof BlogTagColors;
+
+const blogTypeArr = Object.keys(BlogTagColors);
+
+export const correctBlogTags = (stringArray: string[]): stringArray is BlogTags[] => {
+  stringArray.forEach((str) => {
+    if (!blogTypeArr.includes(str)) {
+      return false;
+    }
+  });
+  return true;
 };
-// console.log(isValidBlogType("Computer-Science"));
 
 // export interface SearchParamaters {
 //   // keywords: string;
 // }
 
 // once i implement search parameters this should take in (query: SearchParamaters = {}, subject)
+/** Returns all posts in a given blog type using import.meta.glob
+ * @param subject: BlogType - the blog type to search for
+ * @returns an array of PostInfo objects
+ */
 export const getPostsInfo = async (subject: BlogType): Promise<PostInfo[]> => {
+  //TODO async (subject: BlogType, sorting: SortingMethod): Promise<PostInfo[]>
   let modules: Record<string, () => Promise<ImportedPost>>;
 
   switch (subject) {
@@ -51,6 +89,16 @@ export const getPostsInfo = async (subject: BlogType): Promise<PostInfo[]> => {
 
       const utcdate = new Date(metadata.date);
 
+      let tags: undefined | BlogTags[] = undefined;
+      const tagsString = metadata?.tags;
+
+      if (tagsString) {
+        const uncheckedTags = tagsString.split(", ");
+        if (correctBlogTags(uncheckedTags)) {
+          tags = uncheckedTags;
+        }
+      }
+
       return {
         title: metadata.title,
         excerpt: metadata.excerpt,
@@ -58,17 +106,9 @@ export const getPostsInfo = async (subject: BlogType): Promise<PostInfo[]> => {
         formatteddate: convertDateToString(utcdate),
         thumbnailpath: metadata.thumbnailpath,
         slug: getPath(url) ?? "error",
-        utctimestamp: utcdate.getTime()
+        utctimestamp: utcdate.getTime(),
+        tags: tags ?? undefined
       };
-
-      // return {
-      //   slug: getPath(url) ?? "error",
-      //   title: metadata?.title,
-      //   excerpt: metadata?.excerpt,
-      //   date: utcdate,
-      //   datestring: convertDateToString(utcdate),
-      //   thumbnailpath: metadata?.thumbnailpath ? metadata.thumbnailpath : null
-      // };
     })
   );
 
@@ -112,6 +152,7 @@ export interface ImportedPost {
     videoid?: string;
     audiopath?: string;
     pdfpath?: string;
+    tags?: string;
   };
   default: {
     render: () => {
@@ -123,8 +164,8 @@ export interface ImportedPost {
 
 export type FullPost = Omit<
   ImportedPost["metadata"],
-  keyof { excerpt: string; thumbnailpath: string }
-> & { formatteddate: string; html: string };
+  keyof { excerpt: string; thumbnailpath: string; tags: string }
+> & { formatteddate: string; html: string; tags?: BlogTags[] };
 
 // type Unwanted = {
 //   videoid?: string;
@@ -145,6 +186,7 @@ export type PostInfo = {
   thumbnailpath: string;
   slug: string;
   utctimestamp: number;
+  tags?: BlogTags[];
 };
 
 // * Helper Functions *

@@ -1,7 +1,9 @@
 <script lang="ts">
-  import type { PostInfo } from "$lib/blog/blog";
+  import type { PostInfo, BlogTags } from "$lib/blog/blog";
+  import { BlogTagColors } from "$lib/blog/blog";
   import { fly } from "svelte/transition";
   export let post: PostInfo;
+  const tags = post?.tags;
   export let subject = "";
   export let id = 0;
 </script>
@@ -23,7 +25,21 @@
       {#if post.excerpt}
         <p class="text-base text-zinc-500 dark:text-zinc-400">{post.excerpt}</p>
       {/if}
-      <div class="mt-6">
+
+      {#if tags}
+        <div class="-ml-[1px] flex flex-row space-x-1 pt-1.5">
+          {#each tags as tag}
+            <div
+              class="cursor-default rounded-xl py-1 px-2 group-hover:rounded-lg group-hover:contrast-[90%] transition-all ease-in-out"
+              style:background-color={BlogTagColors[tag]}
+            >
+              <span class="text-xs relative block text-white">{tag}</span>
+            </div>
+          {/each}
+        </div>
+      {/if}
+
+      <div class="pt-3" class:pt-0.5={tags}>
         <div class="text-sm dark:text-zinc-400/60 text-zinc-500">
           <time>{post.formatteddate}</time>
         </div>

@@ -4,6 +4,7 @@ date: 2022-6-6
 layout: blog
 excerpt: Dealing with and understanding the stress put on students in schools. Written during 11th grade finals week :).
 thumbnailpath: /thumbnails/mentalhealth.jpg
+tags: News
 ---
 
 As finals week begins for Upper School students, the topic of ‘stress’ seems to pervade the hallways. During finals, students are typically required to recite information learned throughout the year in one long, stressful exam. The prospect of having an exam weigh a significant portion of a final grade often becomes a starting point for anxiety and overthinking. Despite the fact that it’s highly unlikely a student recalls everything from the syllabus, individuals beat themselves up over practice tests and review material, corroding their mental health. Yet, it’s critical to examine what factors have led to this form of extreme thinking.

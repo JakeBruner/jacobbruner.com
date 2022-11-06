@@ -5,6 +5,7 @@ layout: blog
 excerpt: How might the idea of continuously compounding a quantity over an interval change when that quantity is complex? In this exploration, I demonstrate the link between complex multiplication and rotation.
 pdfpath: /pdfs/EulerForm.pdf
 thumbnailpath: thumbnails/eulerform.png
+tags: LaTeX, Python
 ---
 
 This paper was a short assignment for IB Maths Higher Level Approaches and Analysis class. In our unit on complex numbers, we looked at a variety of representations, one of which being euler's (polar) form. In this exploration, which I wrote in a day, I coded a quick demonstration to show how evalutaing a problem about compounding interest reveals how 'e^ix' cooresponds to a rotation through x radians. If I were to do this project again, I would incorporate the proof of Euler's form using the taylor series expansion of e^ix, where separating the real and imaginary components yields the taylor expansion of cosine and sine respectively. To complete the visualizations, I used 3Blue1Brown's open-source python library Manim. The graphics were made with the code below:

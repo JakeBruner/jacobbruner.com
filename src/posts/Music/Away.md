@@ -1,9 +1,10 @@
 ---
-title: Original Song "Away" published to Spotify
+title: Original Song "Away" on Spotify
 date: 2019-12-14
 layout: blog
 excerpt: I experimented with different sounds, including an ambient backdrop of a party to create a song that has a relaxed vibe to it.
 thumbnailpath: /images/away.jpg
+tags: Composition, Spotify, Audio
 ---
 
 <iframe style="border-radius:.5rem;" src="https://open.spotify.com/embed/track/505VBSoNd7PYljsee1cGtd?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" title="Away song on Spotify" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
