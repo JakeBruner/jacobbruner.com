@@ -1,16 +1,16 @@
 <script lang="ts">
   import type { FullPost, BlogType } from "$lib/blog/blog";
+  import { BlogTagColors } from "$lib/blog/blog";
   // import "/src/app.css"; // doesn't do this by default
   export let data: [FullPost, BlogType];
   const post: FullPost = data[0];
-  const title = post.title.concat("...");
   // i love monads
 
   const subject = data[1];
 </script>
 
 <svelte:head>
-  <title>{subject} | {title}</title>
+  <title>{subject} | {post.title}</title>
 </svelte:head>
 
 <article class="md:container md:mx-auto xl:px-40 lg:px-28 mx-auto py-6 md:py-16 px-4 sm:px-6 ">
@@ -21,10 +21,10 @@
   </div> -->
   <div class="md:px-16 min-h-screen sm:min-h-0">
     <div
-      class="hover:-translate-x-0.5 transition-all ease-in-out duration-300 hover:brightness-110"
+      class="cursor-pointer hover:-translate-x-0.5 transition-all ease-in-out duration-300 hover:brightness-110"
     >
       <button
-        class="group cursor-pointer"
+        class="group"
         on:click={() => {
           history.back();
         }}
@@ -45,6 +45,18 @@
     </div>
     <h2 class="my-4 text-3xl md:text-4xl font-semibold">{post.title}</h2>
     <p class="my-4 text-zinc-500 dark:text-zinc-400">{post.formatteddate}</p>
+    {#if post.tags}
+      <div class="flex flex-row space-x-1">
+        {#each post.tags as tag}
+          <div
+            class="rounded-xl py-1 px-2 group-hover:rounded-lg group-hover:contrast-125 transition-all ease-in-out"
+            style:background-color={BlogTagColors[tag]}
+          >
+            <span class="text-xs relative block text-white">{tag}</span>
+          </div>
+        {/each}
+      </div>
+    {/if}
     {#if post?.videoid}
       <div class="w-full mb-6 aspect-w-16 aspect-h-9">
         <embed

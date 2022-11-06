@@ -3,11 +3,11 @@ import {
   convertDateToString,
   type FullPost,
   type BlogType,
-  type ImportedPost
+  type ImportedPost,
+  correctBlogTags
 } from "$lib/blog/blog";
 import { error, type ServerLoadEvent } from "@sveltejs/kit";
 
-// type data = FullPost & BlogType //! figure out how to do this once i get internet
 type data = [FullPost, BlogType];
 
 export async function load({ params }: ServerLoadEvent): Promise<data | undefined> {
@@ -17,7 +17,12 @@ export async function load({ params }: ServerLoadEvent): Promise<data | undefine
     if (params.blog) {
       isValidBlogType(params.blog);
       const post: ImportedPost = await import(`../../../posts/${params.blog}/${params.post}.md`);
-      // this throws an error if the post doesn't exist
+
+      const tagsArr = post.metadata.tags?.split(", ");
+      // with error handling
+
+      const tags = tagsArr ? (correctBlogTags(tagsArr) ? tagsArr : undefined) : undefined;
+
       const unicodedate = new Date(post.metadata.date);
       const aFullPost: FullPost = {
         title: post.metadata.title,
@@ -26,8 +31,9 @@ export async function load({ params }: ServerLoadEvent): Promise<data | undefine
         html: post.default.render().html,
         videoid: post.metadata?.videoid,
         audiopath: post.metadata?.audiopath,
-        pdfpath: post.metadata?.pdfpath
-      };
+        pdfpath: post.metadata?.pdfpath,
+        tags
+      } as const;
       return [aFullPost, params.blog];
     }
   } catch {

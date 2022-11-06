@@ -27,7 +27,7 @@ export type BlogTags = keyof typeof BlogTagColors;
 
 const blogTypeArr = Object.keys(BlogTagColors);
 
-const correctBlogTags = (stringArray: string[]): stringArray is BlogTags[] => {
+export const correctBlogTags = (stringArray: string[]): stringArray is BlogTags[] => {
   stringArray.forEach((str) => {
     if (!blogTypeArr.includes(str)) {
       return false;
@@ -153,8 +153,8 @@ export interface ImportedPost {
 
 export type FullPost = Omit<
   ImportedPost["metadata"],
-  keyof { excerpt: string; thumbnailpath: string }
-> & { formatteddate: string; html: string };
+  keyof { excerpt: string; thumbnailpath: string; tags: string }
+> & { formatteddate: string; html: string; tags?: BlogTags[] };
 
 // type Unwanted = {
 //   videoid?: string;
