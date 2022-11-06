@@ -20,7 +20,13 @@ export const BlogTagColors = {
   Video: "#EF4444" /** red-500 */,
   Midi: "#60A5FA" /** blue-400 */,
   Interactive: "#d772a1" /** primary */,
-  LaTeX: "#008080" /** latex color */
+  LaTeX: "#008080" /** latex color */,
+  Python: "#DCA900" /** python colorx */,
+  Composition: "#0D9488" /** teal-600 */,
+  Arrangement: "#65a30d" /** lime-600 */,
+  Audio: "#FB923C" /** amber-400 */,
+  Spotify: "#169c46" /** spotify color */,
+  PDF: "#71717a" /** zinc-500 */
 } as const;
 
 export type BlogTags = keyof typeof BlogTagColors;

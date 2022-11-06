@@ -6,6 +6,7 @@ excerpt: An arrangemnet of the popular 'Ending Theme' in the style of Joplin-esq
 audiopath: /audio/supermarioendingtheme.mp3
 videoid: OzshofQ4AGk
 thumbnailpath: /thumbnails/supermario.png
+tags: Arrangement, Video
 ---
 
 For the task of Exploring as a Performer, I chose the “World Ending Theme” from Super Mario World. This song falls under local context and the AOI 2: music for listening and performing. My relationship to this song prior to the project was limited, as I have never played Super Mario world. Yet, this has a local context because I enjoy listening to video game music in general. Furthermore, this piece falls into AOI 2 because I adapted this song to a rag-time genre, which is traditionally a performance-based convention.

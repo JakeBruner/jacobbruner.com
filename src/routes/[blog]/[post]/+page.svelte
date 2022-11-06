@@ -41,20 +41,30 @@
         <!-- why wont this work? -->
       </button>
     </div>
-    <h2 class="my-4 text-3xl md:text-4xl font-semibold">{post.title}</h2>
-    <p class="my-4 text-zinc-500 dark:text-zinc-400">{post.formatteddate}</p>
+    <h2 class="pt-3 text-3xl md:text-4xl font-semibold">{post.title}</h2>
+
     {#if post?.tags}
-      <div class="flex flex-row -mt-1 space-x-2">
-        {#each post.tags as tag}
-          <div
-            class="rounded-lg py-1 px-2 group-hover:rounded-lg group-hover:contrast-125 transition-all ease-in-out"
-            style:background-color={BlogTagColors[tag]}
-          >
-            <span class="text-sm relative block text-white">{tag}</span>
+      <div class="block py-5">
+        <div class="flex flex-row align-middle">
+          <p class="left-0 text-zinc-500 dark:text-zinc-400 block">
+            {post.formatteddate}
+          </p>
+          <div class="ml-auto flex flex-row space-x-2 md:space-x-4 mr-2 md:mr-5">
+            {#each post.tags as tag}
+              <div
+                class="rounded-lg my-auto right-0 py-1 px-2 group-hover:rounded-lg group-hover:contrast-125 transition-all ease-in-out"
+                style:background-color={BlogTagColors[tag]}
+              >
+                <span class="text-sm relative block text-white">{tag}</span>
+              </div>
+            {/each}
           </div>
-        {/each}
+        </div>
       </div>
+    {:else}
+      <p class="pt-1 pb-4 text-zinc-500 dark:text-zinc-400">{post.formatteddate}</p>
     {/if}
+
     <!-- TODO do I want this here? -->
     {#if post?.videoid}
       <div class="w-full mb-6 aspect-w-16 aspect-h-9">
