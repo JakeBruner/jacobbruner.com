@@ -17,17 +17,16 @@ export function isValidBlogType(string: string): asserts string is BlogType {
 
 // in lieu of an enum
 export const BlogTagColors = {
-  Video: "rgb(239 68 68)" /** red-500 */,
-  Midi: "rgb(74 222 128)" /** blue-400 */,
-  Interactive: "rgb(244 114 182)" /** pink-400 */,
-  LaTeX: "rgb(161 161 170)" /** zinc-500 */
+  video: "#EF4444" /** red-500 */,
+  midi: "#60A5FA" /** blue-400 */,
+  interactive: "#d772a1" /** primary */,
+  LaTeX: "#008080" /** latex color */
 } as const;
-
-const blogTypeArr = Object.keys(BlogTagColors);
 
 export type BlogTags = keyof typeof BlogTagColors;
 
-//TODO make this array be auto in-lined from the above const object
+const blogTypeArr = Object.keys(BlogTagColors);
+
 const correctBlogTags = (stringArray: string[]): stringArray is BlogTags[] => {
   stringArray.forEach((str) => {
     if (!blogTypeArr.includes(str)) {

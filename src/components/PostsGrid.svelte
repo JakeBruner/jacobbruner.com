@@ -28,7 +28,7 @@
         <Post {post} {subject} id={i} />
       {:else}
         <div
-          class="w-full h-full rounded-lg bg-white dark:bg-zinc-900 min-h-[380px] md:h-[410px]"
+          class="w-full h-full shadow-md rounded-lg bg-white dark:bg-zinc-900 min-h-[380px] md:h-[410px]"
         />
       {/if}
     </div>

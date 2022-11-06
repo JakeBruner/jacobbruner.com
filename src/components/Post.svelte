@@ -6,7 +6,6 @@
   const tags = post?.tags;
   export let subject = "";
   export let id = 0;
-  //TODO strong typing
 </script>
 
 <div
@@ -26,16 +25,21 @@
       {#if post.excerpt}
         <p class="text-base text-zinc-500 dark:text-zinc-400">{post.excerpt}</p>
       {/if}
-      <div class="-ml-0.5 flex flex-row space-x-1 py-1" class:py-0.5={tags}>
-        {#if tags}
+
+      {#if tags}
+        <div class="-ml-0.5 flex flex-row space-x-1 pt-1.5">
           {#each tags as tag}
-            <div class="rounded-3xl py-1 px-2" style:background-color={BlogTagColors[tag]}>
-              <span class="text-xs relative block text-zinc-100">{tag}</span>
+            <div
+              class="rounded-xl py-1 px-2 group-hover:rounded-lg group-hover:contrast-125 transition-all ease-in-out"
+              style:background-color={BlogTagColors[tag]}
+            >
+              <span class="text-xs relative block text-white">{tag}</span>
             </div>
           {/each}
-        {/if}
-      </div>
-      <div class="">
+        </div>
+      {/if}
+
+      <div class="pt-3" class:pt-0.5={tags}>
         <div class="text-sm dark:text-zinc-400/60 text-zinc-500">
           <time>{post.formatteddate}</time>
         </div>
