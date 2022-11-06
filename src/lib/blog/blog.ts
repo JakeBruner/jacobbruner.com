@@ -17,9 +17,9 @@ export function isValidBlogType(string: string): asserts string is BlogType {
 
 // in lieu of an enum
 export const BlogTagColors = {
-  video: "#EF4444" /** red-500 */,
-  midi: "#60A5FA" /** blue-400 */,
-  interactive: "#d772a1" /** primary */,
+  Video: "#EF4444" /** red-500 */,
+  Midi: "#60A5FA" /** blue-400 */,
+  Interactive: "#d772a1" /** primary */,
   LaTeX: "#008080" /** latex color */
 } as const;
 
@@ -46,6 +46,7 @@ export const correctBlogTags = (stringArray: string[]): stringArray is BlogTags[
  * @returns an array of PostInfo objects
  */
 export const getPostsInfo = async (subject: BlogType): Promise<PostInfo[]> => {
+  //TODO async (subject: BlogType, sorting: SortingMethod): Promise<PostInfo[]>
   let modules: Record<string, () => Promise<ImportedPost>>;
 
   switch (subject) {

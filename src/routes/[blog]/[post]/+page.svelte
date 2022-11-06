@@ -3,9 +3,7 @@
   import { BlogTagColors } from "$lib/blog/blog";
   // import "/src/app.css"; // doesn't do this by default
   export let data: [FullPost, BlogType];
-  const post: FullPost = data[0];
-  // i love monads
-
+  const post = data[0];
   const subject = data[1];
 </script>
 
@@ -45,18 +43,19 @@
     </div>
     <h2 class="my-4 text-3xl md:text-4xl font-semibold">{post.title}</h2>
     <p class="my-4 text-zinc-500 dark:text-zinc-400">{post.formatteddate}</p>
-    {#if post.tags}
-      <div class="flex flex-row space-x-1">
+    {#if post?.tags}
+      <div class="flex flex-row -mt-1 space-x-2">
         {#each post.tags as tag}
           <div
-            class="rounded-xl py-1 px-2 group-hover:rounded-lg group-hover:contrast-125 transition-all ease-in-out"
+            class="rounded-lg py-1 px-2 group-hover:rounded-lg group-hover:contrast-125 transition-all ease-in-out"
             style:background-color={BlogTagColors[tag]}
           >
-            <span class="text-xs relative block text-white">{tag}</span>
+            <span class="text-sm relative block text-white">{tag}</span>
           </div>
         {/each}
       </div>
     {/if}
+    <!-- TODO do I want this here? -->
     {#if post?.videoid}
       <div class="w-full mb-6 aspect-w-16 aspect-h-9">
         <embed
