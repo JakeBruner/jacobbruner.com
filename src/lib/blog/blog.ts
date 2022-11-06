@@ -19,10 +19,22 @@ export const BlogTagColors = {
   Video: "rgb(239 68 68)" /** red-500 */,
   Midi: "rgb(74 222 128)" /** blue-400 */,
   Interactive: "rgb(244 114 182)" /** pink-400 */,
-  LaTeX: "rgb(59 130 246)" /** blue-500 */
+  LaTeX: "rgb(161 161 170)" /** zinc-500 */
 } as const;
 
+const blogTypeArr = Object.keys(BlogTagColors);
+
 export type BlogTags = keyof typeof BlogTagColors;
+
+//TODO make this array be auto in-lined from the above const object
+const correctBlogTags = (stringArray: string[]): stringArray is BlogTags[] => {
+  stringArray.forEach((str) => {
+    if (!blogTypeArr.includes(str)) {
+      return false;
+    }
+  });
+  return true;
+};
 
 // export interface SearchParamaters {
 //   // keywords: string;
@@ -66,6 +78,16 @@ export const getPostsInfo = async (subject: BlogType): Promise<PostInfo[]> => {
 
       const utcdate = new Date(metadata.date);
 
+      let tags: undefined | BlogTags[] = undefined;
+      const tagsString = metadata?.tags;
+
+      if (tagsString) {
+        const uncheckedTags = tagsString.split(", ");
+        if (correctBlogTags(uncheckedTags)) {
+          tags = uncheckedTags;
+        }
+      }
+
       return {
         title: metadata.title,
         excerpt: metadata.excerpt,
@@ -73,17 +95,9 @@ export const getPostsInfo = async (subject: BlogType): Promise<PostInfo[]> => {
         formatteddate: convertDateToString(utcdate),
         thumbnailpath: metadata.thumbnailpath,
         slug: getPath(url) ?? "error",
-        utctimestamp: utcdate.getTime()
+        utctimestamp: utcdate.getTime(),
+        tags: tags ?? undefined
       };
-
-      // return {
-      //   slug: getPath(url) ?? "error",
-      //   title: metadata?.title,
-      //   excerpt: metadata?.excerpt,
-      //   date: utcdate,
-      //   datestring: convertDateToString(utcdate),
-      //   thumbnailpath: metadata?.thumbnailpath ? metadata.thumbnailpath : null
-      // };
     })
   );
 
@@ -127,7 +141,7 @@ export interface ImportedPost {
     videoid?: string;
     audiopath?: string;
     pdfpath?: string;
-    tags?: BlogTags[];
+    tags?: string;
   };
   default: {
     render: () => {

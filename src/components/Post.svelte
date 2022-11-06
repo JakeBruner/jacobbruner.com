@@ -26,11 +26,11 @@
       {#if post.excerpt}
         <p class="text-base text-zinc-500 dark:text-zinc-400">{post.excerpt}</p>
       {/if}
-      <div class="-ml-0.5 flex flex-row space-x-1">
+      <div class="-ml-0.5 flex flex-row space-x-1 py-1" class:py-0.5={tags}>
         {#if tags}
           {#each tags as tag}
             <div class="rounded-3xl py-1 px-2" style:background-color={BlogTagColors[tag]}>
-              <span class="text-sm relative block text-zinc-100">{tag}</span>
+              <span class="text-xs relative block text-zinc-100">{tag}</span>
             </div>
           {/each}
         {/if}

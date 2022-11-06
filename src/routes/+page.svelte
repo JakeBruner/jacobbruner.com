@@ -57,8 +57,7 @@
       title: "Elliptic Curve Cayley Table Generator",
       utctimestamp: 1, // yes I know this is abuse of my functionality
       formatteddate: "March 30th, 2022",
-      thumbnailpath: "/thumbnails/ellipticcurve.jpg",
-      tags: ["Interactive", "Video"]
+      thumbnailpath: "/thumbnails/ellipticcurve.jpg"
     },
     {
       slug: "/game-of-life",
