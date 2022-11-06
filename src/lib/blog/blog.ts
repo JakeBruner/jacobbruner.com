@@ -8,11 +8,12 @@ export type BlogType = "Computer-Science" | "Math" | "Music" | "Writing"; // "Co
 // this type is used on [slug]/+page.server.ts endpoints to construct the glob path fed into the fn below
 
 /** Checks if parameter is a valid blog type */
-export const isValidBlogType = (string: string): asserts string is BlogType => {
+export function isValidBlogType(string: string): asserts string is BlogType {
+  // https://github.com/microsoft/TypeScript/pull/33622, asserts can't be arrow functions
   if (!["Computer-Science", "Math", "Music", "Writing"].includes(string)) {
     throw new Error(`${string} is not a valid blog type.`);
   }
-};
+}
 
 // in lieu of an enum
 export const BlogTagColors = {

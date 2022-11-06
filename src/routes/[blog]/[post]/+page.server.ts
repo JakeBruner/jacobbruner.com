@@ -15,23 +15,20 @@ export async function load({ params }: ServerLoadEvent): Promise<data | undefine
   let errormessage: string | null = null;
   try {
     if (params.blog) {
-      if (isValidBlogType(params.blog)) {
-        const post: ImportedPost = await import(`../../../posts/${params.blog}/${params.post}.md`);
-        // this throws an error if the post doesn't exist
-        const unicodedate = new Date(post.metadata.date);
-        const aFullPost: FullPost = {
-          title: post.metadata.title,
-          date: post.metadata.date,
-          formatteddate: convertDateToString(unicodedate),
-          html: post.default.render().html,
-          videoid: post.metadata?.videoid,
-          audiopath: post.metadata?.audiopath,
-          pdfpath: post.metadata?.pdfpath
-        };
-        return [aFullPost, params.blog];
-      } else {
-        errormessage = `Invalid blog type: "${params.blog}"`;
-      }
+      isValidBlogType(params.blog);
+      const post: ImportedPost = await import(`../../../posts/${params.blog}/${params.post}.md`);
+      // this throws an error if the post doesn't exist
+      const unicodedate = new Date(post.metadata.date);
+      const aFullPost: FullPost = {
+        title: post.metadata.title,
+        date: post.metadata.date,
+        formatteddate: convertDateToString(unicodedate),
+        html: post.default.render().html,
+        videoid: post.metadata?.videoid,
+        audiopath: post.metadata?.audiopath,
+        pdfpath: post.metadata?.pdfpath
+      };
+      return [aFullPost, params.blog];
     }
   } catch {
     errormessage = `Post "${params.post}" not found under ${params.blog}`;
