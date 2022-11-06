@@ -8,16 +8,31 @@ export type BlogType = "Computer-Science" | "Math" | "Music" | "Writing"; // "Co
 // this type is used on [slug]/+page.server.ts endpoints to construct the glob path fed into the fn below
 
 /** Checks if parameter is a valid blog type */
-export const isValidBlogType = (string: string): string is BlogType => {
-  return ["Computer-Science", "Math", "Music", "Writing"].includes(string);
+export const isValidBlogType = (string: string): asserts string is BlogType => {
+  if (!["Computer-Science", "Math", "Music", "Writing"].includes(string)) {
+    throw new Error(`${string} is not a valid blog type.`);
+  }
 };
-// console.log(isValidBlogType("Computer-Science"));
+
+// in lieu of an enum
+export const BlogTagColors = {
+  Video: "rgb(239 68 68)" /** red-500 */,
+  Midi: "rgb(74 222 128)" /** blue-400 */,
+  Interactive: "rgb(244 114 182)" /** pink-400 */,
+  LaTeX: "rgb(59 130 246)" /** blue-500 */
+} as const;
+
+export type BlogTags = keyof typeof BlogTagColors;
 
 // export interface SearchParamaters {
 //   // keywords: string;
 // }
 
 // once i implement search parameters this should take in (query: SearchParamaters = {}, subject)
+/** Returns all posts in a given blog type using import.meta.glob
+ * @param subject: BlogType - the blog type to search for
+ * @returns an array of PostInfo objects
+ */
 export const getPostsInfo = async (subject: BlogType): Promise<PostInfo[]> => {
   let modules: Record<string, () => Promise<ImportedPost>>;
 
@@ -112,6 +127,7 @@ export interface ImportedPost {
     videoid?: string;
     audiopath?: string;
     pdfpath?: string;
+    tags?: BlogTags[];
   };
   default: {
     render: () => {
@@ -145,6 +161,7 @@ export type PostInfo = {
   thumbnailpath: string;
   slug: string;
   utctimestamp: number;
+  tags?: BlogTags[];
 };
 
 // * Helper Functions *
