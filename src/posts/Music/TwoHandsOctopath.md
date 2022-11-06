@@ -1,11 +1,12 @@
 ---
-title: Two-Hands Arrangement of 'Main Theme' from Octopath Traveler [midi]
+title: Two-Hands Arrangement of 'Main Theme' from Octopath Traveler
 date: 2021-11-29
 layout: blog
 excerpt: An original composition for piano using a sample of a ticking clock as a stimulus. The suspense grows as the ticking clock speeds up, adding another level of anticipation and anxiety culminating in an 'armageddon'--esque tone.
 pdfpath: /pdfs/OctopathArrangement.pdf
 audiopath: /audio/OctopathTwoPianos.mp3
 thumbnailpath: /thumbnails/octopath.png
+tags: Arrangement, MIDI, PDF
 ---
 
 To explore unfamiliar territory as an arranger, I chose to reinvent an orchestral piece for four hands piano. My stimulus was “Main Theme” from Octopath Traveler, composed by Yasonuri Nishiki. I came across this song within a videogame I had not played. I was intrigued by the instrumentation and western style despite its Japanese origin. I hadn’t written for four hands on the piano; I was excited to undertake the challenge. Therefore, this project falls under Global Context and AOI 3, since I adapted music to an unfamiliar instrumentation and the music evokes emotion within the game.

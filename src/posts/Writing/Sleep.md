@@ -4,6 +4,7 @@ date: 2022-1-17
 layout: blog
 excerpt: A deep-dive into the Public Defenders system reveals the systemic factors contributing to inequalities on socioeconomic lines. Completed as the final project for Constitutional Law.
 thumbnailpath: /images/effectssleep.png
+tags: Essay
 ---
 
 Seventy-three percent of adolescents are not getting adequate sleep at night. But this surprises no one, right? Teens just lack the time-management and decision-making skills to go to sleep at a reasonable hour, right? It must be their addiction to phones, video games, and social media, right? The solution must be to educate kids about the importance of sleep and count on them to make good decisions… right?
@@ -29,6 +30,8 @@ The average school start time across the United States is 8:00 am. This means th
 </div>
 
 The solution to this pertinent issue should no longer be to blame the individual. Forgoing a pessimistic resignation to ‘it’s society’s fault,’ this issue is comparatively simple (≠ easy) to address. For teenagers, the primary variable affecting their quality of sleep is school start times. The American Academy of Pediatrics states that “Although a number of factors, including biological changes in sleep associated with puberty, lifestyle choices, and academic demands, negatively affect middle and high school student’s ability to obtain sufficient sleep, the evidence strongly implicates earlier school start times (i.e., before 8:30 am) as a key modifiable contributor to insufficient sleep.” Delayed school start times is associated with an improvement on countless metrics; for instance, increased sleep duration, improved attendance, better grades, higher graduation rates, lower rates of depression, and fewer motor vehicle crashes. Within society, the problem of sleep loss is worsened by the way we value morning productivity and dignify working extreme hours. Often, phrases like “rich people do not sleep,” “I function fine on 4-5 hours of sleep,” or “early bird gets the worm” create a negative bias towards night-productivity which can corrosively manifest as internalized insecurity about one’s value as a person. For some, the inability to wake up at 6am for an 8am job is a fact of their biology, not some intrinsic lack of motivation or an indicator of a drive to succeed. Since sleep is predicated on environmental and biological processes, not individual motivation, we should all strive to innovate methods of adapting our work/school schedules to our sleep habits, not the other way around.
+
+<a href="https://docs.google.com/document/d/1AQIiSmkPj0WN0z4XTBOrmT9Xzto-Ihwky5d0igegvgY/edit?usp=sharing" class="text-primary">Link to Original with Footnotes and In-Line Citations</a>
 
 ### Further reading:
 

@@ -1,5 +1,5 @@
 ---
-title: Super Mario World Ending Theme Ragtime Arrangement [recorded]
+title: Super Mario World Ending Theme Ragtime Arrangement
 date: 2021-10-12
 layout: blog
 excerpt: An arrangemnet of the popular 'Ending Theme' in the style of Joplin-esque ragtime.

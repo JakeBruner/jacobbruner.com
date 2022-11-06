@@ -4,6 +4,7 @@ date: 2022-2-14
 layout: blog
 excerpt: With the advent of COVID-19, firms across the United States have been experiencing an unprecedented number of employee resignations. This is what I explore in this paper.
 thumbnailpath: /thumbnails/greatresignation.jpg
+tags: News
 ---
 
 With the advent of COVID-19, firms across the United States have been experiencing an unprecedented number of employee resignations. A lack of worker protections during the COVID pandemic coupled with long-term wage stagnation and the rising cost of living, saw private-sector resignation rates soar to a record 3.4% (Bureau of Labor Statistics) in 2021. In increasingly stressful jobs, the number of resignations have reached more remarkable highs. For instance, in November, the accommodation and food services industry saw resignation rates reach nearly 7%, compared to only 1.7% of individuals in finance. This means that, in the month of November, a total of 4.5 million workers quit of their own volition, constituting 3.4% of all workers nationwide. So why does this matter? This movement, akin to a general strike, has led to widespread so-called “labor shortages” and industry disruptions as workers attempt to monumentally shift the power dynamics of the jobs market.

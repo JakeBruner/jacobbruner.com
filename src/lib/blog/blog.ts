@@ -18,15 +18,19 @@ export function isValidBlogType(string: string): asserts string is BlogType {
 // in lieu of an enum
 export const BlogTagColors = {
   Video: "#EF4444" /** red-500 */,
-  Midi: "#60A5FA" /** blue-400 */,
+  MIDI: "#60A5FA" /** blue-400 */,
   Interactive: "#d772a1" /** primary */,
   LaTeX: "#008080" /** latex color */,
   Python: "#DCA900" /** python colorx */,
+  Rust_WASM: "#ff4136" /** rust color */,
   Composition: "#0D9488" /** teal-600 */,
   Arrangement: "#65a30d" /** lime-600 */,
   Audio: "#FB923C" /** amber-400 */,
   Spotify: "#169c46" /** spotify color */,
-  PDF: "#71717a" /** zinc-500 */
+  PDF: "#71717a" /** zinc-500 */,
+  Essay: "#a855f7" /** purple-500 */,
+  Creative: "#f43f5e" /** rose-500 */,
+  News: "#0ea5e9" /** sky-500 */
 } as const;
 
 export type BlogTags = keyof typeof BlogTagColors;

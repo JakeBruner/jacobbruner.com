@@ -27,7 +27,7 @@
       {/if}
 
       {#if tags}
-        <div class="-ml-0.5 flex flex-row space-x-1 pt-1.5">
+        <div class="-ml-[1px] flex flex-row space-x-1 pt-1.5">
           {#each tags as tag}
             <div
               class="cursor-default rounded-xl py-1 px-2 group-hover:rounded-lg group-hover:contrast-[90%] transition-all ease-in-out"
