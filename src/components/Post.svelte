@@ -2,6 +2,7 @@
   import type { PostInfo, BlogTags } from "$lib/blog/blog";
   import { BlogTagColors } from "$lib/blog/blog";
   import { fly } from "svelte/transition";
+  import { hexToRGB } from "$lib/blog/tags";
   export let post: PostInfo;
   const tags = post?.tags;
   export let subject = "";
@@ -29,11 +30,15 @@
       {#if tags}
         <div class="-ml-[1px] flex flex-row space-x-1 pt-1.5">
           {#each tags as tag}
+            {@const color = hexToRGB(BlogTagColors[tag])}
             <div
-              class="cursor-default rounded-xl py-1 px-2 group-hover:rounded-lg group-hover:contrast-[90%] transition-all ease-in-out"
-              style:background-color={BlogTagColors[tag]}
+              class="cursor-default rounded-full py-1 px-2"
+              style="background-color: rgba({color}, 0.3);"
             >
-              <span class="text-xs relative block text-white">{tag}</span>
+              <span
+                class="text-xs relative block opacity-100"
+                style="color: rgba({color}, 1); filter: brightness(0.6);">{tag}</span
+              >
             </div>
           {/each}
         </div>

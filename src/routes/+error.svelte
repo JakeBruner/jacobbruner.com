@@ -8,6 +8,7 @@
     The page you were looking for is imaginary! Please rotate your device through 90° to get back to
     a real one!
   </h2>
+
   <h3
     class="text-lg font-light text-grey-300 dark:text-zinc-600 text-center pt-5 italic yesthisissanitized"
   >
