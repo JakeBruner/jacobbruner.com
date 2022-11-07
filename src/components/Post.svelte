@@ -36,8 +36,8 @@
               style="background-color: rgba({color}, 0.3);"
             >
               <span
-                class="text-xs relative block opacity-100"
-                style="color: rgba({color}, 1); filter: brightness(0.6);">{tag}</span
+                class="text-xs relative block opacity-100 brightness-[.6] dark:!brightness-100 dark:!text-white/80"
+                style="color: rgba({color}, 1);">{tag}</span
               >
             </div>
           {/each}
