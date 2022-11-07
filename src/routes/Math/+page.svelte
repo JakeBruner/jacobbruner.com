@@ -11,6 +11,9 @@
 <svelte:head>
   <title>{subject}</title>
 </svelte:head>
+<div class=" bg-white w-full h-[60px] z-30 fixed" />
+<!-- TODO: this div above ensures the blurred navbar doesn't become dark during lightmode -->
+<!-- TODO: make this video transparent and have background controlled by css -->
 <div class="bg-zinc-800 group">
   <div class="w-full -mt-[60px] h-auto bg-zinc-800 flex flex-col px-2">
     <video

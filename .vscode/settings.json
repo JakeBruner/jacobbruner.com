@@ -1,4 +1,7 @@
 {
   "prettier.arrowParens": "avoid",
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "search.exclude": {
+    "**/node_modules": false
+  }
 }

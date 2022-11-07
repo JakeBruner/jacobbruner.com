@@ -26,13 +26,14 @@
 
   // if ios mobile
   const isiOS = () => {
-    return (
-      ["iPad Simulator", "iPhone Simulator", "iPod Simulator", "iPad", "iPhone", "iPod"].includes(
-        navigator.platform
-      ) ||
-      // iPad on iOS 13 detection
-      (navigator.userAgent.includes("Mac") && "ontouchend" in document)
-    );
+    return [
+      "iPad Simulator",
+      "iPhone Simulator",
+      "iPod Simulator",
+      "iPad",
+      "iPhone",
+      "iPod"
+    ].includes(navigator.platform);
   };
 
   let ios = false;
@@ -77,6 +78,7 @@
 
   import { inview } from "svelte-inview";
   import type { ObserverEventDetails, Options } from "svelte-inview";
+  import { goto } from "$app/navigation";
 
   let isInView: boolean[] = new Array(7).fill(false);
   // $: console.log("isInView", isInView);
@@ -129,10 +131,10 @@
           transform: translateY(-20px);
         }
       </style> -->
-      <div use:inview={options} on:change={handleChange} id="0">
+      <div use:inview={options} on:change={handleChange} id="0" class="z-30">
         {#if isInView[0]}
           <h1
-            class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[53px] text-4xl text-zinc-700 dark:text-zinc-300 font-light py-3 sm:pb-[13px] sm:pt-[17px] px-2 my-2 sm:my-4 text-center"
+            class="bg-white/60 backdrop-blur-sm dark:bg-zinc-900/70 sm:text-[53px] text-4xl text-zinc-700 dark:text-zinc-300 font-light rounded-lg py-3 sm:py-4 px-4 my-2 sm:my-4 text-center"
             in:fly={{ x: 0, y: -100, duration: 1000, opacity: 0 }}
           >
             Learning as a Hobby
@@ -140,45 +142,65 @@
           </h1>
         {/if}
       </div>
-      <div use:inview={options} on:change={handleChange} id="1">
-        {#if isInView[1]}
-          <h2
-            class="bg-white_translucent dark:bg-zinc-900/70 sm:text-[25px] text-xl text-zinc-600 dark:text-zinc-300 italic py-0.1 px-1.5 font-normal"
-            in:fly={{ x: 0, y: -60, duration: 1000, delay: 100, opacity: 0 }}
-          >
-            The work of Jacob Bruner
-          </h2>
-        {/if}
+      <style>
+        .glow {
+          text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 21px #fff, 0 0 41px #fff, 0 0 46px #fff;
+          color: #71717a;
+          opacity: 0.2;
+        }
+      </style>
+      <div class="absolute w-full my-auto">
+        <h2
+          class="glow absolute block sm:text-[53px] text-4xl font-light py-3 sm:pb-[13px] sm:pt-[17px] px-2 my-2 sm:my-4 text-center"
+          style=""
+        >
+          Learning as a Hobby
+        </h2>
       </div>
       <div>
-        <!-- scroll to next section -->
-        <div class="">
-          <div use:inview={options} on:change={handleChange} id="2" class="inline">
-            {#if isInView[2]}
-              <button
-                class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-blue-400/80 lg:px-7 lg:py-2 rounded-xl hover:bg-blue-400 hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
-                in:fly={{ x: 0, y: 40, duration: 1000, delay: 200, opacity: 0 }}
-                on:click={() => {
-                  window.scrollTo({
-                    top: y - 60,
-                    behavior: "smooth"
-                  });
-                }}
-                aria-label="Scroll to next section"
-              >
-                About Me
-              </button>
-            {/if}
-          </div>
-          <div use:inview={options} on:change={handleChange} id="3" class="inline">
-            {#if isInView[3]}
-              <button
-                href={randomlink}
-                class="my-3 px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition duration-500 ease-in-out transform bg-primary/80 lg:px-7 lg:py-2 rounded-xl hover:bg-primary hover:scale-[102%] focus:ring-2 focus:ring-offset-0.5 focus:ring-white"
-                in:fly={{ x: 0, y: 40, duration: 1000, delay: 400, opacity: 0 }}
-                data-svelte-prefetch>Random Post</button
-              >
-            {/if}
+        <div use:inview={options} on:change={handleChange} id="1">
+          {#if isInView[1]}
+            <h2
+              class="bg-white/60 backdrop-blur-sm dark:bg-zinc-900/70 sm:text-[25px] text-xl text-zinc-600 dark:text-zinc-300 rounded-lg italic py-0.1 px-1.5 font-normal"
+              in:fly={{ x: 0, y: -60, duration: 1000, delay: 100, opacity: 0 }}
+            >
+              The work of Jacob Bruner
+            </h2>
+          {/if}
+        </div>
+        <div>
+          <!-- scroll to next section -->
+          <div class="">
+            <div use:inview={options} on:change={handleChange} id="2" class="inline">
+              {#if isInView[2]}
+                <button
+                  class="my-3 backdrop-blur-sm px-3 py-1.5 text-base lg:font-medium text-center text-white dark:text-black transition-all duration-100 ease-in-out bg-blue-400/60 lg:px-7 lg:py-2 rounded-xl hover:bg-blue-500/50 hover:scale-[102%] focus:border-none focus:ring-2 focus:ring-blue-300/60 focus:ring-offset-2"
+                  in:fly={{ x: 0, y: 40, duration: 1000, delay: 200, opacity: 0 }}
+                  on:click={() => {
+                    window.scrollTo({
+                      top: y - 60,
+                      behavior: "smooth"
+                    });
+                  }}
+                  aria-label="Scroll to next section"
+                >
+                  About Me
+                </button>
+              {/if}
+            </div>
+            <div use:inview={options} on:change={handleChange} id="3" class="inline">
+              {#if isInView[3]}
+                <button
+                  href={randomlink}
+                  on:click={() => {
+                    goto(randomlink);
+                  }}
+                  class="my-3 backdrop-blur-sm px-3 py-1.5 text-base lg:font-medium font-small text-center text-white dark:text-black transition-all duration-100 ease-in-out bg-primary/60 lg:px-7 lg:py-2 rounded-xl hover:bg-primary-600/60 hover:scale-[102%] focus:border-none focus:ring-2 focus:ring-primary-400/60 focus:ring-offset-2"
+                  in:fly={{ x: 0, y: 40, duration: 1000, delay: 400, opacity: 0 }}
+                  >Random Post</button
+                >
+              {/if}
+            </div>
           </div>
         </div>
       </div>

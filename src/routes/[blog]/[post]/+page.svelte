@@ -5,6 +5,7 @@
   export let data: [FullPost, BlogType];
   const post = data[0];
   const subject = data[1];
+  import { hexToRGB } from "$lib/blog/tags";
 </script>
 
 <svelte:head>
@@ -51,9 +52,10 @@
           </p>
           <div class="ml-auto flex flex-row space-x-2 md:space-x-4 mr-2 md:mr-5">
             {#each post.tags as tag}
+              {@const color = hexToRGB(BlogTagColors[tag])}
               <div
                 class="rounded-lg my-auto right-0 py-1 px-2 group-hover:rounded-lg group-hover:contrast-125 transition-all ease-in-out"
-                style:background-color={BlogTagColors[tag]}
+                style="background-color: rgba({color}, 0.8)"
               >
                 <span class="text-sm relative block text-white">{tag}</span>
               </div>
