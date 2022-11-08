@@ -96,7 +96,7 @@
 </script>
 
 <svelte:head>
-  <title>Home</title>
+  <title>Jacob Bruner</title>
 </svelte:head>
 
 <svelte:window bind:innerHeight={y} />
