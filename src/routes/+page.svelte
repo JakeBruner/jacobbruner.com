@@ -112,7 +112,7 @@
       <div use:inview={options} on:change={handleChange} id="0" class="z-30">
         {#if isInView[0]}
           <h1
-            class="bg-white/60 backdrop-blur-sm dark:bg-zinc-900/60 sm:text-[53px] text-4xl text-zinc-700 dark:text-zinc-300 font-light rounded-lg py-3 sm:pt-4 sm:pb-6 px-4 my-2 sm:my-4 text-center"
+            class="bg-white/60 backdrop-blur-sm dark:bg-zinc-900/60 sm:text-[53px] text-4xl text-zinc-700 dark:text-zinc-300 font-light rounded-lg py-3 sm:pt-4 sm:pb-5 px-4 my-2 sm:my-4 text-center"
             in:fly={{ x: 0, y: -100, duration: 1000, opacity: 0 }}
           >
             Learning as a Hobby

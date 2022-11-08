@@ -96,14 +96,14 @@
     {/if}
     <div
       class="px-1 md:px-0 prose prose-p:font-serif prose-p:text-zinc-800
-        prose-a:underline prose-a:text-primary prose-a:hover:text-primary-400 prose-a:after:content-['↗'] after:prose-a:no-underline prose-a:after:ml-0.5
+        prose-a:underline prose-a:text-primary prose-a:hover:text-primary-600 prose-a:after:content-['↗'] 
+        after:prose-a:no-underline prose-a:after:ml-0.5 prose-a:font-sans
+        prose-a:hover:underline-offset-2 prose-a:hover:after:ml-1 transition-all
+        prose-img:rounded-lg prose-img:shadow-lg prose-img:mx-auto prose-img:my-6
        dark:prose-p:text-zinc-300 max-w-none prose-p:leading-normal prose-base
         lg:prose-xl prose-zinc dark:prose-invert subpixel-antialiased optimize-legibility"
     >
-      <!-- firstletter isnt working here... not sure why -->
-
       {@html post.html}
-      <!-- <svelte:component this={post.content} /> -->
     </div>
   </div>
 </article>
