@@ -10,7 +10,7 @@
 </script>
 
 <div
-  class="group rounded-lg bg-white dark:bg-zinc-900 flex flex-col justify-between shadow-md hover:shadow-lg self-center transition ease-in-out duration-200 dark:shadow-white/5 hover:dark:shadow-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-800/25 hover:scale-[100.5%] hover:-translate-y-1"
+  class="group rounded-lg bg-white dark:bg-zinc-900 flex flex-col justify-between shadow-md hover:shadow-lg self-center transition ease-in-out duration-200 dark:shadow-white/5 hover:dark:shadow-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-850 hover:scale-[100.5%] hover:-translate-y-1"
   in:fly={{ x: 0, y: -30, duration: 700, delay: id * 40, opacity: 0 }}
 >
   <!--* if there is no subject, link directly to the slug -->

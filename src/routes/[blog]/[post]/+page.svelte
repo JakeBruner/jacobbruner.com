@@ -95,7 +95,10 @@
       </div>
     {/if}
     <div
-      class="px-1 md:px-0 prose prose-p:font-serif prose-p:text-zinc-800 dark:prose-p:text-zinc-300 max-w-none prose-p:leading-normal prose-base lg:prose-xl prose-zinc dark:prose-invert subpixel-antialiased optimize-legibility"
+      class="px-1 md:px-0 prose prose-p:font-serif prose-p:text-zinc-800
+        prose-a:underline prose-a:text-primary prose-a:hover:text-primary-400 prose-a:after:content-['↗'] after:prose-a:no-underline prose-a:after:ml-0.5
+       dark:prose-p:text-zinc-300 max-w-none prose-p:leading-normal prose-base
+        lg:prose-xl prose-zinc dark:prose-invert subpixel-antialiased optimize-legibility"
     >
       <!-- firstletter isnt working here... not sure why -->
 
