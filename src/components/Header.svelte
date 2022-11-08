@@ -51,9 +51,7 @@
       }
     </style>
     <!-- dark:bg-gray-800 dark:text-white -->
-    <div
-      class="pt-[4px] flex flex-wrap justify-between items-center xl:px-40 lg:px-24 xs:px-12 px-4"
-    >
+    <div class="pt-1 flex flex-wrap justify-between items-center xl:px-40 lg:px-24 xs:px-12 px-4">
       <!-- NAME/LOGO -->
       <a href="/" class="name m-0 p-0 font-bold text-zinc-950 dark:text-zinc-50 text-[28px]"
         >Jacob <span class="text-primary">B.</span></a
@@ -90,7 +88,7 @@
               <a
                 href={item.path}
                 class:active={$page.url.pathname === item.path}
-                class="before:!bottom-[-2px] transition ease-in-out duration-100 text-zinc-800/90 hover:text-primary dark:text-zinc-200/90"
+                class="before:!-bottom-0.5 transition ease-in-out duration-100 text-zinc-800/90 hover:text-primary dark:text-zinc-200/90"
                 on:click={() => {
                   $loading = true;
                   menuOpen = false;
@@ -110,7 +108,7 @@
               <a
                 href={item.path}
                 class:active={$page.url.pathname === item.path}
-                class="transition ease-in-out duration-100 decoration-primary block text-[17px] text-zinc-800/90 hover:text-primary dark:text-zinc-200/90 hover:dark:text-primary after:bg-primary after:bottom-[2px] after:absolute after:h-[2.5px] after:left-[2px] after:right-[2px] after:invisible after:-scale-x-0 hover:after:-scale-x-100 hover:after:visible after:transition after:ease-out after:duration-500"
+                class="transition ease-in-out duration-100 decoration-primary block text-[17px] text-zinc-800/90 hover:text-primary dark:text-zinc-200/90 hover:dark:text-primary after:bg-primary after:bottom-[2px] after:absolute after:h-[2.5px] after:left-0.5 after:right-0.5 after:invisible after:-scale-x-0 hover:after:-scale-x-100 hover:after:visible after:transition after:ease-out after:duration-500"
                 on:click={() => ($loading = true)}>{item.title}</a
               >
             </li>
