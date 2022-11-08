@@ -189,7 +189,7 @@
 <section class="mt-16 mb-2 px-6 xl:px-30">
   <!-- MD IS MY BREAKPOINT FOR THIS TO BE A COLUMN -->
   <div
-    class="md:flex md:flex-row lg:px-20 md:pb-20 md:px-30 justify-center content-center align-middle"
+    class="xl:max-w-6xl mx-auto md:flex md:flex-row lg:px-20 md:pb-20 md:px-30 justify-center content-center align-middle"
   >
     <div class="md:w-1/2 md:h-full flex align-middle">
       <div
@@ -223,75 +223,19 @@
 </section>
 
 <section class="bg-primary items-center pt-10 pb-20 px-4 sm:px-6 lg:pt-16 lg:pb-28 lg:px-8 w-full">
-  <!-- TODO -->
-  <style>
-    /* .anim {
-      position: absolute;
-      left: 50%;
-      top: {y};
-      transform: translate(-50%, -50%);
-      display: block;
-      color: #cf1b1b;
-      font-size: 124px;
-      letter-spacing: 8px;
-      cursor: pointer;
-    }
-
-    .anim::before {
-      content: "Interactive Projects!";
-      position: absolute;
-      color: transparent;
-      background-image: repeating-linear-gradient(
-        45deg,
-        transparent 0,
-        transparent 2px,
-        white 2px,
-        white 4px
-      );
-      -webkit-background-clip: text;
-      top: 0px;
-      left: 0;
-      z-index: -1;
-      transition: 1s;
-    }
-
-    .anim::after {
-      content: "Interactive Projects!";
-      position: absolute;
-      color: transparent;
-      background-image: repeating-linear-gradient(
-        135deg,
-        transparent 0,
-        transparent 2px,
-        white 2px,
-        white 4px
-      );
-      -webkit-background-clip: text;
-      top: 0px;
-      left: 0px;
-      transition: 1s;
-    }
-
-    .anim:hover:before {
-      top: 10px;
-      left: 10px;
-    }
-
-    .anim:hover:after {
-      top: -10px;
-      left: -10px;
-    } */
-  </style>
   <div class="flex" use:inview={options} on:change={handleChange} id="7">
     <h1
-      class="w-full text-center underline anim text-4xl sm:text-5xl md:text-6xl text-zinc-50 dark:text-zinc-800 italic"
+      class="w-full text-center underline anim text-4xl sm:text-5xl md:text-6xl text-zinc-50 dark:text-zinc-800 italic cursor-text"
     >
       <Typewriter text="Interactive Projects!" activated={typewriterEffect} />
     </h1>
   </div>
 
   <!-- look at how neat this is! -->
-  <div class="mt-12 grid gap-16 md:grid-cols-3 md:gap-x-5 md:gap-y-12 content-center">
+
+  <div
+    class="mt-12 grid gap-16 max-w-md md:max-w-none mx-auto md:grid-cols-3 md:gap-x-5 md:gap-y-12 items-center"
+  >
     {#each projectList as post, i}
       {@const arraypos = i + 4}
       <div use:inview={options} on:change={handleChange} id={arraypos.toString()}>

@@ -11,7 +11,7 @@ In this recent project, I rewrote a script from 11th grade that generates the Ca
 
 [Try it out!](/elliptic-curve)
 
-<!-- 
+<!--
 <style>
   /* hmm not working */
   a::after {

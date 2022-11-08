@@ -146,7 +146,7 @@
 </div>
 {#if fullscreen}
   <div
-    class="overflow-y-hidden select-none flex mx-auto fixed inset-0 z-30 h-full w-full bg-zinc-800/70 dark:bg-zinc-800/70 items-center "
+    class="select-none flex mx-auto fixed inset-0 z-30 h-full w-full bg-zinc-800/70 dark:bg-zinc-800/70 items-center "
     transition:fade={{ duration: 100 }}
     on:click={deselectMe}
     on:keypress={deselectMe}
@@ -155,7 +155,7 @@
       use:lazyImage={selected.src}
       src={selected.thumb}
       alt={selected.alt}
-      class="rounded-sm content-center object-contain object-center md:scale-95 shadow-md pointer-events-none"
+      class="rounded-sm content-center object-contain object-center xl:scale-95 shadow-md pointer-events-none"
     />
   </div>
 {/if}
