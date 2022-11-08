@@ -80,7 +80,7 @@
   import type { ObserverEventDetails, Options } from "svelte-inview";
   import { goto } from "$app/navigation";
 
-  let isInView: boolean[] = new Array(7).fill(false);
+  let isInView: boolean[] = new Array(8).fill(false);
   // $: console.log("isInView", isInView);
 
   const options: Options = {
@@ -93,6 +93,9 @@
     isInView[+node.id] = detail.inView;
     // scrollDirection = detail.scrollDirection;
   };
+
+  import Typewriter from "$components/Typewriter.svelte";
+  $: typewriterEffect = isInView[7];
 </script>
 
 <svelte:head>
@@ -279,9 +282,11 @@
       left: -10px;
     } */
   </style>
-  <div class="flex text-center">
-    <h1 class="w-full anim text-4xl sm:text-5xl md:text-6xl text-zinc-50 dark:text-zinc-800 italic">
-      <span>Interactive Projects!</span>
+  <div class="flex" use:inview={options} on:change={handleChange} id="7">
+    <h1
+      class="w-full text-center underline anim text-4xl sm:text-5xl md:text-6xl text-zinc-50 dark:text-zinc-800 italic"
+    >
+      <Typewriter text="Interactive Projects!" activated={typewriterEffect} />
     </h1>
   </div>
 
