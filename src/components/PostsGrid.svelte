@@ -21,7 +21,8 @@
   };
 </script>
 
-<div class="mt-12 grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12 content-center">
+<!-- items-center looks good here as well... -->
+<div class="mt-12 grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12">
   {#each posts as post, i}
     <div use:inview={options} on:change={handleChange} id={i.toString()}>
       {#if isInView[i]}

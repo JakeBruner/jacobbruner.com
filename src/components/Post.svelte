@@ -17,7 +17,7 @@
   <a href={subject ? subject + "/" + post.slug : post.slug}>
     {#if post.thumbnailpath}
       <div
-        class="group-hover:contrast-[90%] border-b-2 border-zinc-100 rounded-t-lg aspect-w-16 lg:aspect-h-9 aspect-h-7 w-full bg-cover bg-center min-w-full transition ease-in-out duration-200"
+        class="group-hover:contrast-[90%] border-b-2 dark:border-zinc-800 border-zinc-100 rounded-t-lg aspect-w-16 lg:aspect-h-9 aspect-h-7 w-full bg-cover bg-center min-w-full transition ease-in-out duration-200"
         style="background-image: url({post.thumbnailpath})"
       />
     {/if}
@@ -36,7 +36,7 @@
               style="background-color: rgba({color}, 0.3);"
             >
               <span
-                class="text-xs relative block opacity-100 brightness-[.6] dark:!brightness-100 dark:!text-white/80"
+                class="text-xs relative block opacity-100 brightness-[.6] dark:!brightness-150"
                 style="color: rgba({color}, 1);">{tag}</span
               >
             </div>

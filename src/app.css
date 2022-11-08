@@ -3,14 +3,10 @@
 @tailwind utilities;
 @tailwind variants;
 
-:root {
-  font-family: "Helvetica Neue", "Helvetica", "Trebuchet MS", Verdana, sans-serif;
-  --font-mono: monospace;
-  --accent-color: #d772a1;
-}
-/* PLEASE DONT FORGET THE SEMICOLON OR YOU GET A RANDOM ERROR THAT MAKES NO SENSE AND YOU WILL HAVE NO IDEA HOW TO FIX */
-/* PLEASE DONT WASTE MORE HOURS OF YOUR LIFE!!!!!! */
 @layer base {
+  html {
+    @apply font-sans;
+  }
   body {
     @apply text-lg text-zinc-600 dark:text-zinc-200;
   }
@@ -29,7 +25,7 @@
   p {
     font-weight: 400;
     line-height: 1.5;
-    @apply text-zinc-600 dark:text-zinc-300;
+    @apply text-zinc-700 dark:text-zinc-300;
   }
   a {
     text-decoration: none;

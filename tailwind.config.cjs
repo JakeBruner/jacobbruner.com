@@ -18,11 +18,15 @@ module.exports = {
           700: "#964f70",
           800: "#6b3950",
           900: "#562d40"
+        },
+        zinc: {
+          950: "#100E12"
         }
       },
       fontFamily: {
-        sans: ["Helvetica", ...defaultTheme.fontFamily.sans],
-        serif: ["sprat", ...defaultTheme.fontFamily.serif],
+        sans: ["Helvetica Neue", "Helvetica", "Roboto", ...defaultTheme.fontFamily.sans],
+        serif: ["Georgia", ...defaultTheme.fontFamily.serif],
+        roboto: ["Roboto", ...defaultTheme.fontFamily.sans],
         mono: ["Courier", "Vazirmatn", ...defaultTheme.fontFamily.mono]
       },
       aspectRatio: {

@@ -2,7 +2,7 @@
 title: "Among Teens, Sleep Deprivation: A Preventable Epidemic"
 date: 2022-1-17
 layout: blog
-excerpt: A deep-dive into the Public Defenders system reveals the systemic factors contributing to inequalities on socioeconomic lines. Completed as the final project for Constitutional Law.
+excerpt: Looking into the multitude of ways in which school start times affect teens' health and well-being. I firmly belive that sleep deprivation is one of the formost issues facing society in the long term.
 thumbnailpath: /images/effectssleep.png
 tags: Essay
 ---

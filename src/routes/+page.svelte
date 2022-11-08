@@ -106,35 +106,13 @@
     class="codybowl ios bg-[url('/images/codybowl.jpg')] dark:bg-[url('/images/jacksonstars.jpg')] md:bg-fixed h-screen min-h-screen bg-cover bg-center flex flex-col justify-center items-center"
     style={ios ? `background-attachment: scroll !important;` : ""}
   >
-    <!-- <style>
-      .fadeInDown {
-        animation: fadeinDown 10s;
-      }
-      @keyframes fadeInDown {
-        from {
-          opacity: 0;
-          -webkit-transform: translate3d(0, -100%, 0);
-          transform: translate3d(0, -100%, 0);
-        }
+    <div class="items-center flex flex-col">
+      <!-- TODO: maybe i shouldn't be using flexbox here -->
 
-        to {
-          opacity: 1;
-          -webkit-transform: translate3d(0, 0, 0);
-          transform: translate3d(0, 0, 0);
-        }
-      }
-    </style> -->
-    <div class="absolute items-center flex flex-col">
-      <!-- <style>
-        .animate {
-          opacity: 0;
-          transform: translateY(-20px);
-        }
-      </style> -->
       <div use:inview={options} on:change={handleChange} id="0" class="z-30">
         {#if isInView[0]}
           <h1
-            class="bg-white/60 backdrop-blur-sm dark:bg-zinc-900/70 sm:text-[53px] text-4xl text-zinc-700 dark:text-zinc-300 font-light rounded-lg py-3 sm:py-4 px-4 my-2 sm:my-4 text-center"
+            class="bg-white/60 backdrop-blur-sm dark:bg-zinc-900/60 sm:text-[53px] text-4xl text-zinc-700 dark:text-zinc-300 font-light rounded-lg py-3 sm:pt-4 sm:pb-6 px-4 my-2 sm:my-4 text-center"
             in:fly={{ x: 0, y: -100, duration: 1000, opacity: 0 }}
           >
             Learning as a Hobby
@@ -146,22 +124,19 @@
         .glow {
           text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 21px #fff, 0 0 41px #fff, 0 0 46px #fff;
           color: #71717a;
-          opacity: 0.2;
+          opacity: 0.1;
         }
       </style>
-      <div class="absolute w-full my-auto">
-        <h2
-          class="glow absolute block sm:text-[53px] text-4xl font-light py-3 sm:pb-[13px] sm:pt-[17px] px-2 my-2 sm:my-4 text-center"
-          style=""
-        >
+      <div class="absolute my-auto">
+        <h1 class="glow inline-flex sm:text-[53px] text-4xl font-light mt-5 sm:mt-8">
           Learning as a Hobby
-        </h2>
+        </h1>
       </div>
       <div>
         <div use:inview={options} on:change={handleChange} id="1">
           {#if isInView[1]}
             <h2
-              class="bg-white/60 backdrop-blur-sm dark:bg-zinc-900/70 sm:text-[25px] text-xl text-zinc-600 dark:text-zinc-300 rounded-lg italic py-0.1 px-1.5 font-normal"
+              class="bg-white/60 backdrop-blur-sm dark:bg-zinc-900/70 sm:text-[25px] text-xl text-zinc-600 dark:text-zinc-300 rounded-md italic pt-1 pb-2 px-2 font-normal"
               in:fly={{ x: 0, y: -60, duration: 1000, delay: 100, opacity: 0 }}
             >
               The work of Jacob Bruner

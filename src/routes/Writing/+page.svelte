@@ -14,7 +14,7 @@
 </svelte:head>
 
 <!-- TODO add a way to have a thumbnail for some posts -->
-<div class="pt-8 md:pt-16 pb-20 px-4 sm:px-6 lg:pt-24 lg:pb-28 lg:px-8">
+<div class="pt-8 md:pt-16 pb-20 px-4 sm:px-6 lg:pt-20 lg:pb-28 lg:px-8">
   <div class="max-w-lg mx-auto lg:max-w-7xl">
     <div class="border-b border-b-zinc-200  dark:border-b-zinc-700 pb-6">
       <h2 class="text-3xl tracking-tight font-semibold  sm:text-4xl">Writing</h2>
