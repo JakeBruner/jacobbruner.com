@@ -30,7 +30,7 @@
     "@threlte/extras": "^4.4.1",
     "@tsconfig/svelte": "^3.0.0",
     "@types/node": "^18.11.9",
-    "@types/three": "^0.144.0",
+    "@types/three": "^0.146.0",
     "@types/webgl2": "^0.0.6",
     "@typescript-eslint/eslint-plugin": "^5.42.1",
     "@typescript-eslint/parser": "^5.42.0",
