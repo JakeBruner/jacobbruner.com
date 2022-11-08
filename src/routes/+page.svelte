@@ -279,14 +279,14 @@
       left: -10px;
     } */
   </style>
-  <div class="text-center">
-    <h1 class="anim text-6xl text-zinc-50 dark:text-zinc-800 italic">
+  <div class="flex text-center">
+    <h1 class="w-full anim text-4xl sm:text-5xl md:text-6xl text-zinc-50 dark:text-zinc-800 italic">
       <span>Interactive Projects!</span>
     </h1>
   </div>
 
   <!-- look at how neat this is! -->
-  <div class="mt-12 grid gap-16 lg:grid-cols-3 lg:gap-x-5 lg:gap-y-12 content-center">
+  <div class="mt-12 grid gap-16 md:grid-cols-3 md:gap-x-5 md:gap-y-12 content-center">
     {#each projectList as post, i}
       {@const arraypos = i + 4}
       <div use:inview={options} on:change={handleChange} id={arraypos.toString()}>
