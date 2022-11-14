@@ -7,9 +7,7 @@
   import { webVitals } from "$lib/vitals";
   import { inject } from "@vercel/analytics";
 
-  inject();
-
-  import { browser } from "$app/environment";
+  import { browser, dev } from "$app/environment";
   import { page } from "$app/stores";
 
   import { fade } from "svelte/transition";
@@ -17,6 +15,10 @@
   import { navigating } from "$app/stores";
   import { loading } from "$lib/loading";
   import { onDestroy } from "svelte";
+
+  $: if (!dev) {
+    inject();
+  }
 
   navigating.subscribe((value) => {
     $loading = !!value;
