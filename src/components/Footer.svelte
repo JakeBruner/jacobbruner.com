@@ -20,7 +20,7 @@
             Hand-coded by Jacob using Svelte, Rust, Typescript and many, many hours :).
           </p>
         </div>
-        <div class="basis-[37.5%] md:px-9 px-7 xl:px-16">
+        <div class="basis-[37.5] md:px-9 px-7 xl:px-16">
           <h4 class="pb-4 font-bold text-primary">Links</h4>
           <p class="flex md:grid md:grid-cols-2 flex-col leading-relaxed font-light">
             {#each navitems as item}
@@ -32,7 +32,7 @@
             {/each}
           </p>
         </div>
-        <div class="basis-[25%] md:px-7 px-7 xl:px-16">
+        <div class="basis-1/2 md:px-7 px-7 xl:px-16">
           <h4 class="pb-4 font-bold text-primary">Contact Information</h4>
           <p class="leading-relaxed font-light dark:text-zinc-300">
             New York City <br />
@@ -104,7 +104,7 @@
     </div>
   </div>
   <div class="bottom-0 text-right text-zinc-500/80 dark:text-zinc-500 mr-4 text-base">
-    {#if !false}
+    {#if !dev}
       <svg
         aria-hidden="true"
         height="16"
