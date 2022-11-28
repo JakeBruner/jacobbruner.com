@@ -27,7 +27,7 @@
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/typography": "^0.5.7",
     "@threlte/core": "^4.3.3",
-    "@threlte/extras": "^4.4.1",
+    "@threlte/extras": "^4.8.0",
     "@tsconfig/svelte": "^3.0.0",
     "@types/node": "^18.11.9",
     "@types/three": "^0.146.0",
