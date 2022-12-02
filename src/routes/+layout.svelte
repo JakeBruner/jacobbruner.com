@@ -48,9 +48,14 @@
 
   let popup = false;
   onMount(() => {
+      if ($page.url.pathname !== '/Math/ECC') {
       if (!(localStorage.getItem("popup") === "closed")) {
         popup = true;
+      } else {
+        popup = false;
+        localStorage.setItem("popup", "closed");
       }
+    }
     }
   )
 
