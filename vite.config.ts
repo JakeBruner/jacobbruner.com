@@ -22,7 +22,7 @@ const config: UserConfig = {
     "import.meta.env.VERCEL_ANALYTICS_ID": JSON.stringify(process.env.VERCEL_ANALYTICS_ID)
   },
   optimizeDeps: {
-    exclude: ["./game-of-life"]
+    exclude: ["./game-of-life", "svelte-heros-v2"]
   },
   ssr: {
     noExternal: ["three", "troika-three-text"]
