@@ -13,7 +13,6 @@
 
   let menuOpen = false;
 
-  export let popup = true;
 </script>
 
 <header>
