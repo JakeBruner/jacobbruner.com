@@ -10,6 +10,7 @@
       "$components": ["src/components"],
       "$components/*": ["src/components/*"]
     },
+    "target": "es2019",
 
     // "allowJs": true,
     // "checkJs": true,

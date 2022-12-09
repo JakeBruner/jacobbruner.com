@@ -7,6 +7,16 @@
 export type BlogType = "Computer-Science" | "Math" | "Music" | "Writing"; // "Computer-Science" | "Math" | "Music" | "Writing";
 // this type is used on [slug]/+page.server.ts endpoints to construct the glob path fed into the fn below
 
+// declare global {
+//   interface ReadonlyArray<T> {
+//     includes<U>(
+//       searchElement: T & U extends never ? never : U,
+//       fromIndex?: number
+//     ): boolean;
+//   }
+//   // so when I declare an array as const I can use prototype.includes(str: string)
+// }
+
 /** Checks if parameter is a valid blog type */
 export function isValidBlogType(string: string): asserts string is BlogType {
   // https://github.com/microsoft/TypeScript/pull/33622, asserts can't be arrow functions
@@ -30,7 +40,8 @@ export const BlogTagColors = {
   PDF: "#71717a" /** zinc-500 */,
   Essay: "#a855f7" /** purple-500 */,
   Creative: "#f43f5e" /** rose-500 */,
-  News: "#0ea5e9" /** sky-500 */
+  News: "#0ea5e9" /** sky-500 */,
+  Website: "#06b6d4" /** cyan-500 */
 } as const;
 
 export type BlogTags = keyof typeof BlogTagColors;
