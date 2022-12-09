@@ -2,111 +2,46 @@
   // audio-fft.ts
   import { onMount } from 'svelte';
   import { error } from '@sveltejs/kit'
-  import FFT from './util'
+  import AudioFFT from './audio';
 
-  class AudioFFT {
-    private audioContext?: AudioContext;
-    private analyser: AnalyserNode = this.audioContext.createAnalyser();
-    private fft?: FFT;
-    private bufferLength?: number;
-    private dataArray?: Uint8Array;
-    private canvas?: HTMLCanvasElement;
-    private canvasContext?: CanvasRenderingContext2D | null;
+  let analyser: AnalyserNode;
+  let audioContext: AudioContext;
+  
 
-    constructor() {
-      this.setupAudio();
-      this.setupCanvas();
-      this.setupFFT();
-      this.renderFFT();
+  const initAudio = async () => {
+    console.log('navigator.mediaDevices', navigator.mediaDevices);
+    if (!navigator.mediaDevices) {
+      throw error(500, 'MediaDevices not supported');
     }
 
-    private setupAudio() {
-      // Create an AudioContext
-      this.audioContext = new AudioContext();
+    const stream = await navigator.mediaDevices
+      .getUserMedia({
+        audio: true,
+      })
+      
+    // Create an AudioNode from the stream
+    console.log('stream', stream)
+    audioContext = new AudioContext();
+    const audioSource = audioContext.createMediaStreamSource(stream);
+    analyser = audioContext.createAnalyser();
+    audioSource.connect(analyser);
 
-      // Request access to the microphone
-      navigator.mediaDevices
-        .getUserMedia({ audio: true })
-        .then(stream => {
-          // Create an AudioNode from the stream
-          const audioSource = this.audioContext.createMediaStreamSource(stream);
 
-          // Create an AnalyserNode
-          this.analyser = this.audioContext.createAnalyser();
-          audioSource.connect(this.analyser);
-        })
-        .catch(err => {
-          console.error('Failed to get microphone input:', err);
-        });
+
+    if (!analyser) {
+      throw error(500, 'Analyser not supported');
     }
+    const audioFFT = new AudioFFT(c, analyser);
 
-    private setupCanvas() {
-      // Create a canvas element
-      this.canvas = document.createElement('canvas');
-
-      // Set the dimensions of the canvas
-      this.canvas.width = 1024;
-      this.canvas.height = 512;
-
-      // Append the canvas to the document
-      document.body.appendChild(this.canvas);
-
-      // Get the 2D rendering context for the canvas
-      if (!this.canvas) {
-        throw error(400,'Canvas is null');
-      }
-      this.canvasContext = this.canvas.getContext('2d');
-    }
-
-    private setupFFT() {
-      // Create a new instance of the FFT object
-      this.fft = new FFT(this.analyser.fftSize);
-
-      // Get the buffer length and create a new array to hold the data
-      this.bufferLength = this.analyser.frequencyBinCount;
-      this.dataArray = new Uint8Array(this.bufferLength);
-    }
-
-    private renderFFT() {
-      // assert all are not undefined
-      if (!this.fft || !this.bufferLength || !this.dataArray || !this.canvas || !this.canvasContext) {
-        throw error(400,'FFT is null');
-      }
-
-      const loop = () => {
-        // Render the FFT at a rate of 60 frames per second
-        requestAnimationFrame(() => this.renderFFT());
-
-        // Get the current frequency data from the analyser
-
-        //@ts-ignore
-        this.analyser.getByteFrequencyData(this.dataArray);
-
-        // Clear the canvas
-        //@ts-ignore
-        this.canvasContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-        // Draw the frequency data on the canvas
-        //@ts-ignore
-        for (let i = 0; i < this.bufferLength; i++) {
-          //@ts-ignore
-          const barHeight = this.dataArray[i];
-          //@ts-ignore
-          const x = i * (this.canvas.width / this.bufferLength);
-          //@ts-ignore
-          const y = (this.canvas.height / 2) - barHeight / 2;
-          //@ts-ignore
-          this.canvasContext.fillRect(x, y, 2, barHeight);
-        }
-
-      }
-      requestAnimationFrame(loop);
-    }
-  }
+   
+  };
 
   onMount(() => {
-    const audioFFT = new AudioFFT();
+    console.log(navigator.mediaDevices?.enumerateDevices());
+
   });
+
+   let c: HTMLCanvasElement;
 
 </script>
 
@@ -115,7 +50,9 @@
 </svelte:head>
 
 <h1>Real-time Audio FFT</h1>
-<p>
-  This page uses the Svelte framework and Typescript to display a real-time fast fourier transform
-  of microphone input.
-</p>
+<div class="container flex">
+  
+  <canvas bind:this={c} class="mx-auto" width="1024px" height="512px"></canvas>
+</div>
+
+<button on:click={initAudio}>Start</button>
