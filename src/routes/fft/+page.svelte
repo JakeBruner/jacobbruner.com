@@ -52,7 +52,7 @@
 <h1>Real-time Audio FFT</h1>
 <div class="container flex">
   
-  <canvas bind:this={c} class="mx-auto" width="1024px" height="512px"></canvas>
+  <canvas bind:this={c} class="mx-auto  dark:stroke-slate-100 dark:fill-zinc-300" width="1024px" height="512px"></canvas>
 </div>
 
 <button on:click={initAudio}>Start</button>
