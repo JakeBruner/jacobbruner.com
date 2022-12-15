@@ -2,7 +2,7 @@ const defaultTheme = require("tailwindcss/defaultTheme");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/**/*.{html,js,svelte,ts}", "./lib/**/*.{html,js,svelte,ts}"],
+  content: ["./src/**/*.{html,js,svelte,ts}", "./src/posts/**/*.md"],
   theme: {
     extend: {
       colors: {
@@ -13,19 +13,23 @@ module.exports = {
           300: "#e39cbd",
           400: "#db80aa",
           500: "#d772a1",
+          DEFAULT: "#d772a1",
           600: "#c16690",
           700: "#964f70",
           800: "#6b3950",
           900: "#562d40"
         },
-        // this doesn't work I dont think
-        primary: "#d772a1",
-        primary_translucent: "rgba(215, 114, 161, 0.8)",
-        white_translucent: "rgba(255, 255, 255, 0.8)"
+        zinc: {
+          950: "#100E12",
+          850: "#1e1e21",
+          750: "#333338",
+          650: "#494951"
+        }
       },
       fontFamily: {
-        sans: ["Helvetica", ...defaultTheme.fontFamily.sans],
-        serif: ["sprat", ...defaultTheme.fontFamily.serif],
+        sans: ["Helvetica Neue", "Helvetica", "Roboto", ...defaultTheme.fontFamily.sans],
+        serif: ["Georgia", ...defaultTheme.fontFamily.serif],
+        roboto: ["Roboto", ...defaultTheme.fontFamily.sans],
         mono: ["Courier", "Vazirmatn", ...defaultTheme.fontFamily.mono]
       },
       aspectRatio: {

@@ -8,7 +8,7 @@ export const translate = (
     y = vector[1],
     z = vector[2];
 
-  let out = a;
+  const out = a;
 
   out[12] = a[0] * x + a[4] * y + a[8] * z + a[12];
   out[13] = a[1] * x + a[5] * y + a[9] * z + a[13];

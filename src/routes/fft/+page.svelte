@@ -51,4 +51,4 @@
   />
 </div>
 
-<button on:click={initAudio}>Start</button>
+<button on:click={initAudio} class="bg-primary text-white rounded-md px-3 py-2 ml-2">Start</button>

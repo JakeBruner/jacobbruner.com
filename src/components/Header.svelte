@@ -8,15 +8,17 @@
     { title: "Math", path: "/Math" },
     { title: "Photography", path: "/Photography" },
     { title: "CS", path: "/Computer-Science" },
-    { title: "Writing", path: "/Writing" },
+    { title: "Writing", path: "/Writing" }
   ];
 
   let menuOpen = false;
+
 </script>
 
 <header>
+  <div class="absolute top-0 bg-white dark:bg-zinc-900 w-full h-[60px] z-[700] opacity-60" />
   <nav
-    class=" fixed top-0 left-0 right-0 z-20 bg-white_translucent dark:bg-zinc-900/80 px-2 sm:px-4 py-3.5 text-black dark:text-zinc-100/90 shadow-md dark:shadow-black/30"
+    class="backdrop-blur-sm fixed top-0 left-0 right-0 z-[800] bg-white_translucent dark:bg-zinc-900/80 px-2 sm:px-4 py-3.5 text-black dark:text-zinc-100/90 shadow-md dark:shadow-black/30"
   >
     <style>
       nav::before {
@@ -50,11 +52,9 @@
       }
     </style>
     <!-- dark:bg-gray-800 dark:text-white -->
-    <div
-      class="pt-[4px] flex flex-wrap justify-between items-center xl:px-40 lg:px-24 xs:px-12 px-4"
-    >
+    <div class="pt-1 flex flex-wrap justify-between items-center xl:px-40 lg:px-24 xs:px-12 px-4">
       <!-- NAME/LOGO -->
-      <a href="/" class="name m-0 p-0 font-bold text-[28px]"
+      <a href="/" class="name m-0 p-0 font-bold text-zinc-950 dark:text-zinc-50 text-[28px]"
         >Jacob <span class="text-primary">B.</span></a
       >
 
@@ -89,7 +89,7 @@
               <a
                 href={item.path}
                 class:active={$page.url.pathname === item.path}
-                class="before:!bottom-[-2px] transition ease-in-out duration-100 text-zinc-800/90 hover:text-primary dark:text-zinc-200/90"
+                class="before:!-bottom-0.5 transition ease-in-out duration-100 text-zinc-800/90 hover:text-primary dark:text-zinc-200/90"
                 on:click={() => {
                   $loading = true;
                   menuOpen = false;
@@ -109,7 +109,7 @@
               <a
                 href={item.path}
                 class:active={$page.url.pathname === item.path}
-                class="transition ease-in-out duration-100 decoration-primary block text-[17px] text-zinc-800/90 hover:text-primary dark:text-zinc-200/90 hover:dark:text-primary after:bg-primary after:bottom-[2px] after:absolute after:h-[2.5px] after:left-[2px] after:right-[2px] after:invisible after:-scale-x-0 hover:after:-scale-x-100 hover:after:visible after:transition after:ease-out after:duration-500"
+                class="transition ease-in-out duration-100 decoration-primary block text-[17px] text-zinc-800/90 hover:text-primary dark:text-zinc-200/90 hover:dark:text-primary after:bg-primary after:bottom-[2px] after:absolute after:h-[2.5px] after:left-0.5 after:right-0.5 after:invisible after:-scale-x-0 hover:after:-scale-x-100 hover:after:visible after:transition after:ease-out after:duration-500"
                 on:click={() => ($loading = true)}>{item.title}</a
               >
             </li>

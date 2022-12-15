@@ -4,6 +4,7 @@ date: 2020-11-10
 layout: blog
 excerpt: Visually depicting the way in which displacement, velocity, and acceleration vectors vary in a gravitational field without air resistance.
 thumbnailpath: thumbnails/velocityvectors.png
+tags: Interactive
 ---
 
 <div class="flex justify-center"><iframe title="Interactive Embed of the Desmos Calculator" src="https://www.desmos.com/calculator/u1jibstt11?embed" height="500" class="w-full border-2 rounded-md " frameborder=0></iframe></div>

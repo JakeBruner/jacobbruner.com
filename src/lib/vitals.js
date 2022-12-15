@@ -1,14 +1,15 @@
-import { getCLS, getFCP, getFID, getLCP, getTTFB } from 'web-vitals';
+import { getCLS, getFCP, getFID, getLCP, getTTFB } from "web-vitals";
 
-const vitalsUrl = 'https://vitals.vercel-analytics.com/v1/vitals';
+const vitalsUrl = "https://vitals.vercel-analytics.com/v1/vitals";
 
 function getConnectionSpeed() {
-  return 'connection' in navigator &&
-    navigator['connection'] &&
-    'effectiveType' in navigator['connection']
-    ? // @ts-ignore
-      navigator['connection']['effectiveType']
-    : '';
+  return "connection" in navigator &&
+    navigator["connection"] &&
+    "effectiveType" in navigator["connection"]
+    ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      navigator["connection"]["effectiveType"]
+    : "";
 }
 
 /**
@@ -32,20 +33,20 @@ function sendToAnalytics(metric, options) {
   };
 
   if (options.debug) {
-    console.log('[Analytics]', metric.name, JSON.stringify(body, null, 2));
+    console.log("[Analytics]", metric.name, JSON.stringify(body, null, 2));
   }
 
   const blob = new Blob([new URLSearchParams(body).toString()], {
     // This content type is necessary for `sendBeacon`
-    type: 'application/x-www-form-urlencoded'
+    type: "application/x-www-form-urlencoded"
   });
   if (navigator.sendBeacon) {
     navigator.sendBeacon(vitalsUrl, blob);
   } else
     fetch(vitalsUrl, {
       body: blob,
-      method: 'POST',
-      credentials: 'omit',
+      method: "POST",
+      credentials: "omit",
       keepalive: true
     });
 }
@@ -61,6 +62,6 @@ export function webVitals(options) {
     getCLS((metric) => sendToAnalytics(metric, options));
     getFCP((metric) => sendToAnalytics(metric, options));
   } catch (err) {
-    console.error('[Analytics]', err);
+    console.error("[Analytics]", err);
   }
 }

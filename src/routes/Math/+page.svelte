@@ -3,7 +3,6 @@
 
   import PostsGrid from "$components/PostsGrid.svelte";
 
-  /** @type {import('./$types').PageData} */
   export let data: { p: PostInfo[] };
   const subject = "Math" as BlogType;
   // this is basically useless but makes it easier for me to copy paste for now :)
@@ -12,6 +11,9 @@
 <svelte:head>
   <title>{subject}</title>
 </svelte:head>
+<div class=" bg-white dark:bg-zinc-900 w-full h-[60px] z-30 fixed" />
+<!-- TODO: this div above ensures the blurred navbar doesn't become dark during lightmode -->
+<!-- TODO: make this video transparent and have background controlled by css -->
 <div class="bg-zinc-800 group">
   <div class="w-full -mt-[60px] h-auto bg-zinc-800 flex flex-col px-2">
     <video

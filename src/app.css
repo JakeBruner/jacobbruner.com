@@ -3,23 +3,10 @@
 @tailwind utilities;
 @tailwind variants;
 
-:root {
-  font-family: "Helvetica Neue", "Helvetica", "Trebuchet MS", Verdana, sans-serif;
-  --font-mono: monospace;
-  --pure-white: #ffffff;
-  --primary-color: #b9c6d2;
-  --secondary-color: #d0dde9;
-  --tertiary-color: #edf0f8;
-  --accent-color: #d772a1;
-  --heading-color: rgba(0, 0, 0, 0.7);
-  --text-color: #444444;
-  --background-without-opacity: rgba(255, 255, 255, 0.7);
-  --column-width: 42rem;
-  --column-margin-top: 4rem;
-}
-/* PLEASE DONT FORGET THE SEMICOLON OR YOU GET A RANDOM ERROR THAT MAKES NO SENSE AND YOU WILL HAVE NO IDEA HOW TO FIX */
-/* PLEASE DONT WASTE MORE HOURS OF YOUR LIFE!!!!!! */
 @layer base {
+  html {
+    @apply font-sans;
+  }
   body {
     @apply text-lg text-zinc-600 dark:text-zinc-200;
   }
@@ -38,20 +25,9 @@
   p {
     font-weight: 400;
     line-height: 1.5;
-    @apply text-zinc-600 dark:text-zinc-300;
+    @apply text-zinc-700 dark:text-zinc-300;
   }
-}
-
-.fadeInDown {
-  animation: fadeInDown;
-  animation-duration: 0.7s;
-}
-
-.fadeIn {
-  animation: fadeIn;
-  animation-duration: 1s;
-}
-
-a {
-  text-decoration: none;
+  a {
+    text-decoration: none;
+  }
 }

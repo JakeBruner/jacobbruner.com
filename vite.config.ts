@@ -2,7 +2,6 @@ import { sveltekit } from "@sveltejs/kit/vite";
 import type { UserConfig } from "vite";
 // import wasmPack from "vite-plugin-wasm-pack";
 import wasm from "vite-plugin-wasm";
-// import topLevelAwait from "vite-plugin-top-level-await";
 import path from "path";
 
 /** @type {import('vite').UserConfig} */
@@ -18,13 +17,12 @@ const config: UserConfig = {
     sveltekit(),
     wasm()
     // wasmPack(["./game-of-life"]),
-    // topLevelAwait()
   ],
   define: {
     "import.meta.env.VERCEL_ANALYTICS_ID": JSON.stringify(process.env.VERCEL_ANALYTICS_ID)
   },
   optimizeDeps: {
-    exclude: ["./game-of-life"]
+    exclude: ["./game-of-life", "svelte-heros-v2"]
   },
   ssr: {
     noExternal: ["three", "troika-three-text"]
