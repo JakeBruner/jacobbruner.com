@@ -3,7 +3,7 @@
   "exclude": ["game-of-life/*", "static/*", "node_modules/game-of-life/*"],
   "compilerOptions": {
     "baseUrl": ".",
-    "typeRoots": ["node_modules/@types"],
+    // "typeRoots": ["node_modules/@types"],
     "paths": {
       "$lib": ["src/lib"],
       "$lib/*": ["src/lib/*"],
