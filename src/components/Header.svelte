@@ -12,11 +12,10 @@
   ];
 
   let menuOpen = false;
-
 </script>
 
 <header>
-  <div class="absolute top-0 bg-white dark:bg-zinc-900 w-full h-[60px] z-[700] opacity-60" />
+  <div class="fixed top-0 bg-white dark:bg-zinc-900 w-full h-[60px] z-[700] opacity-60" />
   <nav
     class="backdrop-blur-sm fixed top-0 left-0 right-0 z-[800] bg-white_translucent dark:bg-zinc-900/80 px-2 sm:px-4 py-3.5 text-black dark:text-zinc-100/90 shadow-md dark:shadow-black/30"
   >

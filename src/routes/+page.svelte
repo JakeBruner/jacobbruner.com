@@ -75,6 +75,7 @@
       thumbnailpath: "/thumbnails/guessthebuild.jpg"
     }
   ] as PostInfo[];
+  //! tecnically I'm abusing my PostInfo type here, but it's fine
 
   import { inview } from "svelte-inview";
   import type { ObserverEventDetails, Options } from "svelte-inview";
@@ -107,11 +108,9 @@
 <section class="-mt-[60px] inset-0">
   <div
     class="codybowl ios bg-[url('/images/codybowl.jpg')] dark:bg-[url('/images/jacksonstars.jpg')] md:bg-fixed h-screen min-h-screen bg-cover bg-center flex flex-col justify-center items-center"
-    style={ios ? `background-attachment: scroll !important;` : ""}
+    style={ios ? `background-attachment: scroll !important;` : null}
   >
     <div class="items-center flex flex-col">
-      <!-- TODO: maybe i shouldn't be using flexbox here -->
-
       <div use:inview={options} on:change={handleChange} id="0" class="z-30">
         {#if isInView[0]}
           <h1
@@ -127,19 +126,20 @@
         .glow {
           text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 21px #fff, 0 0 41px #fff, 0 0 46px #fff;
           color: #71717a;
-          opacity: 0.1;
+          opacity: 0.07;
         }
       </style>
       <div class="absolute my-auto">
         <h1 class="glow inline-flex sm:text-[53px] text-4xl font-light mt-5 sm:mt-8">
           Learning as a Hobby
         </h1>
+        <!-- This hack ensures that lighthouse doesn't give me a shit lighthouse score because I want this to be animated... -->
       </div>
       <div>
         <div use:inview={options} on:change={handleChange} id="1">
           {#if isInView[1]}
             <h2
-              class="bg-white/60 backdrop-blur-sm dark:bg-zinc-900/70 sm:text-[25px] text-xl text-zinc-600 dark:text-zinc-300 rounded-md italic pt-1 pb-2 px-2 font-normal"
+              class="bg-white/60 backdrop-blur-sm dark:bg-zinc-900/70 sm:text-[25px] text-xl text-zinc-600 dark:text-zinc-300 rounded-md italic pt-1 pb-1 px-2 font-normal"
               in:fly={{ x: 0, y: -60, duration: 1000, delay: 100, opacity: 0 }}
             >
               The work of Jacob Bruner
@@ -248,12 +248,3 @@
 </section>
 
 <div class="h-20 md:h-0" />
-
-<style>
-  @supports (-webkit-touch-callout: none) {
-    .h-screen {
-      height: -webkit-fill-available;
-    }
-  }
-  /* hopefully this fixes my h-screen issues on mobile */
-</style>
