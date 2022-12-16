@@ -1,13 +1,13 @@
 ---
-title: Creating an IB-Study CRUD App
+title: Creating an IB-Study App With Supabase RPCs and Auth in Svelte
 date: 2022-11-20
 layout: blog
-excerpt: How I used Svelte Typescript and tools like Postgres to create an application for IB students to track their progress on IB Questions.
+excerpt: How I used Svelte Typescript and Postgres to create an application for IB students to track their progress on IB Questions.
 thumbnailpath: /thumbnails/ibgrind.png
 tags: Website, Interactive
 ---
 
-To my peers navigate available resources to study for the IB exams, I created a full-stack application using Svelte/Sveltekit and PostgreSQL. The website, at <a href="www.ib-grind.com/about">ib-grind.com</a>, has full auth functionality and uses postgres functions that are triggered by clientside(!) remote-procedure-calls. This works because I'm using Postgres Row-Level security to selectively allow SELECT, POST, UPDATE, and DELETE actions on specific tables, using a RESTful middleware.
+To help my peers navigate the wide-range of available resources for IB exam revision, I created a full-stack application using Svelte/Sveltekit and Typescript. The website, at <a href="www.ib-grind.com/about">ib-grind.com</a>, has full auth functionality and uses postgres functions that are triggered by client-side(!) remote procedure calls. This works because I'm using Postgres Row-Level security to selectively allow SELECT, POST, UPDATE, and DELETE actions on specific tables, using a RESTful middleware, Supabase, which I cannot recomend highly enough. Although... perhaps unfortunately for them, their amazing tutorials and step-by-step instructions gave me enough PostgreSQL knowlege to host my own dockerized Postgres using my native code for projects instead of locking myself to their proprietary Postgres wrapper software.
 
 Here's an example of a particularly ugly postgres function I wrote:
 ```plsql
