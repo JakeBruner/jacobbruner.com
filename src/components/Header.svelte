@@ -12,6 +12,12 @@
   ];
 
   let menuOpen = false;
+
+  type input = string | number | boolean | undefined | null;
+
+  const classnames = (...args: input[]) => {
+    return args.filter(Boolean).join(" ");
+  };
 </script>
 
 <header>
@@ -78,13 +84,19 @@
       </button>
 
       <!-- MOBILE ROW POPOUT MENU -->
+      <div
+        class={classnames(
+          "md:hidden fixed -z-10 w-1/2 mt-[60px] min-h-screen right-0 inset-y-0 transition-all duration-300 ease-in-out bg-white dark:bg-zinc-900 opacity-60",
+          menuOpen ? "right-0" : "-right-full"
+        )}
+      />
       <aside
         class:menuOpen
-        class="md:hidden fixed -z-1 w-1/2 mt-[60px] min-h-screen inset-y-0 shadow-md bg-white/80 dark:bg-zinc-900/80  transition duration-300 ease-in-out"
+        class="md:hidden fixed -z-1 w-1/2 mt-[60px] min-h-screen inset-y-0 shadow-md bg-white-translucent backdrop-blur-sm dark:bg-zinc-900/80  transition duration-300 ease-in-out"
       >
         <ul class="flex flex-col p-5 space-y-4 ">
           {#each navitems as item}
-            <li class="hover:scale-[102%] transition ease-in-out duration-300">
+            <li class="hover:scale-[102%] transition ease-in-out duration-300 relative">
               <a
                 href={item.path}
                 class:active={$page.url.pathname === item.path}
@@ -104,13 +116,18 @@
         <!-- hidden and flex utility classes overwrite oneanother: here it is hidden until the min width 'md' makes it flex -->
         <ul class="flex lg:space-x-7 space-x-4">
           {#each navitems as item}
-            <li class="hover:scale-105 transition ease-in-out duration-300">
+            <li class="relative">
               <a
                 href={item.path}
                 class:active={$page.url.pathname === item.path}
-                class="transition ease-in-out duration-100 decoration-primary block text-[17px] text-zinc-800/90 hover:text-primary dark:text-zinc-200/90 hover:dark:text-primary after:bg-primary after:bottom-[2px] after:absolute after:h-[2.5px] after:left-0.5 after:right-0.5 after:invisible after:-scale-x-0 hover:after:-scale-x-100 hover:after:visible after:transition after:ease-out after:duration-500"
-                on:click={() => ($loading = true)}>{item.title}</a
+                class="transition ease-in-out duration-100 decoration-primary block text-[17px]  after:bg-primary after:bottom-[2px] after:absolute after:h-[2.5px] after:left-0.5 after:right-0.5 after:invisible after:-scale-x-0 hover:after:-scale-x-100 hover:after:visible after:transition after:ease-out after:duration-500"
+                on:click={() => ($loading = true)}
               >
+                <span
+                  class=" hover:text-primary hover:dark:text-primary transition-colors duration-300  text-zinc-800/90 dark:text-zinc-200/90 focus:-translate-y-1"
+                  >{item.title}</span
+                >
+              </a>
             </li>
           {/each}
         </ul>
@@ -165,6 +182,7 @@
 } */
   .active {
     position: relative;
+    @apply after:scale-x-100 after:visible after:bg-opacity-90 after:hover:opacity-100;
   }
   /* .active::after {
     position: absolute;
@@ -185,6 +203,6 @@
     position: absolute;
     left: 6px;
     right: 6px;
-    transition: all 0.15s ease-in;
+    transition: 0.15s ease-in;
   }
 </style>
