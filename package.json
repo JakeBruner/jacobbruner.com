@@ -32,7 +32,7 @@
     "@types/node": "^18.11.15",
     "@types/three": "^0.146.0",
     "@types/webgl2": "^0.0.6",
-    "@typescript-eslint/eslint-plugin": "^5.46.1",
+    "@typescript-eslint/eslint-plugin": "^5.47.0",
     "@typescript-eslint/parser": "^5.46.1",
     "@vercel/analytics": "^0.1.6",
     "autoprefixer": "^10.4.13",
