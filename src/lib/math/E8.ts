@@ -1,32 +1,50 @@
-// NOT MY CODE
-// THIS IS COPIED FOR MY REFERENCE FROM http://www.madore.org/~david/math/e8w.html
-// THiS CODE WAS WRITTEN BY DAVID MADORE
+// declare global {
+//   interface Array<T> {
+//     /**
+//      * Returns the squared norm of this vector.
+//      * @returns The squared norm.
+//     */
+//     sqnorm(): number;
+// }
 
-const haveTypedArrays = typeof Uint16Array === "function" && typeof Float32Array === "function";
-// var haveTypedArrays = false;
+const sqdist = (a: number[], b: number[]) => {
+  let d = 0;
+  for (let i = 0; i < 8; i++) {
+    d += (a[i] - b[i]) * (a[i] - b[i]);
+  }
+  return d;
+};
 
-// Coordinates of the roots (these are fixed):
-const roots = [];
-
+function createEdges(roots: number[][]) {
+  const _edges: number[] = [];
+  for (let a = 0; a < roots.length; a++) {
+    for (let b = a + 1; b < roots.length; b++) {
+      if (sqdist(roots[a], roots[b]) === 8) {
+        _edges.push(a);
+        _edges.push(b);
+      }
+    }
+  }
+  // edges = new Uint16Array(_edges);
+  return _edges;
+}
 function createRoots() {
-  function rootFirstKind(i0, i1, s0, s1) {
+  const roots: number[][] = [];
+  function rootFirstKind(i0: number, i1: number, s0: boolean, s1: boolean) {
     const rt = [0, 0, 0, 0, 0, 0, 0, 0];
     rt[i0] = s0 ? -2 : 2;
     rt[i1] = s1 ? -2 : 2;
     return rt;
   }
-  function rootSecondKind(s0, s1, s2, s3, s4, s5, s6) {
-    const s7 = s0 ^ s1 ^ s2 ^ s3 ^ s4 ^ s5 ^ s6;
-    return [
-      s0 ? -1 : 1,
-      s1 ? -1 : 1,
-      s2 ? -1 : 1,
-      s3 ? -1 : 1,
-      s4 ? -1 : 1,
-      s5 ? -1 : 1,
-      s6 ? -1 : 1,
-      s7 ? -1 : 1
-    ];
+  function rootSecondKind(...si: boolean[]): number[] {
+    let s7 = false;
+    const signs: number[] = [];
+    for (let i = 0; i <= 6; i++) {
+      s7 = s7 !== si[i];
+      signs.push(si[i] ? -1 : 1);
+    }
+    signs.push(s7 ? -1 : 1);
+    return signs;
   }
   for (let i0 = 0; i0 < 8; i0++) {
     for (let i1 = i0 + 1; i1 < 8; i1++) {
@@ -41,7 +59,7 @@ function createRoots() {
       rootSecondKind(!!(i & 1), !!(i & 2), !!(i & 4), !!(i & 8), !!(i & 16), !!(i & 32), !!(i & 64))
     );
   }
-  roots.sort(function (a, b) {
+  roots.sort((a, b) => {
     // Lexicographic ordering
     for (let k = 0; k < 8; k++) {
       if (a[k] < b[k]) return -1;
@@ -49,485 +67,339 @@ function createRoots() {
     }
     return 0;
   });
+  return roots;
 }
 
-function sqnorm(a) {
-  let ret = 0;
-  for (let i = 0; i < a.length; i++) {
-    const d = a[i];
-    ret += d * d;
-  }
-  return ret;
-}
+export const initE8 = (ctx: CanvasRenderingContext2D) => {
+  let roots: number[][] = [];
+  let edges: Uint16Array;
+  const canvas = ctx.canvas;
+  const width = canvas.width;
+  const height = canvas.height;
+  const scale = 0.5 * Math.min(width, height);
+  const center = [0.5 * width, 0.5 * height];
+  const origin = [0, 0, 0, 0, 0, 0, 0, 0];
+  const basis: number[][] = [
+    [1, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 1, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 0, 0, 0, 0, 0, 1, 0],
+    [0, 0, 0, 0, 0, 0, 0, 1]
+  ];
 
-function dotprod(a, b) {
-  let ret = 0;
-  for (let i = 0; i < a.length; i++) {
-    ret += a[i] * b[i];
-  }
-  return ret;
-}
+  const init = () => {
+    roots = createRoots();
+    edges = new Uint16Array(createEdges(roots));
+  };
+  console.log("init");
+  init();
 
-function sqdist(a, b) {
-  let ret = 0;
-  for (let i = 0; i < a.length; i++) {
-    const d = a[i] - b[i];
-    ret += d * d;
-  }
-  return ret;
-}
-
-// List of edges (an edge connects each even entry of this array
-// to the following):
-let edges;
-
-function createEdges() {
-  const edges0 = [];
-  for (let a = 0; a < roots.length; a++) {
-    for (let b = a + 1; b < roots.length; b++) {
-      if (sqdist(roots[a], roots[b]) == 8) {
-        edges0.push(a);
-        edges0.push(b);
+  const colors = ["red", "green", "blue", "yellow", "cyan", "magenta", "orange", "purple"];
+  const color = (a: number[]) => {
+    for (let i = 0; i < 8; i++) {
+      if (a[i] !== 0) {
+        return colors[i];
       }
     }
-  }
-  if (haveTypedArrays) edges = new Uint16Array(edges0);
-  else edges = edges0;
-}
-
-let gaussianStore = null;
-function gaussian() {
-  // Generate a Gaussian variable by Box-Muller.
-  if (gaussianStore == null) {
-    const u0 = Math.random();
-    const u1 = Math.random();
-    gaussianStore = Math.sqrt(-2 * Math.log(u0)) * Math.cos(2 * Math.PI * u1);
-    return Math.sqrt(-2 * Math.log(u0)) * Math.sin(2 * Math.PI * u1);
-  } else {
-    const ret = gaussianStore;
-    gaussianStore = null;
-    return ret;
-  }
-}
-
-function gramSchmidt(matrix, orthcond) {
-  // Make matrix normed and orthogonal.
-  if (typeof orthcond === "undefined") {
-    orthcond = new Array(matrix.length);
-    for (var k = 0; k < matrix.length; k++) {
-      orthcond[k] = new Array(k);
-      for (var l = 0; l < k; l++) orthcond[k][l] = l;
-    }
-  }
-  for (var k = 0; k < orthcond.length; k++) {
-    var d;
-    for (var l = 0; l < orthcond[k].length; l++) {
-      const k2 = orthcond[k][l];
-      d = dotprod(matrix[k], matrix[k2]);
-      for (var i = 0; i < matrix[k].length; i++) matrix[k][i] -= d * matrix[k2][i];
-    }
-    d = Math.sqrt(sqnorm(matrix[k]));
-    for (var i = 0; i < matrix[k].length; i++) matrix[k][i] /= d;
-  }
-}
-
-function zeroMatrix(rows, cols) {
-  const mat = new Array(rows);
-  for (let i = 0; i < rows; i++) {
-    mat[i] = new Array(cols);
-    for (let j = 0; j < cols; j++) mat[i][j] = 0;
-  }
-  return mat;
-}
-
-function gaussianVector(size) {
-  const vec = new Array(size);
-  for (let j = 0; j < size; j++) vec[j] = gaussian();
-  return vec;
-}
-
-function identityMatrix(size) {
-  const mat = new Array(size);
-  for (let i = 0; i < size; i++) {
-    mat[i] = new Array(size);
-    for (let j = 0; j < size; j++) mat[i][j] = i == j ? 1 : 0;
-  }
-  return mat;
-}
-
-function randomOrthogonalMatrix(rows, cols) {
-  const mat = new Array(rows);
-  for (let i = 0; i < rows; i++) mat[i] = gaussianVector(cols);
-  gramSchmidt(mat);
-  return mat;
-}
-
-const octonionSignTab = [
-  // Convention here is that:
-  //   e3=e1*e2, e5=e1*e4, e6=e2*e4, e7=(e1*e2)*e4
-  // 0   1   2   3   4   5   6   7
-  [+1, +1, +1, +1, +1, +1, +1, +1], // 0
-  [+1, -1, +1, -1, +1, -1, -1, +1], // 1
-  [+1, -1, -1, +1, +1, +1, -1, -1], // 2
-  [+1, +1, -1, -1, +1, -1, +1, -1], // 3
-  [+1, -1, -1, -1, -1, +1, +1, +1], // 4
-  [+1, +1, -1, +1, -1, -1, -1, +1], // 5
-  [+1, +1, +1, -1, -1, +1, -1, -1], // 6
-  [+1, -1, +1, +1, -1, -1, +1, -1] // 7
-];
-
-function octonionProduct(x, y) {
-  // Multiply two octonions
-  const z = new Array(8);
-  for (var i = 0; i < 8; i++) z[i] = 0;
-  for (var i = 0; i < 8; i++)
-    for (let j = 0; j < 8; j++) z[i ^ j] += octonionSignTab[i][j] * x[i] * y[j];
-  return z;
-}
-
-function randomG2Matrix() {
-  // Return a random element of the G2 group
-  const mat = new Array(8);
-  mat[0] = [1, 0, 0, 0, 0, 0, 0, 0];
-  mat[1] = gaussianVector(8);
-  mat[1][0] = 0;
-  mat[2] = gaussianVector(8);
-  mat[2][0] = 0;
-  gramSchmidt(mat, [[], [0], [0, 1]]);
-  mat[3] = octonionProduct(mat[1], mat[2]);
-  mat[4] = gaussianVector(8);
-  mat[4][0] = 0;
-  gramSchmidt(mat, [[], [], [], [], [0, 1, 2, 3]]);
-  mat[5] = octonionProduct(mat[1], mat[4]);
-  mat[6] = octonionProduct(mat[2], mat[4]);
-  mat[7] = octonionProduct(mat[3], mat[4]);
-  gramSchmidt(mat); // In principle, this should be useless
-  return mat;
-}
-
-function matrixProduct(m, mm, storeP) {
-  // Compute m*mm and possible store in storeP.
-  // Note: storeP is allowed to be m (but not mm).
-  const rows = m.length;
-  const mid = mm.length;
-  const cols = mm[0].length;
-  if (typeof storeP === "undefined") storeP = new Array(rows);
-  for (let i = 0; i < rows; i++) {
-    const vec = new Array(cols);
-    for (let j = 0; j < cols; j++) {
-      vec[j] = 0;
-      for (let k = 0; k < mid; k++) vec[j] += m[i][k] * mm[k][j];
-    }
-    storeP[i] = vec;
-  }
-  return storeP;
-}
-
-function transpose(m) {
-  // Return transpose of a matrix
-  const cols = m.length;
-  const rows = m[0].length;
-  const m2 = new Array(rows);
-  for (let i = 0; i < rows; i++) {
-    m2[i] = new Array(cols);
-    for (let j = 0; j < cols; j++) m2[i][j] = m[j][i];
-  }
-  return m2;
-}
-
-function scalarMultiple(m, t) {
-  const rows = m.length;
-  const cols = m[0].length;
-  const m2 = new Array(rows);
-  for (let i = 0; i < rows; i++) {
-    m2[i] = new Array(cols);
-    for (let j = 0; j < cols; j++) m2[i][j] = m[i][j] * t;
-  }
-  return m2;
-}
-
-const e8ToOctMat = [
-  [1 / 2, 0, 0, 0, 1 / 2, 0, 0, 0],
-  [0, 1 / 2, 0, 0, 0, -1 / 2, 0, 0],
-  [0, 0, 1 / 2, 0, 0, 0, -1 / 2, 0],
-  [0, 0, 0, 1 / 2, 0, 0, 0, -1 / 2],
-  [-1 / 2, 0, 0, 0, 1 / 2, 0, 0, 0],
-  [0, 1 / 2, 0, 0, 0, 1 / 2, 0, 0],
-  [0, 0, 1 / 2, 0, 0, 0, 1 / 2, 0],
-  [0, 0, 0, 1 / 2, 0, 0, 0, 1 / 2]
-];
-
-function torusMat(t) {
-  const phi = (1 + Math.sqrt(5)) / 2;
-  const ca = Math.cos(t);
-  const sa = Math.sin(t);
-  const cb = Math.cos(phi * t);
-  const sb = Math.sin(phi * t);
-  const c2b = Math.cos(2 * phi * t);
-  const s2b = Math.sin(2 * phi * t);
-  return [
-    [1, 0, 0, 0, 0, 0, 0, 0],
-    [0, ca * cb, sa * cb, 0, 0, ca * sb, sa * sb, 0],
-    [0, -sa * cb, ca * cb, 0, 0, -sa * sb, ca * sb, 0],
-    [0, 0, 0, c2b, 0, 0, 0, -s2b],
-    [0, 0, 0, 0, 1, 0, 0, 0],
-    [0, -ca * sb, -sa * sb, 0, 0, ca * cb, sa * cb, 0],
-    [0, sa * sb, -ca * sb, 0, 0, -sa * cb, ca * cb, 0],
-    [0, 0, 0, s2b, 0, 0, 0, c2b]
-  ];
-}
-
-// The two 8-vectors determining the projection to a plane:
-// these should be normed and orthogonal.
-// A third vector is used to determine the (Z-index) order of the dots.
-let projMatrix0; // At t=0
-let projMatrix;
-
-let conjugator;
-let conjugatorT;
-
-let e8ToOctThenConjugator;
-let e8ToOctThenConjugatorInv;
-
-function initMatrices(standard) {
-  projMatrix0 = new Array(2);
-  projMatrix0[0] = [
-    0.580162190775135, 0.240311047795148, 0.424708200277867, 0.0, -0.580162190775135,
-    0.240311047795148, 0.0, 0.175919896606161
-  ];
-  projMatrix0[1] = [
-    0.580162190775135, 0.240311047795148, 0.0, 0.175919896606161, 0.580162190775135,
-    -0.240311047795148, -0.424708200277867, 0.0
-  ];
-  projMatrix0[2] = [1, 0, 0, 0, 0, 0, 0, 0];
-  gramSchmidt(projMatrix0);
-  if (standard) conjugator = identityMatrix(8);
-  else conjugator = randomG2Matrix();
-  conjugatorT = transpose(conjugator);
-  e8ToOctThenConjugator = matrixProduct(e8ToOctMat, conjugator);
-  e8ToOctThenConjugatorInv = scalarMultiple(transpose(e8ToOctThenConjugator), 2);
-}
-
-function computeProjectionMatrix(time) {
-  const tMat = torusMat(time);
-  projMatrix = matrixProduct(
-    matrixProduct(matrixProduct(projMatrix0, e8ToOctThenConjugator), tMat),
-    e8ToOctThenConjugatorInv
-  );
-}
-
-let rootProj; // Projection of the roots (in canvas coordinates)
-let rootZidx; // Z-index of the roots
-let rootColor; // Root colors (RGB coordinates)
-
-function computeRootProjections() {
-  if (typeof rootProj === "undefined") {
-    if (haveTypedArrays) {
-      rootProj = new Float32Array(roots.length * 2);
-      rootZidx = new Float32Array(roots.length);
-    } else {
-      rootProj = new Array(roots.length * 2);
-      rootZidx = new Array(roots.length);
-    }
-  }
-  for (let n = 0; n < roots.length; n++) {
-    rootProj[2 * n] = dotprod(projMatrix[0], roots[n]) * 100 + 300;
-    rootProj[2 * n + 1] = dotprod(projMatrix[1], roots[n]) * 100 + 300;
-    rootZidx[n] = dotprod(projMatrix[2], roots[n]);
-  }
-}
-
-function computeRootColors() {
-  rootColor = [];
-  for (let n = 0; n < roots.length; n++) {
-    const x = dotprod(projMatrix0[0], roots[n]) / 2.83;
-    const y = dotprod(projMatrix0[1], roots[n]) / 2.83;
-    const hue = (Math.atan2(-y, x) / Math.PI + 1) * 3;
-    var red;
-    var grn;
-    var blu;
-    if (hue < 1) {
-      red = 0;
-      grn = 1;
-      blu = hue;
-    } else if (hue < 2) {
-      red = 0;
-      grn = 2 - hue;
-      blu = 1;
-    } else if (hue < 3) {
-      red = hue - 2;
-      grn = 0;
-      blu = 1;
-    } else if (hue < 4) {
-      red = 1;
-      grn = 0;
-      blu = 4 - hue;
-    } else if (hue < 5) {
-      red = 1;
-      grn = hue - 4;
-      blu = 0;
-    } else {
-      red = 6 - hue;
-      grn = 1;
-      blu = 0;
-    }
-    const sat = Math.sqrt(x * x + y * y) * 0.9 + 0.1;
-    red = sat * red + (1 - sat);
-    grn = sat * grn + (1 - sat);
-    blu = sat * blu + (1 - sat);
-    const col = [
-      Math.floor(red * 255 + 0.5),
-      Math.floor(grn * 255 + 0.5),
-      Math.floor(blu * 255 + 0.5)
-    ];
-    rootColor[n] = "rgb(" + col[0] + "," + col[1] + "," + col[2] + ")";
-  }
-}
-
-let canvas;
-let ctx;
-
-function drawLines() {
-  // Draw the 6720 edges.
-  ctx.lineWidth = 0.2;
-  ctx.strokeStyle = "rgb(0,0,0)";
-  for (let n = 0; n < edges.length / 2; n++) {
-    const i = edges[2 * n];
-    const j = edges[2 * n + 1];
-    ctx.beginPath();
-    ctx.moveTo(rootProj[2 * i], rootProj[2 * i + 1]);
-    ctx.lineTo(rootProj[2 * j], rootProj[2 * j + 1]);
-    ctx.stroke();
-  }
-}
-
-let rootZorder;
-
-function drawPoints() {
-  // Draw points.
-  if (typeof rootZorder === "undefined") {
-    rootZorder = new Array(roots.length);
-    for (var k = 0; k < roots.length; k++) {
-      rootZorder[k] = k;
-    }
-  }
-  rootZorder.sort(function (k1, k2) {
-    return rootZidx[k1] - rootZidx[k2];
-  });
-  for (var k = 0; k < roots.length; k++) {
-    const n = rootZorder[k];
-    ctx.fillStyle = rootColor[n];
-    ctx.beginPath();
-    ctx.arc(rootProj[2 * n], rootProj[2 * n + 1], 2, 0, Math.PI * 2, true);
-    ctx.closePath();
-    ctx.fill();
-  }
-}
-
-function initCanvas() {
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
-}
-
-const requestAnimationFrame =
-  window.requestAnimationFrame ||
-  window.mozRequestAnimationFrame ||
-  window.webkitRequestAnimationFrame ||
-  window.msRequestAnimationFrame;
-const haveRequestAnimationFrame = typeof requestAnimationFrame === "function";
-
-function now() {
-  const d = new Date();
-  return d.getTime();
-}
-
-let updateFunc;
-let isRunning;
-let animationStart;
-let timeBase;
-let doLines = false;
-
-function computeAndDraw(time) {
-  ctx.clearRect(0, 0, 600, 600);
-  computeProjectionMatrix(time);
-  computeRootProjections();
-  if (doLines) drawLines();
-  else {
-    ctx.fillStyle = "rgb(128,128,128)";
-    ctx.fillRect(0, 0, 600, 600);
-  }
-  drawPoints();
-  const elt = document.getElementById("time");
-  while (elt.firstChild) elt.removeChild(elt.firstChild);
-  elt.appendChild(document.createTextNode(time.toFixed(3)));
-}
-
-function pauseButton() {
-  if (!updateFunc) return;
-  if (isRunning) {
-    isRunning = false;
-    timeBase = timeBase + (now() - animationStart) / 10000;
-    computeAndDraw(timeBase);
-  } else {
-    isRunning = true;
-    animationStart = now();
-    if (haveRequestAnimationFrame) requestAnimationFrame(updateFunc, canvas);
-    else updateFunc();
-  }
-}
-
-function toggleLines() {
-  if (!updateFunc) return;
-  doLines = !doLines;
-  if (!isRunning) computeAndDraw(timeBase);
-}
-
-function warpButton() {
-  if (!updateFunc) return;
-  const timeTarget = prompt("Time to warp to: ", "");
-  if (timeTarget == null) return;
-  timeBase = +timeTarget;
-  animationStart = now();
-  if (!isRunning) computeAndDraw(timeBase);
-}
-
-function resetButton(standard) {
-  if (!updateFunc) return;
-  initMatrices(standard);
-  timeBase = 0;
-  animationStart = now();
-  if (!isRunning) computeAndDraw(timeBase);
-}
-
-function onLoad() {
-  canvas = document.getElementById("canvas");
-  if (typeof canvas.getContext != "function") {
-    alert(
-      "Your browser does not support the HTML5 <canvas> element.\n" + "This page will not function."
-    );
-    throw "canvas unsupported";
-  }
-  ctx = canvas.getContext("2d");
-  createRoots();
-  createEdges();
-  initMatrices();
-  initCanvas();
-  computeRootColors();
-  isRunning = true;
-  timeBase = 0;
-  updateFunc = function () {
-    let time;
-    if (!isRunning) return;
-    if (typeof animationStart === "undefined") {
-      animationStart = now();
-      time = timeBase;
-    } else {
-      time = timeBase + (now() - animationStart) / 10000;
-    }
-    computeAndDraw(time);
-    if (haveRequestAnimationFrame) requestAnimationFrame(updateFunc, canvas);
-    else window.setTimeout(updateFunc, 40);
+    return "black";
   };
-  if (haveRequestAnimationFrame) requestAnimationFrame(updateFunc, canvas);
-  else updateFunc();
-}
+  const draw = (a: number[]) => {
+    const p = project(a);
+    ctx.beginPath();
+    ctx.arc(p[0], p[1], 2, 0, 2 * Math.PI);
+    ctx.fillStyle = color(a);
+    ctx.fill();
+  };
+  const drawLine = (a: number[], b: number[]) => {
+    const p = project(a);
+    const q = project(b);
+    ctx.beginPath();
+    ctx.moveTo(p[0], p[1]);
+    ctx.lineTo(q[0], q[1]);
+    ctx.strokeStyle = color(a);
+    ctx.stroke();
+  };
+  const project = (a: number[]) => {
+    const p = [0, 0];
+    for (let i = 0; i < 2; i++) {
+      for (let j = 0; j < 8; j++) {
+        p[i] += a[j] * basis[j][i];
+      }
+    }
+    p[0] *= scale;
+    p[1] *= scale;
+    p[0] += center[0];
+    p[1] += center[1];
+    return p;
+  };
+  const drawBasis = () => {
+    for (let i = 0; i < 8; i++) {
+      drawLine(origin, basis[i]);
+    }
+  };
+  const drawRoots = () => {
+    for (let i = 0; i < roots.length; i++) {
+      draw(roots[i]);
+    }
+  };
+  const drawEdges = () => {
+    for (let i = 0; i < edges.length; i += 2) {
+      drawLine(roots[edges[i]], roots[edges[i + 1]]);
+    }
+  };
+  const drawAll = () => {
+    ctx.clearRect(0, 0, width, height);
+    drawBasis();
+    drawRoots();
+    drawEdges();
+  };
+  const drawAllDebounced = debounce(drawAll, 100);
+  // q: what does the debounce function do?
+
+  window.addEventListener("resize", drawAllDebounced);
+  drawAll();
+};
+
+const debounce = (func: () => void, wait: number) => {
+  let timeout: NodeJS.Timeout;
+  return () => {
+    clearTimeout(timeout);
+    timeout = setTimeout(func, wait);
+  };
+};
+
+// Array.prototype.sqnorm = function () {
+//   let ret = 0;
+//   for (let i = 0; i < this.length; i++) {
+//     const d = this[i];
+//     ret += d * d;
+//   }
+//   return ret;
+// };
+
+// const dotprod = (a: number[], b: number[]) => {
+//   let ret = 0;
+//   for (let i = 0; i < a.length; i++) {
+//     ret += a[i] * b[i];
+//   }
+//   return ret;
+// };
+
+// function sqdist(a: number[], b: number[]) {
+//   let ret = 0;
+//   for (let i = 0; i < a.length; i++) {
+//     const d = a[i] - b[i];
+//     ret += d * d;
+//   }
+//   return ret;
+// }
+
+// function rotate(a: number[]) {
+//   const b = [0, 0, 0, 0, 0, 0, 0, 0];
+//   for (let i = 0; i < 8; i++) {
+//     let sum = 0;
+//     for (let j = 0; j < 8; j++) {
+//       sum += a[j] * rot[i][j];
+//     }
+//     b[i] = sum;
+//   }
+//   return b;
+// }
+
+// // Rotation matrix for the quaternion group:
+
+// // prettier-ignore
+// const rot = [
+//   [1, 0, 0, 0, 0, 0, 0, 0],
+//   [0, 1, 0, 0, 0, 0, 0, 0],
+//   [0, 0, 1, 0, 0, 0, 0, 0],
+//   [0, 0, 0, 1, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 1, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 1, 0, 0],
+//   [0, 0, 0, 0, 0, 0, 1, 0],
+//   [0, 0, 0, 0, 0, 0, 0, 1]
+// ];
+
+// function draw() {
+//   const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+//   const ctx = canvas.getContext("2d")!; //TODO
+//   ctx.clearRect(0, 0, canvas.width, canvas.height);
+//   ctx.save();
+//   ctx.translate(canvas.width / 2, canvas.height / 2);
+//   ctx.scale(canvas.width / 10, -canvas.width / 10);
+//   ctx.lineWidth = 0.1;
+//   ctx.strokeStyle = "black";
+//   ctx.beginPath();
+//   for (let i = 0; i < edges.length; i += 2) {
+//     const a = roots[edges[i]];
+//     const b = roots[edges[i + 1]];
+//     ctx.moveTo(a[0], a[1]);
+//     ctx.lineTo(b[0], b[1]);
+//   }
+//   ctx.stroke();
+//   ctx.fillStyle = "black";
+//   ctx.beginPath();
+//   for (let i = 0; i < roots.length; i++) {
+//     const a = rotate(roots[i]);
+//     ctx.moveTo(a[0] + 0.2, a[1] + 0.2);
+//     ctx.arc(a[0], a[1], 0.2, 0, 2 * Math.PI);
+//   }
+//   ctx.fill();
+//   ctx.restore();
+//   requestAnimationFrame(draw);
+// }
+
+// requestAnimationFrame(draw);
+
+// class E8Lattice {
+//   private readonly roots: number[][];
+//   private edges!: Uint16Array;
+//   private gaussianStore: number | null = null;
+
+//   constructor() {
+//     this.roots = [];
+//   }
+
+//   private rootFirstKind(i0: number, i1: number, s0: boolean, s1: boolean): number[] {
+//     const rt = [0, 0, 0, 0, 0, 0, 0, 0];
+//     rt[i0] = s0 ? -2 : 2;
+//     rt[i1] = s1 ? -2 : 2;
+//     return rt;
+//   }
+
+//   private rootSecondKind(...si: boolean[]): number[] {
+//     let s7 = false;
+//     const signs = [];
+//     for (let i = 0; i <= 6; i++) {
+//       s7 = s7 !== si[i];
+//       signs.push(si[i] ? -1 : 1);
+//     }
+//     signs.push(s7 ? -1 : 1);
+//     return signs;
+//   }
+
+//   private createRoots(): void {
+//     for (let i0 = 0; i0 < 8; i0++) {
+//       for (let i1 = i0 + 1; i1 < 8; i1++) {
+//         this.roots.push(this.rootFirstKind(i0, i1, false, false));
+//         this.roots.push(this.rootFirstKind(i0, i1, false, true));
+//         this.roots.push(this.rootFirstKind(i0, i1, true, false));
+//         this.roots.push(this.rootFirstKind(i0, i1, true, true));
+//       }
+//     }
+//     for (let i = 0; i < 128; i++) {
+//       this.roots.push(
+//         this.rootSecondKind(
+//           !!(i & 1),
+//           !!(i & 2),
+//           !!(i & 4),
+//           !!(i & 8),
+//           !!(i & 16),
+//           !!(i & 32),
+//           !!(i & 64)
+//         )
+//       );
+//     }
+//     this.roots.sort(function (a, b) {
+//       // Lexicographic ordering
+//       for (let k = 0; k < 8; k++) {
+//         if (a[k] < b[k]) return -1;
+//         else if (a[k] > b[k]) return 1;
+//       }
+//       return 0;
+//     });
+//   }
+
+//   private sqnorm(a: number[]): number {
+//     let ret = 0;
+//     for (let i = 0; i < a.length; i++) {
+//       const d = a[i];
+//       ret += d * d;
+//     }
+//     return ret;
+//   }
+
+//   private sqdist(a: number[], b: number[]): number {
+//     let ret = 0;
+//     for (let i = 0; i < a.length; i++) {
+//       const d = a[i] - b[i];
+//       ret += d * d;
+//     }
+//     return ret;
+//   }
+
+//   private dotprod(a: number[], b: number[]): number {
+//     let ret = 0;
+//     for (let i = 0; i < a.length; i++) {
+//       ret += a[i] * b[i];
+//     }
+//     return ret;
+//   }
+
+//   private createEdges(): void {
+//     const edges0 = [];
+//     for (let a = 0; a < this.roots.length; a++) {
+//       for (let b = a + 1; b < this.roots.length; b++) {
+//         if (this.sqdist(this.roots[a], this.roots[b]) == 8) {
+//           edges0.push(a);
+//           edges0.push(b);
+//         }
+//       }
+//     }
+//   this.edges = new Uint16Array(edges0);
+//   }
+
+//   private gaussian(): number {
+//     // Generate a Gaussian variable by Box-Muller.
+//     if (this.gaussianStore !== null) {
+//       const ret = this.gaussianStore;
+//       this.gaussianStore = null;
+//       return ret;
+//     } else {
+//       let u, v, s;
+//       do {
+//         u = Math.random() * 2 - 1;
+//         v = Math.random() * 2 - 1;
+//         s = u * u + v * v;
+//       } while (s >= 1 || s == 0);
+//       const fac = Math.sqrt((-2 * Math.log(s)) / s);
+//       this.gaussianStore = v * fac;
+//       return u * fac;
+//     }
+//   }
+
+//   public init(): void {
+//     this.createRoots();
+//     this.createEdges();
+//   }
+
+//   public perturb(amplitude: number): void {
+//     for (let i = 0; i < this.roots.length; i++) {
+//       const r = this.roots[i];
+//       const nr = this.sqnorm(r);
+//       let scale;
+//       if (nr == 0) scale = 1;
+//       else if (nr == 8) scale = Math.sqrt(2);
+//       else scale = Math.sqrt(8 / nr);
+//       for (let k = 0; k < 8; k++) {
+//         r[k] += this.gaussian() * amplitude * scale;
+//       }
+//     }
+//   }
+
+//   public project(projection: number[], center: number[]): number[][] {
+//     const ret = [];
+//     for (let i = 0; i < this.roots.length; i++) {
+//       const r = this.roots[i];
+//       const pr = [];
+//       for (let k = 0; k < projection.length; k++) {
+//         pr.push(this.dotprod(r, projection[k]) + center[k]);
+//       }
+//       ret.push(pr);
+//     }
+//     return ret;
+//   }
+// }
