@@ -37,7 +37,7 @@
 
       const options: E8LatticeConstructor = {
         ctx,
-        speed: smallScreen ? 0.2 : 0.1,
+        speed: smallScreen ? 0.2 : 0.08,
         darkmode,
         scalefactor: smallScreen ? 0.9 : 2,
         showLines: true,
@@ -45,7 +45,7 @@
         randomConjugator: true,
         strokeWidth: smallScreen ? 0.05 : 0.1,
         darkmodeStroke: "#3f3f46", // zinc-700
-        lightmodeStroke: "#52525b", // zinc-300
+        lightmodeStroke: "#a1a1aa", // zinc-300
         opacity: smallScreen ? 0.5 : 1
       };
 
@@ -171,40 +171,42 @@
       Welcome to <br />
       <span class="text-8xl">jacobbruner.com</span>
     </h1>
+    <div class="flex flex-row">
+      <div class="flex flex-col mt-14 relative flex-start w-auto">
+        {#each navitems as item}
+          {@const active =
+            item.path === $page.url.pathname ||
+            (item.path === "/" && $page.url.pathname === "/test")}
 
-    <div class="flex flex-col mt-14 relative">
-      {#each navitems as item}
-        {@const active =
-          item.path === $page.url.pathname || (item.path === "/" && $page.url.pathname === "/test")}
+          <div class="relative z-20">
+            <a
+              class={classnames(
+                "group text-5xl font-semibold text-transparent bg-clip-text self-start",
+                "bigGradient hoverMove",
+                "bg-gradient-to-bl from-teal-400 via-indigo-400 to-primary-500 leading-relaxed bg-pos-0 hover:bg-pos-x-100",
+                "transition-all duration-700 ease-in-out whitespace-nowrap relative"
+              )}
+              class:active
+              href={item.path}
+            >
+              {item.title}
 
-        <div class="relative">
-          <a
-            class={classnames(
-              "group text-5xl font-bold text-transparent bg-clip-text self-start",
-              "bg-gradient-to-tr from-fuchsia-800 via-primary-400 to-violet-500 leading-relaxed group-hover:from-rose-500 group-hover:to-cyan-300",
-              "transition-colors duration-500 ease-in-out whitespace-nowrap relative"
-              // "after:content-['&nbsp;'] after:absolute after:w-full -z-20 after:top-2/3 after:bg-gradient-to-tr after:bottom-0 after:right-[-0.01em] after:from-fuchsia-800 after:via-primary-400 after:to-violet-500 after:h-1/3 ",
-              // "after:hover:top-[0%] after:transition-all after:duration-500 after:ease-in-out"
-            )}
-            class:active
-            href={item.path}
-          >
-            {item.title}
-
-            <span
-              class="absolute -z-10 w-full h-0 bottom-0 left-0 bg-gradient-to-tr from-fuchsia-800 via-primary-400 to-violet-500 group-hover:h-full transition-all duration-500 ease-in-out opacity-40 px-1"
-              aria-hidden="true"
-            />
-          </a>
-        </div>
-      {/each}
+              <span
+                class="absolute -z-20 w-full h-0 bottom-0 left-0 bg-gradient-to-bl  from-primary-700/70 to-violet-700/70 group-hover:h-full transition-all duration-500 ease-in-out px-1"
+                aria-hidden="true"
+              />
+            </a>
+          </div>
+        {/each}
+      </div>
+      <div class="flex-grow hidden -z-50" />
     </div>
   </div>
   <div class="absolute bottom-0 ml-5 mb-16">
     <h3 class="text-6xl font-semibold italic headingGradient">&ldquo;Learning as a Hobby&rdquo;</h3>
   </div>
 
-  <div class="absolute left-0 bottom-0 translate-x-20 overflow-x-hidden -z-10">
+  <div class="absolute left-0 bottom-0 translate-x-20 overflow-x-hidden">
     <canvas
       class="sm:hidden block overflow-x-clip select-none opacity-90 touch-none"
       on:touchstart={handleTouchStart}
@@ -228,18 +230,12 @@
 
 <!-- <canvas class="" width={x} height={y} bind:this={c} /> -->
 <style>
-  /* a::after {
-    content: "";
-    position: absolute;
-    width: 100%;
-    z-index: -1;
-    top: 66%;
-    right: -0.01em;
-    bottom: 0;
-    @apply bg-gradient-to-tr from-fuchsia-800 via-primary-400 to-violet-500;
-    @apply hover:top-[0%];
-    background-color: rgba(79, 192, 141, 0.5);
-  } */
+  .bigGradient {
+    background-size: 300% 100%;
+  }
+  .hoverMove:hover {
+    background-position-x: 100%;
+  }
 
   .headingGradient {
     @apply text-transparent bg-clip-text;

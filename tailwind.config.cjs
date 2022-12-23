@@ -27,7 +27,7 @@ module.exports = {
         }
       },
       fontFamily: {
-        sans: ["Helvetica Neue", "Helvetica", "Roboto", ...defaultTheme.fontFamily.sans],
+        sans: ["InterVariable", "Roboto", ...defaultTheme.fontFamily.sans],
         serif: ["Georgia", ...defaultTheme.fontFamily.serif],
         roboto: ["Roboto", ...defaultTheme.fontFamily.sans],
         mono: ["Courier", "Vazirmatn", ...defaultTheme.fontFamily.mono]
@@ -39,7 +39,14 @@ module.exports = {
         22: "22",
         17: "17",
         8.5: "8.5"
-      }
+      },
+      backgroundSize: {
+        'size-200': '200% 100%',
+      },
+      backgroundPosition: {
+          'pos-0': '0% 0%',
+          'pos-x-100': '100% 0%',
+      },
     }
   },
   corePlugins: {

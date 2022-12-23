@@ -39,9 +39,6 @@
   let ios = false;
   onMount(() => {
     ios = isiOS();
-    if (ios) {
-      console.log("his");
-    }
   });
 
   // // bound to window height below

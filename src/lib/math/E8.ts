@@ -420,7 +420,7 @@ export default class E8 {
     this.width = this.ctx.canvas.width;
     this.height = this.ctx.canvas.height;
     this.sf = scalefactor * 100;
-    this.speed = speed;
+    // this.speed = speed;
 
     this.darkmode = darkmode;
     // this.randomConjugator = randomConjugator;
@@ -459,7 +459,20 @@ export default class E8 {
     this.rotation = 0;
     this.drawLinesOn = showLines;
     this.drawPointsOn = showPoints;
+
+    // draw and wait at the petri projection
+    this.computeAndDraw(0);
+
+    this.speed = speed / 100;
     requestAnimationFrame(this.draw);
+
+    // slowly increase the speed to full
+    const interval = setInterval(() => {
+      this.speed += 0.0001;
+      if (this.speed >= speed) {
+        clearInterval(interval);
+      }
+    }, 10);
   }
 
   public start = () => {

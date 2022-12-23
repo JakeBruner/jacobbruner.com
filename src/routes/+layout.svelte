@@ -1,6 +1,11 @@
 <script lang="ts">
   import "../app.css";
 
+  // import "@fontsource/rubik";
+  // import "@fontsource/nunito"; half decent
+  // import "@fontsource/lato"; nice
+  import "@fontsource/inter/variable.css";
+
   // import Header from "$components/Header.svelte";
   import Footer from "$components/Footer.svelte";
 
@@ -71,6 +76,9 @@
     in:fly={{ x: 0, y: -100, duration: 1000, easing: sineIn, delay: 1000 }}
     out:fly={{ x: 0, y: -100, duration: 500, opacity: 0 }}
   >
+    {#if $page.url.pathname !== "/"}
+      <div class="h-18" />
+    {/if}
     <div class="bg-primary-500/80 dark:bg-primary-700/80 mt-16 rounded-lg mx-0.5 backdrop-blur-sm">
       <div class="mx-auto max-w-7xl py-2 px-2 sm:px-6 lg:px-8">
         <div class="flex flex-wrap items-center justify-between">

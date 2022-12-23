@@ -79,7 +79,7 @@
 
   import { inview } from "svelte-inview";
   import type { ObserverEventDetails, Options } from "svelte-inview";
-  import { goto } from "$app/navigation";
+  // import { goto } from "$app/navigation";
 
   let isInView: boolean[] = new Array(8).fill(false);
   // $: console.log("isInView", isInView);
