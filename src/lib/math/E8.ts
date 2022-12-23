@@ -10,7 +10,6 @@
 import { sqdist, dotprod, sqnorm, octonionProduct } from "./vectorUtils";
 import {
   identityMatrix,
-  zeroMatrix,
   matrixProduct,
   transpose,
   scalarMultiple,
@@ -126,58 +125,58 @@ const gaussianVector = (dim: number): number[] => {
   return vec;
 };
 
-// const randomOrthogonalMatrix = (rows: number, cols: number) => {
-//   const mat = new Array(rows);
-//   for (let i = 0; i < rows; i++) mat[i] = gaussianVector(cols);
-//   return gramSchmidt(mat);
-// };
+const randomOrthogonalMatrix = (rows: number, cols: number) => {
+  const mat = new Array(rows);
+  for (let i = 0; i < rows; i++) mat[i] = gaussianVector(cols);
+  return gramSchmidt(mat);
+};
 
 /**
  * this function returns a random element of the G2 group, a subgroup of the octonion algebra.
  * Specifically, it is a 14-dimensional subgroup of the automorphism group of octionion algebra.
  * This is isomorphic to the group of rotations in 8-dimensional space.
  */
-// const randomG2Matrix = () => {
-//   // Return a random element of the G2 group
-//   // Initialize a matrix with 8 rows
-//   let mat = new Array(8);
+const randomG2Matrix = () => {
+  // Return a random element of the G2 group
+  // Initialize a matrix with 8 rows
+  let mat = new Array(8);
 
-//   // The first row is the identity matrix
-//   mat[0] = [1, 0, 0, 0, 0, 0, 0, 0];
+  // The first row is the identity matrix
+  mat[0] = [1, 0, 0, 0, 0, 0, 0, 0];
 
-//   // The second and third rows are random vectors with a zero in the first position
-//   mat[1] = gaussianVector(8);
-//   mat[1][0] = 0;
-//   mat[2] = gaussianVector(8);
-//   mat[2][0] = 0;
+  // The second and third rows are random vectors with a zero in the first position
+  mat[1] = gaussianVector(8);
+  mat[1][0] = 0;
+  mat[2] = gaussianVector(8);
+  mat[2][0] = 0;
 
-//   // Use the Gram-Schmidt process to make the first three rows orthogonal and of unit length
-//   // Specifically, we want to make sure that mat[1] and mat[2] are orthogonal to mat[0], and that mat[2] is orthogonal to mat[1]
-//   mat = gramSchmidt(mat, [[], [0], [0, 1]]);
+  // Use the Gram-Schmidt process to make the first three rows orthogonal and of unit length
+  // Specifically, we want to make sure that mat[1] and mat[2] are orthogonal to mat[0], and that mat[2] is orthogonal to mat[1]
+  mat = gramSchmidt(mat, [[], [0], [0, 1]]);
 
-//   // The fourth row is the octonion product of the second and third rows
-//   mat[3] = octonionProduct(mat[1], mat[2]);
+  // The fourth row is the octonion product of the second and third rows
+  mat[3] = octonionProduct(mat[1], mat[2]);
 
-//   // The fifth row is a random vector with a zero in the first position
-//   mat[4] = gaussianVector(8);
-//   mat[4][0] = 0;
+  // The fifth row is a random vector with a zero in the first position
+  mat[4] = gaussianVector(8);
+  mat[4][0] = 0;
 
-//   // Use the Gram-Schmidt process to make the first five rows orthogonal and of unit length
-//   // Specifically, we want to make sure that mat[4] is orthogonal to mat[0], mat[1], mat[2], and mat[3]
-//   mat = gramSchmidt(mat, [[], [], [], [], [0, 1, 2, 3]]);
+  // Use the Gram-Schmidt process to make the first five rows orthogonal and of unit length
+  // Specifically, we want to make sure that mat[4] is orthogonal to mat[0], mat[1], mat[2], and mat[3]
+  mat = gramSchmidt(mat, [[], [], [], [], [0, 1, 2, 3]]);
 
-//   // The sixth, seventh, and eighth rows are the octonion products of the other rows with the fifth row
-//   mat[5] = octonionProduct(mat[1], mat[4]);
-//   mat[6] = octonionProduct(mat[2], mat[4]);
-//   mat[7] = octonionProduct(mat[3], mat[4]);
+  // The sixth, seventh, and eighth rows are the octonion products of the other rows with the fifth row
+  mat[5] = octonionProduct(mat[1], mat[4]);
+  mat[6] = octonionProduct(mat[2], mat[4]);
+  mat[7] = octonionProduct(mat[3], mat[4]);
 
-//   // Use the Gram-Schmidt process to make all eight rows orthogonal and of unit length
-//   // In principle, this should be unnecessary, since the first five rows are already orthogonal and of unit length
-//   mat = gramSchmidt(mat);
+  // Use the Gram-Schmidt process to make all eight rows orthogonal and of unit length
+  // In principle, this should be unnecessary, since the first five rows are already orthogonal and of unit length
+  mat = gramSchmidt(mat);
 
-//   // Return the resulting matrix
-//   return mat;
-// };
+  // Return the resulting matrix
+  return mat;
+};
 
 const e8ToOctMat = [
   [1 / 2, 0, 0, 0, 1 / 2, 0, 0, 0],
@@ -196,9 +195,9 @@ const e8ToOctMat = [
  * @returns A 8x8 matrix representing a simple rotation in 8-dimensional space.
  */
 const torus8DRotationMatrix = (t: number) => {
-  t = 0;
-  // The golden ratio.
-  const phi = 2;
+  t = t / 4;
+  // t =The golden ratio.
+  const phi = 1.618033988749894;
   // Cosine of t.
   const ca = Math.cos(t);
   // Sine of t.
@@ -257,12 +256,12 @@ export const initE8 = (ctx: CanvasRenderingContext2D) => {
     projMatrix0[2] = [1, 0, 0, 0, 0, 0, 0, 0];
 
     // Use Gram-Schmidt process to make projMatrix0 normed and orthogonal.
-    gramSchmidt(projMatrix0);
+    projMatrix0 = gramSchmidt(projMatrix0);
 
     // If standard is true, set conjugator to the identity matrix.
     // Otherwise, set conjugator to a random element of the G2 group.
     if (standard) conjugator = identityMatrix(8);
-    // else conjugator = randomG2Matrix();
+    else conjugator = randomG2Matrix();
 
     // Set conjugatorT to the transpose of conjugator.
     conjugatorT = transpose(conjugator);
@@ -381,20 +380,34 @@ export const initE8 = (ctx: CanvasRenderingContext2D) => {
 
   const drawPoints = () => {
     if (!rootProj) return;
-    // Draw points.
+
     if (!rootZorder) {
-      rootZorder = new Array(roots.length);
+      rootZorder = [];
       for (let k = 0; k < roots.length; k++) {
         rootZorder[k] = k;
       }
     }
-    rootZorder.sort((k1, k2) => rootZidx[k1] - rootZidx[k2]);
+
+    // Avoid sorting the rootZorder array on every frame.
+    let zIndexChanged = false;
+    for (let k = 0; k < roots.length; k++) {
+      if (rootZidx[k] !== rootZidx[k + 1]) {
+        zIndexChanged = true;
+        break;
+      }
+    }
+    if (zIndexChanged) {
+      rootZorder.sort((k1, k2) => rootZidx[k1] - rootZidx[k2]);
+    }
+
     for (let k = 0; k < roots.length; k++) {
       const n = rootZorder[k];
       ctx.fillStyle = rootColor[n];
       ctx.beginPath();
-      ctx.arc(rootProj[2 * n], rootProj[2 * n + 1], 2, 0, Math.PI * 2, true);
+      // ctx.arc(rootProj[2 * n], rootProj[2 * n + 1], 2, 0, Math.PI * 2, true);
+      ctx.rect(rootProj[2 * n] - 1, rootProj[2 * n + 1] - 1, 2, 2);
       ctx.closePath();
+
       ctx.fill();
     }
   };
@@ -426,12 +439,18 @@ export const initE8 = (ctx: CanvasRenderingContext2D) => {
   initCanvas();
   computeRootColors();
   isRunning = true;
+  let frames = 0;
 
   const draw = (time: number) => {
     if (!isRunning) return;
     if (!animationStart) animationStart = time;
     computeAndDraw((time - animationStart) / 1000 + timeBase);
     requestAnimationFrame(draw);
+    // log renders per second
+    frames++;
+    if (frames % 100 === 0) {
+      console.log(frames / ((time - animationStart) / 1000));
+    }
   };
 
   requestAnimationFrame(draw);
