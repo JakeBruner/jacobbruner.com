@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const zeroMatrix = (rows: number, cols: number) => {
   const mat = new Array(rows);
   for (let i = 0; i < rows; i++) {
@@ -16,19 +17,6 @@ export const identityMatrix = (size: number) => {
   return mat;
 };
 
-// const memoize = (fn: any) => {
-//   const cache = new Map();
-//   return (...args: any[]) => {
-//     const key = JSON.stringify(args);
-//     if (cache.has(key)) return cache.get(key);
-//     const result = fn(...args);
-//     cache.set(key, result);
-//     return result;
-//   };
-// };
-
-// but typesafe
-// https://stackoverflow.com/questions/49927584/typescript-memoize-function
 const memoize = <T extends (...args: any[]) => any>(fn: T): T => {
   const cache = new Map();
   return ((...args: any[]) => {
@@ -52,9 +40,6 @@ const memoizedMatrixProduct = memoize((a: number[][], b: number[][]) => {
   }
   return c;
 });
-
-//TODO I could possibly use local storage to cache this
-
 export const matrixProduct = memoizedMatrixProduct;
 
 export const matrixMultiProduct = (...matrices: number[][][]) => {
