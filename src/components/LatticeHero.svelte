@@ -150,10 +150,8 @@
     if (!instance.isRunning) instance.start();
   };
 
-  // q: how to make the rotation handelers above also work for touchscreen?
-  // a: use touch events
-  // a: like this
-  // a: https://stackoverflow.com/questions/2264072/detect-a-finger-swipe-through-javascript-on-the-iphone-and-android
+  import GradientWander from "./GradientWander.svelte";
+  import classnames from "$lib/classnames";
 </script>
 
 <svelte:window
@@ -166,23 +164,39 @@
 <!-- <button class="px-3 py-2 bg-primary rounded-md" on:click={() => instance?.stop()}>Stop</button> -->
 <!-- <button on:click={() => instance?.start()}>Start</button> -->
 
-<div class="w-full h-screen -mt-16 relative overflow-x-clip z-10 select-none">
-  <div class="mt-20 mx-5 absolute">
+<div class="w-full h-screen relative overflow-x-clip z-10 select-none">
+  <GradientWander />
+  <div class="mt-10 mx-5 absolute">
     <h1 class="text-7xl font-bold headingGradient">
       Welcome to <br />
       <span class="text-8xl">jacobbruner.com</span>
     </h1>
 
-    <div class="flex flex-col mt-14">
+    <div class="flex flex-col mt-14 relative">
       {#each navitems as item}
         {@const active =
           item.path === $page.url.pathname || (item.path === "/" && $page.url.pathname === "/test")}
-        <a class="nav" href={item.path}>
-          {#if active}
-            <span class="text-2xl font-bold">{">"}</span>
-          {/if}
-          {item.title}
-        </a>
+
+        <div class="relative">
+          <a
+            class={classnames(
+              "group text-5xl font-bold text-transparent bg-clip-text self-start",
+              "bg-gradient-to-tr from-fuchsia-800 via-primary-400 to-violet-500 leading-relaxed group-hover:from-rose-500 group-hover:to-cyan-300",
+              "transition-colors duration-500 ease-in-out whitespace-nowrap relative"
+              // "after:content-['&nbsp;'] after:absolute after:w-full -z-20 after:top-2/3 after:bg-gradient-to-tr after:bottom-0 after:right-[-0.01em] after:from-fuchsia-800 after:via-primary-400 after:to-violet-500 after:h-1/3 ",
+              // "after:hover:top-[0%] after:transition-all after:duration-500 after:ease-in-out"
+            )}
+            class:active
+            href={item.path}
+          >
+            {item.title}
+
+            <span
+              class="absolute -z-10 w-full h-0 bottom-0 left-0 bg-gradient-to-tr from-fuchsia-800 via-primary-400 to-violet-500 group-hover:h-full transition-all duration-500 ease-in-out opacity-40 px-1"
+              aria-hidden="true"
+            />
+          </a>
+        </div>
       {/each}
     </div>
   </div>
@@ -214,11 +228,19 @@
 
 <!-- <canvas class="" width={x} height={y} bind:this={c} /> -->
 <style>
-  .nav {
-    @apply text-5xl font-bold text-transparent bg-clip-text self-start;
-    @apply bg-gradient-to-tr from-fuchsia-800 via-primary-400 to-violet-500 leading-relaxed hover:from-rose-500 hover:to-cyan-300;
-    @apply transition-colors duration-500 ease-in-out;
-  }
+  /* a::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    z-index: -1;
+    top: 66%;
+    right: -0.01em;
+    bottom: 0;
+    @apply bg-gradient-to-tr from-fuchsia-800 via-primary-400 to-violet-500;
+    @apply hover:top-[0%];
+    background-color: rgba(79, 192, 141, 0.5);
+  } */
+
   .headingGradient {
     @apply text-transparent bg-clip-text;
     @apply bg-gradient-to-bl from-primary-500 via-violet-600 to-pink-500 leading-relaxed;

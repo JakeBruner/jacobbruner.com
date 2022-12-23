@@ -13,14 +13,9 @@
   import { page } from "$app/stores";
   import { loading } from "$lib/loading";
   // console.log($page)
+  import classnames from "$lib/classnames";
 
   let menuOpen = false;
-
-  type input = string | number | boolean | undefined | null;
-
-  const classnames = (...args: input[]) => {
-    return args.filter(Boolean).join(" ");
-  };
 </script>
 
 <header>
