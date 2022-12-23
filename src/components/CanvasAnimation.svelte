@@ -11,7 +11,5 @@
   });
 </script>
 
--
-
 <!-- <h1>Canvas Animation</h1> -->
-<canvas class="w-full h-screen" bind:this={c} />
+<canvas width="1000px" height="1100px" bind:this={c} />

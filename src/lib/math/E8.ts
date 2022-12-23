@@ -7,15 +7,17 @@
 //     sqnorm(): number;
 // }
 
-const sqdist = (a: number[], b: number[]) => {
-  let d = 0;
-  for (let i = 0; i < 8; i++) {
-    d += (a[i] - b[i]) * (a[i] - b[i]);
-  }
-  return d;
-};
+import { sqdist, dotprod, sqnorm, octonionProduct } from "./vectorUtils";
+import {
+  identityMatrix,
+  zeroMatrix,
+  matrixProduct,
+  transpose,
+  scalarMultiple,
+  matrixMultiProduct
+} from "./matrixUtils";
 
-function createEdges(roots: number[][]) {
+const createEdges = (roots: number[][]) => {
   const _edges: number[] = [];
   for (let a = 0; a < roots.length; a++) {
     for (let b = a + 1; b < roots.length; b++) {
@@ -27,8 +29,9 @@ function createEdges(roots: number[][]) {
   }
   // edges = new Uint16Array(_edges);
   return _edges;
-}
-function createRoots() {
+};
+
+const createRoots = () => {
   const roots: number[][] = [];
   function rootFirstKind(i0: number, i1: number, s0: boolean, s1: boolean) {
     const rt = [0, 0, 0, 0, 0, 0, 0, 0];
@@ -68,338 +71,368 @@ function createRoots() {
     return 0;
   });
   return roots;
-}
+};
+
+// Make matrix normed and orthogonal.
+const gramSchmidt = (matrix: number[][], orthcond?: number[][]) => {
+  if (!orthcond) {
+    orthcond = new Array(matrix.length);
+    for (let k = 0; k < matrix.length; k++) {
+      // Create an array of length k for each element in orthcond.
+      orthcond[k] = new Array(k);
+      // Fill the array with the indices 0 to k-1.
+      for (let l = 0; l < k; l++) orthcond[k][l] = l;
+    }
+  }
+
+  for (let k = 0; k < orthcond.length; k++) {
+    let d;
+    for (let l = 0; l < orthcond[k].length; l++) {
+      // Get the index of the current element in orthcond[k].
+      const k2 = orthcond[k][l];
+      // Calculate the dot product of matrix[k] and matrix[k2].
+      d = dotprod(matrix[k], matrix[k2]);
+      // Subtract d * matrix[k2] from matrix[k].
+      for (let i = 0; i < matrix[k].length; i++) matrix[k][i] -= d * matrix[k2][i];
+    }
+    // Calculate the square root of the square norm of matrix[k].
+    d = Math.sqrt(sqnorm(matrix[k]));
+    // Divide each element in matrix[k] by d.
+    for (let i = 0; i < matrix[k].length; i++) matrix[k][i] /= d;
+  }
+
+  return matrix;
+};
+
+let gaussianStore: number | null = null;
+
+const gaussian = (): number => {
+  // Generate a Gaussian variable by Box-Muller.
+  if (gaussianStore === null) {
+    const u0 = Math.random();
+    const u1 = Math.random();
+    gaussianStore = Math.sqrt(-2 * Math.log(u0)) * Math.cos(2 * Math.PI * u1);
+    return Math.sqrt(-2 * Math.log(u0)) * Math.sin(2 * Math.PI * u1);
+  } else {
+    const ret = gaussianStore;
+    gaussianStore = null;
+    return ret;
+  }
+};
+
+const gaussianVector = (dim: number): number[] => {
+  const vec = new Array(dim);
+  for (let i = 0; i < dim; i++) vec[i] = gaussian();
+  return vec;
+};
+
+// const randomOrthogonalMatrix = (rows: number, cols: number) => {
+//   const mat = new Array(rows);
+//   for (let i = 0; i < rows; i++) mat[i] = gaussianVector(cols);
+//   return gramSchmidt(mat);
+// };
+
+/**
+ * this function returns a random element of the G2 group, a subgroup of the octonion algebra.
+ * Specifically, it is a 14-dimensional subgroup of the automorphism group of octionion algebra.
+ * This is isomorphic to the group of rotations in 8-dimensional space.
+ */
+// const randomG2Matrix = () => {
+//   // Return a random element of the G2 group
+//   // Initialize a matrix with 8 rows
+//   let mat = new Array(8);
+
+//   // The first row is the identity matrix
+//   mat[0] = [1, 0, 0, 0, 0, 0, 0, 0];
+
+//   // The second and third rows are random vectors with a zero in the first position
+//   mat[1] = gaussianVector(8);
+//   mat[1][0] = 0;
+//   mat[2] = gaussianVector(8);
+//   mat[2][0] = 0;
+
+//   // Use the Gram-Schmidt process to make the first three rows orthogonal and of unit length
+//   // Specifically, we want to make sure that mat[1] and mat[2] are orthogonal to mat[0], and that mat[2] is orthogonal to mat[1]
+//   mat = gramSchmidt(mat, [[], [0], [0, 1]]);
+
+//   // The fourth row is the octonion product of the second and third rows
+//   mat[3] = octonionProduct(mat[1], mat[2]);
+
+//   // The fifth row is a random vector with a zero in the first position
+//   mat[4] = gaussianVector(8);
+//   mat[4][0] = 0;
+
+//   // Use the Gram-Schmidt process to make the first five rows orthogonal and of unit length
+//   // Specifically, we want to make sure that mat[4] is orthogonal to mat[0], mat[1], mat[2], and mat[3]
+//   mat = gramSchmidt(mat, [[], [], [], [], [0, 1, 2, 3]]);
+
+//   // The sixth, seventh, and eighth rows are the octonion products of the other rows with the fifth row
+//   mat[5] = octonionProduct(mat[1], mat[4]);
+//   mat[6] = octonionProduct(mat[2], mat[4]);
+//   mat[7] = octonionProduct(mat[3], mat[4]);
+
+//   // Use the Gram-Schmidt process to make all eight rows orthogonal and of unit length
+//   // In principle, this should be unnecessary, since the first five rows are already orthogonal and of unit length
+//   mat = gramSchmidt(mat);
+
+//   // Return the resulting matrix
+//   return mat;
+// };
+
+const e8ToOctMat = [
+  [1 / 2, 0, 0, 0, 1 / 2, 0, 0, 0],
+  [0, 1 / 2, 0, 0, 0, -1 / 2, 0, 0],
+  [0, 0, 1 / 2, 0, 0, 0, -1 / 2, 0],
+  [0, 0, 0, 1 / 2, 0, 0, 0, -1 / 2],
+  [-1 / 2, 0, 0, 0, 1 / 2, 0, 0, 0],
+  [0, 1 / 2, 0, 0, 0, 1 / 2, 0, 0],
+  [0, 0, 1 / 2, 0, 0, 0, 1 / 2, 0],
+  [0, 0, 0, 1 / 2, 0, 0, 0, 1 / 2]
+];
+
+/**
+ *
+ * @param t Rotation angle in radians.
+ * @returns A 8x8 matrix representing a simple rotation in 8-dimensional space.
+ */
+const torus8DRotationMatrix = (t: number) => {
+  t = 0;
+  // The golden ratio.
+  const phi = 2;
+  // Cosine of t.
+  const ca = Math.cos(t);
+  // Sine of t.
+  const sa = Math.sin(t);
+  // Cosine of phi * t.
+  const cb = Math.cos(phi * t);
+  // Sine of phi * t.
+  const sb = Math.sin(phi * t);
+  // Cosine of 2 * phi * t.
+  const c2b = Math.cos(phi * 2 * t);
+  // Sine of 2 * phi * t.
+  const s2b = Math.sin(5 * phi * t);
+  return [
+    [1, 0, 0, 0, 0, 0, 0, 0],
+    [0, ca * cb, sa * cb, 0, 0, ca * sb, sa * sb, 0],
+    [0, -sa * cb, ca * cb, 0, 0, -sa * sb, ca * sb, 0],
+    [0, 0, 0, c2b, 0, 0, 0, -s2b],
+    [0, 0, 0, 0, 1, 0, 0, 0],
+    [0, -ca * sb, -sa * sb, 0, 0, ca * cb, sa * cb, 0],
+    [0, sa * sb, -ca * sb, 0, 0, -sa * cb, ca * cb, 0],
+    [0, 0, 0, s2b, 0, 0, 0, c2b]
+  ];
+};
 
 export const initE8 = (ctx: CanvasRenderingContext2D) => {
-  let roots: number[][] = [];
-  let edges: Uint16Array;
-  const canvas = ctx.canvas;
-  const width = canvas.width;
-  const height = canvas.height;
-  const scale = 0.5 * Math.min(width, height);
-  const center = [0.5 * width, 0.5 * height];
-  const origin = [0, 0, 0, 0, 0, 0, 0, 0];
-  const basis: number[][] = [
-    [1, 0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 0, 0, 0, 0, 0, 0],
-    [0, 0, 1, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 0, 0, 0, 0],
-    [0, 0, 0, 0, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 1, 0, 0],
-    [0, 0, 0, 0, 0, 0, 1, 0],
-    [0, 0, 0, 0, 0, 0, 0, 1]
-  ];
+  const roots = createRoots();
+  const edges = createEdges(roots);
 
-  const init = () => {
-    roots = createRoots();
-    edges = new Uint16Array(createEdges(roots));
+  // The two 8-vectors determining the projection to a plane:
+  // these should be normed and orthogonal.
+  // A third vector is used to determine the (Z-index) order of the dots.
+  let projMatrix0: number[][]; // At t=0
+  let projMatrix: number[][]; // At t=1
+
+  // The matrix representing the conjugation action on the E8 lattice.
+  let conjugator;
+  // The transpose of the conjugation matrix.
+  let conjugatorT: number[][];
+
+  // The matrix representing the transformation from the E8 lattice to the octonion algebra.
+  let e8ToOctThenConjugator: number[][];
+  // The inverse of the transformation matrix from the E8 lattice to the octonion algebra.
+  let e8ToOctThenConjugatorInv: number[][];
+
+  const initMatrices = (standard: boolean) => {
+    // Set projMatrix0 to the initial projection matrix.
+    projMatrix0 = new Array(2);
+    projMatrix0[0] = [
+      0.580162190775135, 0.240311047795148, 0.424708200277867, 0.0, -0.580162190775135,
+      0.240311047795148, 0.0, 0.175919896606161
+    ];
+    projMatrix0[1] = [
+      0.580162190775135, 0.240311047795148, 0.0, 0.175919896606161, 0.580162190775135,
+      -0.240311047795148, -0.424708200277867, 0.0
+    ];
+    projMatrix0[2] = [1, 0, 0, 0, 0, 0, 0, 0];
+
+    // Use Gram-Schmidt process to make projMatrix0 normed and orthogonal.
+    gramSchmidt(projMatrix0);
+
+    // If standard is true, set conjugator to the identity matrix.
+    // Otherwise, set conjugator to a random element of the G2 group.
+    if (standard) conjugator = identityMatrix(8);
+    // else conjugator = randomG2Matrix();
+
+    // Set conjugatorT to the transpose of conjugator.
+    conjugatorT = transpose(conjugator);
+
+    // Set e8ToOctThenConjugator to the result of transforming the E8 lattice
+    // by the octonion algebra and then by the conjugation action.
+    e8ToOctThenConjugator = matrixProduct(e8ToOctMat, conjugator);
+
+    // Set e8ToOctThenConjugatorInv to the inverse of the transformation matrix
+    // from the E8 lattice to the octonion algebra.
+    e8ToOctThenConjugatorInv = scalarMultiple(transpose(e8ToOctThenConjugator), 2);
   };
-  console.log("init");
-  init();
 
-  const colors = ["red", "green", "blue", "yellow", "cyan", "magenta", "orange", "purple"];
-  const color = (a: number[]) => {
-    for (let i = 0; i < 8; i++) {
-      if (a[i] !== 0) {
-        return colors[i];
+  const computeProjectionMatrix = (time: number) => {
+    // Calculate the matrix representing a rotation on the torus.
+    const tMat = torus8DRotationMatrix(time);
+
+    // Compute the projection matrix using the following steps:
+    // 1. Multiply projMatrix0 by e8ToOctThenConjugator.
+    // 2. Multiply the result by tMat.
+    // 3. Multiply the result by e8ToOctThenConjugatorInv.
+    projMatrix = matrixMultiProduct(
+      projMatrix0,
+      e8ToOctThenConjugator,
+      tMat,
+      e8ToOctThenConjugatorInv
+    );
+  };
+
+  let rootProj: Float32Array | null = null; // Projection of the roots (in canvas coordinates)
+  let rootZidx: Float32Array; // Z-index of the roots
+  let rootColor: string[]; // Root colors (RGB coordinates)
+
+  const computeRootProjections = () => {
+    // closure
+    if (!rootProj) {
+      rootProj = new Float32Array(roots.length * 2);
+      rootZidx = new Float32Array(roots.length);
+    }
+    for (let n = 0; n < roots.length; n++) {
+      rootProj[2 * n] = dotprod(projMatrix[0], roots[n]) * 100 + 300;
+      rootProj[2 * n + 1] = dotprod(projMatrix[1], roots[n]) * 100 + 300;
+      rootZidx[n] = dotprod(projMatrix[2], roots[n]);
+    }
+  };
+
+  const computeRootColors = () => {
+    // closure
+    rootColor = [];
+    for (let n = 0; n < roots.length; n++) {
+      // Calculate the hue value based on the projection of the root in the xy-plane
+      const x = dotprod(projMatrix0[0], roots[n]) / 2.83;
+      const y = dotprod(projMatrix0[1], roots[n]) / 2.83;
+      const hue = (Math.atan2(-y, x) / Math.PI + 1) * 3;
+
+      // Determine the RGB values based on the hue value
+      let red, grn, blu;
+      if (hue < 1) {
+        red = 0;
+        grn = 1;
+        blu = hue;
+      } else if (hue < 2) {
+        red = 0;
+        grn = 2 - hue;
+        blu = 1;
+      } else if (hue < 3) {
+        red = hue - 2;
+        grn = 0;
+        blu = 1;
+      } else if (hue < 4) {
+        red = 1;
+        grn = 0;
+        blu = 4 - hue;
+      } else if (hue < 5) {
+        red = 1;
+        grn = hue - 4;
+        blu = 0;
+      } else {
+        red = 6 - hue;
+        grn = 1;
+        blu = 0;
+      }
+
+      // Adjust the saturation based on the distance of the root in the xy-plane
+      const sat = Math.sqrt(x * x + y * y) * 0.9 + 0.1;
+      red = sat * red + (1 - sat);
+      grn = sat * grn + (1 - sat);
+      blu = sat * blu + (1 - sat);
+
+      // Convert the RGB values to integer values in the range [0, 255] and create the color string
+      const col = [
+        Math.floor(red * 255 + 0.5),
+        Math.floor(grn * 255 + 0.5),
+        Math.floor(blu * 255 + 0.5)
+      ];
+      rootColor[n] = "rgb(" + col[0] + "," + col[1] + "," + col[2] + ")";
+    }
+  };
+
+  const drawLines = () => {
+    if (!rootProj) return;
+    // Draw the 6720 edges.
+    ctx.lineWidth = 0.2;
+    ctx.strokeStyle = "rgb(0,0,0)";
+    for (let n = 0; n < edges.length / 2; n++) {
+      const i = edges[2 * n];
+      const j = edges[2 * n + 1];
+      ctx.beginPath();
+      ctx.moveTo(rootProj[2 * i], rootProj[2 * i + 1]);
+      ctx.lineTo(rootProj[2 * j], rootProj[2 * j + 1]);
+      ctx.stroke();
+    }
+  };
+
+  let rootZorder: number[] | undefined;
+
+  const drawPoints = () => {
+    if (!rootProj) return;
+    // Draw points.
+    if (!rootZorder) {
+      rootZorder = new Array(roots.length);
+      for (let k = 0; k < roots.length; k++) {
+        rootZorder[k] = k;
       }
     }
-    return "black";
-  };
-  const draw = (a: number[]) => {
-    const p = project(a);
-    ctx.beginPath();
-    ctx.arc(p[0], p[1], 2, 0, 2 * Math.PI);
-    ctx.fillStyle = color(a);
-    ctx.fill();
-  };
-  const drawLine = (a: number[], b: number[]) => {
-    const p = project(a);
-    const q = project(b);
-    ctx.beginPath();
-    ctx.moveTo(p[0], p[1]);
-    ctx.lineTo(q[0], q[1]);
-    ctx.strokeStyle = color(a);
-    ctx.stroke();
-  };
-  const project = (a: number[]) => {
-    const p = [0, 0];
-    for (let i = 0; i < 2; i++) {
-      for (let j = 0; j < 8; j++) {
-        p[i] += a[j] * basis[j][i];
-      }
-    }
-    p[0] *= scale;
-    p[1] *= scale;
-    p[0] += center[0];
-    p[1] += center[1];
-    return p;
-  };
-  const drawBasis = () => {
-    for (let i = 0; i < 8; i++) {
-      drawLine(origin, basis[i]);
+    rootZorder.sort((k1, k2) => rootZidx[k1] - rootZidx[k2]);
+    for (let k = 0; k < roots.length; k++) {
+      const n = rootZorder[k];
+      ctx.fillStyle = rootColor[n];
+      ctx.beginPath();
+      ctx.arc(rootProj[2 * n], rootProj[2 * n + 1], 2, 0, Math.PI * 2, true);
+      ctx.closePath();
+      ctx.fill();
     }
   };
-  const drawRoots = () => {
-    for (let i = 0; i < roots.length; i++) {
-      draw(roots[i]);
-    }
-  };
-  const drawEdges = () => {
-    for (let i = 0; i < edges.length; i += 2) {
-      drawLine(roots[edges[i]], roots[edges[i + 1]]);
-    }
-  };
-  const drawAll = () => {
-    ctx.clearRect(0, 0, width, height);
-    drawBasis();
-    drawRoots();
-    drawEdges();
-  };
-  const drawAllDebounced = debounce(drawAll, 100);
-  // q: what does the debounce function do?
 
-  window.addEventListener("resize", drawAllDebounced);
-  drawAll();
+  const initCanvas = () => {
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+  };
+
+  let isRunning = false;
+  let animationStart: number | null = null;
+  let timeBase = 0;
+  const drawLinesOn = true;
+
+  const computeAndDraw = (time: number) => {
+    ctx.clearRect(0, 0, 600, 600);
+    computeProjectionMatrix(time);
+    computeRootProjections();
+    if (drawLinesOn) drawLines();
+
+    drawPoints();
+    // const elt = document.getElementById("time");
+    // while (elt.firstChild) elt.removeChild(elt.firstChild);
+    // elt.appendChild(document.createTextNode(time.toFixed(3)));
+  };
+
+  createRoots();
+  initMatrices(false);
+  initCanvas();
+  computeRootColors();
+  isRunning = true;
+
+  const draw = (time: number) => {
+    if (!isRunning) return;
+    if (!animationStart) animationStart = time;
+    computeAndDraw((time - animationStart) / 1000 + timeBase);
+    requestAnimationFrame(draw);
+  };
+
+  requestAnimationFrame(draw);
 };
-
-const debounce = (func: () => void, wait: number) => {
-  let timeout: NodeJS.Timeout;
-  return () => {
-    clearTimeout(timeout);
-    timeout = setTimeout(func, wait);
-  };
-};
-
-// Array.prototype.sqnorm = function () {
-//   let ret = 0;
-//   for (let i = 0; i < this.length; i++) {
-//     const d = this[i];
-//     ret += d * d;
-//   }
-//   return ret;
-// };
-
-// const dotprod = (a: number[], b: number[]) => {
-//   let ret = 0;
-//   for (let i = 0; i < a.length; i++) {
-//     ret += a[i] * b[i];
-//   }
-//   return ret;
-// };
-
-// function sqdist(a: number[], b: number[]) {
-//   let ret = 0;
-//   for (let i = 0; i < a.length; i++) {
-//     const d = a[i] - b[i];
-//     ret += d * d;
-//   }
-//   return ret;
-// }
-
-// function rotate(a: number[]) {
-//   const b = [0, 0, 0, 0, 0, 0, 0, 0];
-//   for (let i = 0; i < 8; i++) {
-//     let sum = 0;
-//     for (let j = 0; j < 8; j++) {
-//       sum += a[j] * rot[i][j];
-//     }
-//     b[i] = sum;
-//   }
-//   return b;
-// }
-
-// // Rotation matrix for the quaternion group:
-
-// // prettier-ignore
-// const rot = [
-//   [1, 0, 0, 0, 0, 0, 0, 0],
-//   [0, 1, 0, 0, 0, 0, 0, 0],
-//   [0, 0, 1, 0, 0, 0, 0, 0],
-//   [0, 0, 0, 1, 0, 0, 0, 0],
-//   [0, 0, 0, 0, 1, 0, 0, 0],
-//   [0, 0, 0, 0, 0, 1, 0, 0],
-//   [0, 0, 0, 0, 0, 0, 1, 0],
-//   [0, 0, 0, 0, 0, 0, 0, 1]
-// ];
-
-// function draw() {
-//   const canvas = document.getElementById("canvas") as HTMLCanvasElement;
-//   const ctx = canvas.getContext("2d")!; //TODO
-//   ctx.clearRect(0, 0, canvas.width, canvas.height);
-//   ctx.save();
-//   ctx.translate(canvas.width / 2, canvas.height / 2);
-//   ctx.scale(canvas.width / 10, -canvas.width / 10);
-//   ctx.lineWidth = 0.1;
-//   ctx.strokeStyle = "black";
-//   ctx.beginPath();
-//   for (let i = 0; i < edges.length; i += 2) {
-//     const a = roots[edges[i]];
-//     const b = roots[edges[i + 1]];
-//     ctx.moveTo(a[0], a[1]);
-//     ctx.lineTo(b[0], b[1]);
-//   }
-//   ctx.stroke();
-//   ctx.fillStyle = "black";
-//   ctx.beginPath();
-//   for (let i = 0; i < roots.length; i++) {
-//     const a = rotate(roots[i]);
-//     ctx.moveTo(a[0] + 0.2, a[1] + 0.2);
-//     ctx.arc(a[0], a[1], 0.2, 0, 2 * Math.PI);
-//   }
-//   ctx.fill();
-//   ctx.restore();
-//   requestAnimationFrame(draw);
-// }
-
-// requestAnimationFrame(draw);
-
-// class E8Lattice {
-//   private readonly roots: number[][];
-//   private edges!: Uint16Array;
-//   private gaussianStore: number | null = null;
-
-//   constructor() {
-//     this.roots = [];
-//   }
-
-//   private rootFirstKind(i0: number, i1: number, s0: boolean, s1: boolean): number[] {
-//     const rt = [0, 0, 0, 0, 0, 0, 0, 0];
-//     rt[i0] = s0 ? -2 : 2;
-//     rt[i1] = s1 ? -2 : 2;
-//     return rt;
-//   }
-
-//   private rootSecondKind(...si: boolean[]): number[] {
-//     let s7 = false;
-//     const signs = [];
-//     for (let i = 0; i <= 6; i++) {
-//       s7 = s7 !== si[i];
-//       signs.push(si[i] ? -1 : 1);
-//     }
-//     signs.push(s7 ? -1 : 1);
-//     return signs;
-//   }
-
-//   private createRoots(): void {
-//     for (let i0 = 0; i0 < 8; i0++) {
-//       for (let i1 = i0 + 1; i1 < 8; i1++) {
-//         this.roots.push(this.rootFirstKind(i0, i1, false, false));
-//         this.roots.push(this.rootFirstKind(i0, i1, false, true));
-//         this.roots.push(this.rootFirstKind(i0, i1, true, false));
-//         this.roots.push(this.rootFirstKind(i0, i1, true, true));
-//       }
-//     }
-//     for (let i = 0; i < 128; i++) {
-//       this.roots.push(
-//         this.rootSecondKind(
-//           !!(i & 1),
-//           !!(i & 2),
-//           !!(i & 4),
-//           !!(i & 8),
-//           !!(i & 16),
-//           !!(i & 32),
-//           !!(i & 64)
-//         )
-//       );
-//     }
-//     this.roots.sort(function (a, b) {
-//       // Lexicographic ordering
-//       for (let k = 0; k < 8; k++) {
-//         if (a[k] < b[k]) return -1;
-//         else if (a[k] > b[k]) return 1;
-//       }
-//       return 0;
-//     });
-//   }
-
-//   private sqnorm(a: number[]): number {
-//     let ret = 0;
-//     for (let i = 0; i < a.length; i++) {
-//       const d = a[i];
-//       ret += d * d;
-//     }
-//     return ret;
-//   }
-
-//   private sqdist(a: number[], b: number[]): number {
-//     let ret = 0;
-//     for (let i = 0; i < a.length; i++) {
-//       const d = a[i] - b[i];
-//       ret += d * d;
-//     }
-//     return ret;
-//   }
-
-//   private dotprod(a: number[], b: number[]): number {
-//     let ret = 0;
-//     for (let i = 0; i < a.length; i++) {
-//       ret += a[i] * b[i];
-//     }
-//     return ret;
-//   }
-
-//   private createEdges(): void {
-//     const edges0 = [];
-//     for (let a = 0; a < this.roots.length; a++) {
-//       for (let b = a + 1; b < this.roots.length; b++) {
-//         if (this.sqdist(this.roots[a], this.roots[b]) == 8) {
-//           edges0.push(a);
-//           edges0.push(b);
-//         }
-//       }
-//     }
-//   this.edges = new Uint16Array(edges0);
-//   }
-
-//   private gaussian(): number {
-//     // Generate a Gaussian variable by Box-Muller.
-//     if (this.gaussianStore !== null) {
-//       const ret = this.gaussianStore;
-//       this.gaussianStore = null;
-//       return ret;
-//     } else {
-//       let u, v, s;
-//       do {
-//         u = Math.random() * 2 - 1;
-//         v = Math.random() * 2 - 1;
-//         s = u * u + v * v;
-//       } while (s >= 1 || s == 0);
-//       const fac = Math.sqrt((-2 * Math.log(s)) / s);
-//       this.gaussianStore = v * fac;
-//       return u * fac;
-//     }
-//   }
-
-//   public init(): void {
-//     this.createRoots();
-//     this.createEdges();
-//   }
-
-//   public perturb(amplitude: number): void {
-//     for (let i = 0; i < this.roots.length; i++) {
-//       const r = this.roots[i];
-//       const nr = this.sqnorm(r);
-//       let scale;
-//       if (nr == 0) scale = 1;
-//       else if (nr == 8) scale = Math.sqrt(2);
-//       else scale = Math.sqrt(8 / nr);
-//       for (let k = 0; k < 8; k++) {
-//         r[k] += this.gaussian() * amplitude * scale;
-//       }
-//     }
-//   }
-
-//   public project(projection: number[], center: number[]): number[][] {
-//     const ret = [];
-//     for (let i = 0; i < this.roots.length; i++) {
-//       const r = this.roots[i];
-//       const pr = [];
-//       for (let k = 0; k < projection.length; k++) {
-//         pr.push(this.dotprod(r, projection[k]) + center[k]);
-//       }
-//       ret.push(pr);
-//     }
-//     return ret;
-//   }
-// }
