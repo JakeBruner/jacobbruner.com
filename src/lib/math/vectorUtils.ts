@@ -23,7 +23,7 @@ export const dotprod = (a: number[], b: number[]) => {
   return d;
 };
 
-const octonionSignTab = [
+const octionionSignTab = [
   // Convention here is that:
   //   e3=e1*e2, e5=e1*e4, e6=e2*e4, e7=(e1*e2)*e4
   // 0   1   2   3   4   5   6   7
@@ -37,11 +37,11 @@ const octonionSignTab = [
   [+1, -1, +1, +1, -1, -1, +1, -1] // 7
 ];
 
-export const octonionProduct = (x: number[], y: number[]) => {
-  // Multiply two octonions
+export const octionionProduct = (x: number[], y: number[]) => {
+  // Multiply two octionions
   const z = new Array(8);
   for (let i = 0; i < 8; i++) z[i] = 0;
   for (let i = 0; i < 8; i++)
-    for (let j = 0; j < 8; j++) z[i ^ j] += octonionSignTab[i][j] * x[i] * y[j];
+    for (let j = 0; j < 8; j++) z[i ^ j] += octionionSignTab[i][j] * x[i] * y[j];
   return z;
 };
