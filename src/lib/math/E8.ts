@@ -11,79 +11,20 @@ import {
 const TAU = 2 * Math.PI;
 const PHI = 1.618033988749894;
 
-interface E8Lattice {
-  ctx: CanvasRenderingContext2D;
-
-  readonly roots: number[][];
-  rootsZIndex: Float32Array;
-  edges: number[];
-
-  readonly initialProjectionMatrix: number[][];
-  projectionMatrix: number[][];
-
-  G2Conjugator: number[][];
-
-  readonly E8toOctionionMatrix: number[][];
-
-  E8toOctionionsConjugated: number[][];
-  E8toOctionionsConjugatedInverse: number[][];
-
-  rootProjections: Float32Array | null;
-
-  rootColors: string[];
-  rootZOrder: number[] | null;
-
-  isRunning: boolean;
-  animationStart: number | null;
-  timeBase: number;
-  drawLinesOn: boolean;
-  drawPointsOn: boolean;
-  darkmode: boolean;
-  radiansRotated: number;
-
-  // initialization functions
-  createRoots: () => void;
-  createEdges: (roots: number[][]) => void;
-  computeRootColors: () => void;
-  initializeMatrices: (randomConjugator: boolean) => void;
-
-  // helper functions
-  orthonormalize: (matrix: number[][], comparisonIndicies?: number[][]) => number[][];
-
-  storedGaussianComputation: number | null;
-  generateGaussian: () => number;
-
-  generateGaussianVector: (dim: number) => number[];
-
-  generateRandomG2Matrix: () => number[][];
-
-  // animation functions
-  compute8DRotationMatrix: (rad: number) => number[][];
-  computeProjectionMatrix: (rad: number) => void;
-  computeRootProjections: () => void;
-  drawPoints: () => void;
-  drawLines: () => void;
-  computeAndDraw: (rad: number) => void;
-  draw: (time: number) => void;
-
-  // event handlers
-  // handleResize: () => void;
-
-  // stopAnimation: () => void;
-  // startAnimation: () => void;
-
-  // handledarkmode: () => void;
-}
-
 //! stop here to keep your sanity
 
 export type E8LatticeConstructor = {
   ctx: CanvasRenderingContext2D;
+  speed: number;
   darkmode: boolean;
   scalefactor: number;
   showPoints: boolean;
   showLines: boolean;
   randomConjugator: boolean;
+  strokeWidth?: number;
+  lightmodeStroke?: string; // hex color
+  darkmodeStroke?: string; // hex color
+  opacity?: number; // 0-1
 };
 
 export default class E8 {
@@ -125,6 +66,11 @@ export default class E8 {
   width: number;
   height: number;
   sf: number;
+  strokeWidth: number;
+  lightmodeStroke: string;
+  darkmodeStroke: string;
+  speed: number;
+  readonly opacity: number;
 
   isRunning: boolean;
   animationStart: number | null;
@@ -132,7 +78,9 @@ export default class E8 {
   drawLinesOn: boolean;
   drawPointsOn!: boolean;
   darkmode: boolean;
-  radiansRotated = 0;
+  rotation = 0;
+  initialRotation = 0;
+  mouseMoveRadians = 0;
 
   private createRoots = () => {
     const roots: number[][] = [];
@@ -308,7 +256,6 @@ export default class E8 {
   //* rendering functions
 
   private compute8DRotationMatrix = (rad: number) => {
-    rad = rad / 4;
     const ca = Math.cos(rad);
 
     const sa = Math.sin(rad);
@@ -418,8 +365,8 @@ export default class E8 {
       const n = this.rootZOrder[k];
       this.ctx.fillStyle = this.rootColors[n];
       this.ctx.beginPath();
-      this.ctx.arc(this.rootProjections[2 * n], this.rootProjections[2 * n + 1], 2, 0, TAU, true);
-      // this.ctx.rect(this.rootProjections[2 * n] - 1, this.rootProjections[2 * n + 1] - 1, 2, 2);
+      // this.ctx.arc(this.rootProjections[2 * n], this.rootProjections[2 * n + 1], 2, 0, TAU, true);
+      this.ctx.rect(this.rootProjections[2 * n] - 1, this.rootProjections[2 * n + 1] - 1, 2, 2);
       this.ctx.closePath();
 
       this.ctx.fill();
@@ -427,7 +374,6 @@ export default class E8 {
   };
 
   private computeAndDraw = (rad: number) => {
-    this.radiansRotated = rad;
     this.ctx.clearRect(0, 0, this.width, this.height);
     this.computeProjectionMatrix(rad);
     this.computeRootProjections();
@@ -438,30 +384,52 @@ export default class E8 {
   private draw = (time: number) => {
     if (!this.isRunning) return;
     if (!this.animationStart) this.animationStart = time;
-    this.computeAndDraw((time - this.animationStart) / 1000 + this.timeBase);
+
+    // speed is in radians per second
+    // this.rotation = (time - this.animationStart) * this.speed * 0.001;
+    // do the calculation by offset
+    this.rotation += this.speed * 0.01;
+
+    this.computeAndDraw(this.rotation);
+
     requestAnimationFrame(this.draw);
   };
 
   constructor({
     ctx,
+    speed,
     darkmode,
     scalefactor,
     showLines,
     showPoints,
-    randomConjugator
+    randomConjugator,
+    strokeWidth = 0.1,
+    lightmodeStroke = "#3f3f46", // zinc-700
+    darkmodeStroke = "#e4e4e7", // zinc-200
+    opacity = 1
   }: E8LatticeConstructor) {
     this.ctx = ctx;
     this.ctx.lineCap = "round";
     this.ctx.lineJoin = "round";
+    this.strokeWidth = strokeWidth;
+    this.lightmodeStroke = lightmodeStroke;
+    this.darkmodeStroke = darkmodeStroke;
+    if (opacity > 1 || opacity < 0) opacity = 1;
+    this.opacity = opacity;
 
     this.width = this.ctx.canvas.width;
     this.height = this.ctx.canvas.height;
     this.sf = scalefactor * 100;
+    this.speed = speed;
 
     this.darkmode = darkmode;
+    // this.randomConjugator = randomConjugator;
 
-    this.ctx.lineWidth = 0.1;
-    this.ctx.strokeStyle = this.darkmode ? "rgb(228,228,231)" : "rgb(63,63,70)";
+    // using values initiated above
+    this.ctx.lineWidth = this.strokeWidth;
+    this.ctx.strokeStyle = this.darkmode
+      ? hexToRgbaString(this.darkmodeStroke, this.opacity)
+      : hexToRgbaString(this.lightmodeStroke, this.opacity);
 
     this.roots = this.createRoots();
     this.edges = this.createEdges(this.roots);
@@ -483,27 +451,40 @@ export default class E8 {
 
     // initialize the G2Conjugator and E8ToOctionionConjugated
     // true, so random seed is used
-    this.initializeMatrices(true);
+    this.initializeMatrices(randomConjugator);
     this.computeRootColors();
 
     this.isRunning = true;
-    this.animationStart = 0;
-    this.timeBase = 0;
-    this.radiansRotated = 0;
+    this.animationStart = null;
+    this.rotation = 0;
     this.drawLinesOn = showLines;
     this.drawPointsOn = showPoints;
     requestAnimationFrame(this.draw);
   }
 
+  public start = () => {
+    this.isRunning = true;
+    this.animationStart = null;
+    requestAnimationFrame(this.draw);
+  };
+
   public stop = () => {
     this.isRunning = false;
-    this.timeBase += this.radiansRotated;
+    // this.rotation = 0;
+    // this.timeBase += this.rotation;
   };
 
   public handleDarkmodeChange = (darkmode: boolean) => {
+    // console.log("darkmode", darkmode);
     this.darkmode = darkmode;
-    this.ctx.strokeStyle = this.darkmode ? "rgb(228,228,231)" : "rgb(63,63,70)";
+    this.ctx.strokeStyle = this.darkmode ? this.lightmodeStroke : this.darkmodeStroke;
     this.computeRootColors();
+  };
+
+  public manualRotate = (radOffset: number) => {
+    this.rotation += radOffset;
+    this.computeAndDraw(this.rotation);
+    // this.rotation += rad;
   };
 }
 
@@ -553,3 +534,11 @@ function hsvToRgbString(h: number, s: number, v: number) {
   }
   return `rgb(${Math.floor(r * 255)}, ${Math.floor(g * 255)}, ${Math.floor(b * 255)})`;
 }
+
+// with # in front
+const hexToRgbaString = (hex: string, a: number) => {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r},${g},${b}, ${a})`;
+};

@@ -1,7 +1,7 @@
 <script lang="ts">
   import "../app.css";
 
-  import Header from "$components/Header.svelte";
+  // import Header from "$components/Header.svelte";
   import Footer from "$components/Footer.svelte";
 
   import { webVitals } from "$lib/vitals";
@@ -65,7 +65,6 @@
   };
 </script>
 
-<Header />
 {#if popup}
   <div
     class="fixed top-0 w-full z-[700]"
@@ -110,16 +109,14 @@
   </div>
 {/if}
 
-<main class="mt-[60px]">
-  {#if $loading}
-    <div
-      out:fade={{ duration: 200 }}
-      class="loader fixed inset-0 opacity-100 h-full w-full z-[9999] bg-center bg-no-repeat"
-      style="background-image: url(/images/loading);"
-    />
-  {/if}
-  <slot />
-</main>
+{#if $loading}
+  <div
+    out:fade={{ duration: 200 }}
+    class="loader fixed inset-0 opacity-100 h-full w-full z-[9999] bg-center bg-no-repeat"
+    style="background-image: url(/images/loading);"
+  />
+{/if}
+<slot />
 
 <Footer />
 
