@@ -77,3 +77,27 @@ export const scalarMultiple = (m: number[][], t: number) => {
   }
   return m2;
 };
+
+export const determinant = (m: number[][]) => {
+  // Return determinant of a matrix
+  if (m.length == 1) return m[0][0];
+  if (m.length == 2) return m[0][0] * m[1][1] - m[0][1] * m[1][0];
+  let det = 0;
+  for (let i = 0; i < m.length; i++) {
+    det += m[0][i] * determinant(minor(m, 0, i));
+  }
+  return det;
+};
+
+const minor = (m: number[][], row: number, col: number) => {
+  const m2 = new Array(m.length - 1);
+  for (let i = 0; i < m.length; i++) {
+    if (i == row) continue;
+    m2[i < row ? i : i - 1] = new Array(m.length - 1);
+    for (let j = 0; j < m.length; j++) {
+      if (j == col) continue;
+      m2[i < row ? i : i - 1][j < col ? j : j - 1] = m[i][j];
+    }
+  }
+  return m2;
+};

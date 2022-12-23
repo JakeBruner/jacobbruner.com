@@ -77,6 +77,15 @@ interface E8Lattice {
 
 //! stop here to keep your sanity
 
+export type E8LatticeConstructor = {
+  ctx: CanvasRenderingContext2D;
+  darkmode: boolean;
+  scalefactor: number;
+  showPoints: boolean;
+  showLines: boolean;
+  randomConjugator: boolean;
+};
+
 export default class E8 {
   ctx: CanvasRenderingContext2D;
 
@@ -112,6 +121,10 @@ export default class E8 {
   private rootZOrder!: number[] | null;
 
   private storedGaussianComputation: number | null = null;
+
+  width: number;
+  height: number;
+  sf: number;
 
   isRunning: boolean;
   animationStart: number | null;
@@ -335,10 +348,13 @@ export default class E8 {
       this.rootsZIndex = new Float32Array(this.roots.length);
     }
     // project the roots from 8D to 2D :)
-    for (let n = 0; n < this.roots.length; n++) {
-      this.rootProjections[2 * n] = dotprod(this.projectionMatrix[0], this.roots[n]) * 100 + 300;
+    const len = this.roots.length;
+    for (let n = 0; n < len; n++) {
+      // maximum magnitude of the root is  sqrt(8) = 2.828427
+      this.rootProjections[2 * n] =
+        dotprod(this.projectionMatrix[0], this.roots[n]) * this.sf + this.width / 2;
       this.rootProjections[2 * n + 1] =
-        dotprod(this.projectionMatrix[1], this.roots[n]) * 100 + 300;
+        dotprod(this.projectionMatrix[1], this.roots[n]) * this.sf + this.height / 2;
       this.rootsZIndex[n] = dotprod(this.projectionMatrix[2], this.roots[n]);
     }
   };
@@ -412,12 +428,11 @@ export default class E8 {
 
   private computeAndDraw = (rad: number) => {
     this.radiansRotated = rad;
-    this.ctx.clearRect(0, 0, 600, 600);
+    this.ctx.clearRect(0, 0, this.width, this.height);
     this.computeProjectionMatrix(rad);
     this.computeRootProjections();
     if (this.drawLinesOn) this.drawLines();
-
-    this.drawPoints();
+    if (this.drawPointsOn) this.drawPoints();
   };
 
   private draw = (time: number) => {
@@ -427,10 +442,21 @@ export default class E8 {
     requestAnimationFrame(this.draw);
   };
 
-  constructor(ctx: CanvasRenderingContext2D, darkmode: boolean) {
+  constructor({
+    ctx,
+    darkmode,
+    scalefactor,
+    showLines,
+    showPoints,
+    randomConjugator
+  }: E8LatticeConstructor) {
     this.ctx = ctx;
     this.ctx.lineCap = "round";
     this.ctx.lineJoin = "round";
+
+    this.width = this.ctx.canvas.width;
+    this.height = this.ctx.canvas.height;
+    this.sf = scalefactor * 100;
 
     this.darkmode = darkmode;
 
@@ -464,7 +490,8 @@ export default class E8 {
     this.animationStart = 0;
     this.timeBase = 0;
     this.radiansRotated = 0;
-    this.drawLinesOn = true;
+    this.drawLinesOn = showLines;
+    this.drawPointsOn = showPoints;
     requestAnimationFrame(this.draw);
   }
 
