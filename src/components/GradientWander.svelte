@@ -1,15 +1,9 @@
-<div class="nav w-full" />
+<div class="nav inset-0 h-1 fixed w-full z-50 before:w-full before:h-1 before:fixed" />
 
 <style>
   .nav::before {
     /* background-image: linear-gradient(90deg, #b15e84, #d772a1, #8b4968, #b15e84); */
     animation: gradientWander 25s linear infinite;
-    height: 4px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    content: "";
     background-size: 200%;
   }
   @media (prefers-color-scheme: light) {

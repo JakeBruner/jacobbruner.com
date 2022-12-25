@@ -463,7 +463,7 @@ export default class E8 {
     // draw and wait at the petri projection
     this.computeAndDraw(0);
 
-    this.speed = speed / 100;
+    this.speed = speed / 1000;
     requestAnimationFrame(this.draw);
 
     // slowly increase the speed to full
@@ -472,7 +472,7 @@ export default class E8 {
       if (this.speed >= speed) {
         clearInterval(interval);
       }
-    }, 10);
+    }, 20);
   }
 
   public start = () => {
