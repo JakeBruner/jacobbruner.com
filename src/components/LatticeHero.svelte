@@ -65,7 +65,10 @@
     }
   }
 
+  let test: string;
+
   onMount(() => {
+    test = window.navigator.userAgent;
     // scroll to top
     window.scrollTo(0, 0);
 
@@ -262,7 +265,8 @@
       <h3
         class="text-3xl sm:text-4xl md:text-6xl font-semibold italic headingGradient pb-6 bottom-0 overflow-visible"
       >
-        &ldquo;Learning as a Hobby&rdquo; &nbsp;{dvh}
+        &ldquo;Learning as a Hobby&rdquo; &nbsp;{dvh}<br />
+        {test}
       </h3>
     </div>
   </div>
