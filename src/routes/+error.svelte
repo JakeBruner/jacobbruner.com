@@ -1,7 +1,9 @@
 <script lang="ts">
   import { page } from "$app/stores";
+  import Header from "$components/Header.svelte";
 </script>
 
+<Header />
 <div class="mx-auto w-2/3 lg:w-1/2 pt-20 pb-20 sm:pb-[480px]">
   <h1 class="py-7 text-center text-5xl">Oops!</h1>
   <h2 class="text-2xl font-light text-grey-500 text-center">

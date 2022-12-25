@@ -1,8 +1,4 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-
-  // import { Text } from "troika-three-text";
-
   // const featuredposts = [
   //   "/Math/ComplexNumbers",
   //   "/Math/EulerExploration",
@@ -23,31 +19,6 @@
   //TODO look into https://vercel.com/templates/svelte/sveltekit-edge-functions
 
   // const randomlink: string = featuredposts[rand(featuredposts.length)];
-
-  // if ios mobile
-  const isiOS = () => {
-    return [
-      "iPad Simulator",
-      "iPhone Simulator",
-      "iPod Simulator",
-      "iPad",
-      "iPhone",
-      "iPod"
-    ].includes(navigator.platform);
-  };
-
-  let ios = false;
-  onMount(() => {
-    ios = isiOS();
-    if (ios) {
-      console.log("his");
-    }
-  });
-
-  // // bound to window height below
-  let y: number;
-  // // since phones have shit at the bottom, this makes it look more centered
-  // $: y2 = y - 44;
 
   import type { PostInfo } from "$lib/blog/blog";
   import Post from "$components/Post.svelte";
@@ -107,7 +78,7 @@
 
 <main>
   <div class="h-screen relative">
-    <LatticeHero {ios} />
+    <LatticeHero />
   </div>
   <!-- thinline with gradient fading to zinc 800 on both sides-->
   <div class="w-full h-px bg-gradient-to-r from-transparent via-zinc-800 to-transparent" />

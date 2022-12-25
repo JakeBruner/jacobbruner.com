@@ -2,8 +2,6 @@
   import { navitems } from "$components/Header.svelte";
   import { page } from "$app/stores";
 
-  export let ios: boolean;
-
   let c: HTMLCanvasElement;
   let small_c: HTMLCanvasElement;
   let ctx: CanvasRenderingContext2D;
@@ -82,7 +80,6 @@
     smallScreen = window.innerWidth < 768;
 
     if (smallScreen) {
-      // ios = true; // ios is true if the screen is small
       ctx = small_c.getContext("2d")!;
     } else {
       ctx = c.getContext("2d")!;
@@ -111,17 +108,6 @@
       instance = null;
     };
   });
-
-  $: if (x < 768) {
-    if (!smallScreen && instance) {
-      smallScreen = true;
-      instance.stop();
-      instance = null;
-      ctx = small_c.getContext("2d")!;
-    }
-  } else {
-    ios = false;
-  }
 
   onDestroy(() => {
     if (instance) {
@@ -181,13 +167,9 @@
     // yeah technically this is accelerating...
     const radians = (totalDistance / 100000) * Math.PI;
 
-    if (mouseDown) {
-      instance?.manualRotate(-1 * radians);
-    } else {
-      instance?.manualRotate(radians);
-    }
+    instance?.manualRotate(radians);
+
     mouseLastAt = { x: mouseX, y: mouseY };
-    // console.log("mouse move", totalDistance, radians);
   };
 
   const handleTouchEnd = () => {
@@ -280,7 +262,7 @@
       <h3
         class="text-3xl sm:text-4xl md:text-6xl font-semibold italic headingGradient pb-6 bottom-0 overflow-visible"
       >
-        &ldquo;Learning as a Hobby&rdquo; &nbsp;
+        &ldquo;Learning as a Hobby&rdquo; &nbsp;{dvh}
       </h3>
     </div>
   </div>
@@ -291,10 +273,8 @@
     style={`transform: translateX(
     ${x / 3 - (smallScreen ? 100 * moveSmallScreenCanvas(x) : 750 * moveLargeScreenCanvas(x))}px);`}
   >
-    <!-- y = 2 - (x - 390) / (768 - 390) -->
-
     <canvas
-      class="md:hidden block overflow-x-clip select-none opacity-90 origin-center touch-none"
+      class="md:hidden block overflow-x-clip select-none opacity-90 origin-center"
       on:touchstart={handleTouchStart}
       on:touchmove={handleTouchMove}
       on:touchend={handleTouchEnd}
