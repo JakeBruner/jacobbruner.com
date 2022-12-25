@@ -15,15 +15,52 @@
   let x: number = 0;
   let smallScreen: boolean = false;
 
-  let dvh = false;
+  // let dvh = false;
 
-  const supportsDVH = () => {
-    if (window) {
-      const ua = window.navigator.userAgent;
-      const iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
-      const webkit = !!ua.match(/WebKit/i);
-      const iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
-      return !iOSSafari;
+  // const iosHasDVH = (): boolean => {
+  //   // check if ios safari above version 15.4
+  //   const ua = window.navigator.userAgent;
+  //   const webkitIOS =
+  //     (!!ua.match(/iPad/i) || !!ua.match(/iPhone/i) || !!ua.match(/Mac OS X/i)) &&
+  //     !!ua.match(/WebKit/i) &&
+  //     !ua.match(/CriOS/i) &&
+  //     !ua.match(/FxiOS/i);
+  //   if (webkitIOS) {
+  //     const version = ua.match(/Version\/(\d+)\.(\d+)/);
+  //     if (version) {
+  //       const major = parseInt(version[1], 10);
+  //       const minor = parseInt(version[2], 10);
+  //       if (major > 15 || (major === 15 && minor >= 4)) {
+  //         return true;
+  //       }
+  //     }
+  //   }
+  //   return false;
+  // };
+
+  let ios: boolean;
+
+  const isIosMobile = (): boolean => {
+    const ua = window.navigator.userAgent;
+    return (
+      (!!ua.match(/iPad/i) || !!ua.match(/iPhone/i)) &&
+      !!ua.match(/WebKit/i) &&
+      !ua.match(/CriOS/i) && //TODO see if these change canvas opacity
+      !ua.match(/FxiOS/i)
+    );
+  };
+
+  const needsManualHeight = (ios: boolean) => {
+    if (!ios) return false;
+    const ua = window.navigator.userAgent;
+    if (!ua.match(/WebKit/i)) return false;
+    const version = ua.match(/Version\/(\d+)\.(\d+)/);
+    if (version) {
+      const major = parseInt(version[1], 10);
+      const minor = parseInt(version[2], 10);
+      if (major < 15 || (major === 15 && minor < 4)) {
+        return true;
+      }
     }
     return false;
   };
@@ -31,7 +68,7 @@
   const getOptions = (smallScreen: boolean): E8LatticeConstructor => {
     return {
       ctx,
-      speed: smallScreen ? 0.2 : 0.08,
+      speed: smallScreen ? 0.2 : 0.5,
       darkmode,
       scalefactor: smallScreen ? 0.9 : 2,
       showLines: true,
@@ -40,7 +77,7 @@
       strokeWidth: smallScreen ? 0.05 : 0.1,
       darkmodeStroke: "#3f3f46", // zinc-700
       lightmodeStroke: "#a1a1aa", // zinc-300
-      opacity: smallScreen ? 0.5 : 1
+      opacity: smallScreen ? (ios ? 0.4 : 0.7) : 1
     };
   };
 
@@ -65,14 +102,19 @@
     }
   }
 
-  let test: string;
+  // let test: string;
+  let manualHeight: boolean;
 
   onMount(() => {
-    test = window.navigator.userAgent;
+    // test = window.navigator.userAgent;
     // scroll to top
     window.scrollTo(0, 0);
 
-    dvh = supportsDVH();
+    ios = isIosMobile();
+
+    manualHeight = needsManualHeight(ios);
+
+    // dvh = iosHasDVH();
 
     // check if window supports canvas
     if (!("HTMLCanvasElement" in window)) {
@@ -101,15 +143,15 @@
       instance?.handleDarkmodeChange(darkmode);
     });
 
-    // listen for resize above or below 768px
+    // // listen for resize above or below 768px
 
-    window.addEventListener("resize", handleResize);
+    // window.addEventListener("resize", handleResize);
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      instance?.stop();
-      instance = null;
-    };
+    // return () => {
+    //   window.removeEventListener("resize", handleResize);
+    //   instance?.stop();
+    //   instance = null;
+    // };
   });
 
   onDestroy(() => {
@@ -208,7 +250,7 @@
 
   const moveLargeScreenCanvas = invLerp(768, 2000);
 
-  $: console.log(moveSmallScreenCanvas(x));
+  // $: console.log(moveSmallScreenCanvas(x));
 </script>
 
 <svelte:window
@@ -223,11 +265,11 @@
 <!-- <button on:click={() => instance?.start()}>Start</button> -->
 
 <div
-  class="h-screen flex relative overflow-x-clip z-10 select-none xl:pb-10 xl:pt-6 xl:pl-20"
-  style={s(dvh && "height: 100dvh")}
+  class="dvh h-screen flex relative overflow-x-clip z-10 select-none xl:pb-10 xl:pt-6 xl:pl-20"
+  style={manualHeight ? `height: ${y}px !important` : ""}
 >
   <GradientWander />
-  <div class="mt-8 md:mt-10 mx-5 flex-col flex">
+  <div class="mt-12 md:mt-10 mx-5 flex-col flex">
     <h1 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold headingGradient flex-initial">
       Welcome to <br />
       <span class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl">jacobbruner.com</span>
@@ -265,8 +307,7 @@
       <h3
         class="text-3xl sm:text-4xl md:text-6xl font-semibold italic headingGradient pb-6 bottom-0 overflow-visible"
       >
-        &ldquo;Learning as a Hobby&rdquo; &nbsp;{dvh}<br />
-        {test}
+        &ldquo;Learning as a Hobby&rdquo; &nbsp;
       </h3>
     </div>
   </div>
@@ -287,7 +328,8 @@
       bind:this={small_c}
     />
     <canvas
-      class="hidden md:block overflow-x-clip select-none opacity-90 origin-center touch-none"
+      class="hidden md:block overflow-x-clip select-none opacity-90 origin-center touch-none "
+      style="overflow-clip-margin: auto;"
       on:mousemove={handleMouseMove}
       on:mouseleave={handleMouseLeave}
       on:touchstart={handleTouchStart}
@@ -303,8 +345,8 @@
 <!-- <canvas class="" width={x} height={y} bind:this={c} /> -->
 <style>
   @supports (height: 100dvh) {
-    .ios {
-      height: 100dvh;
+    .dvh {
+      height: 100dvh !important;
     }
   }
   .bigGradient {
