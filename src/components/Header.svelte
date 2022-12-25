@@ -1,8 +1,5 @@
-<script lang="ts">
-  import { page } from "$app/stores";
-  import { loading } from "$lib/loading";
-  // console.log($page)
-  const navitems = [
+<script context="module">
+  export const navitems = [
     { title: "Home", path: "/" },
     { title: "Music", path: "/Music" },
     { title: "Math", path: "/Math" },
@@ -10,14 +7,15 @@
     { title: "CS", path: "/Computer-Science" },
     { title: "Writing", path: "/Writing" }
   ];
+</script>
+
+<script lang="ts">
+  import { page } from "$app/stores";
+  import { loading } from "$lib/loading";
+  // console.log($page)
+  import classnames from "$lib/classnames";
 
   let menuOpen = false;
-
-  type input = string | number | boolean | undefined | null;
-
-  const classnames = (...args: input[]) => {
-    return args.filter(Boolean).join(" ");
-  };
 </script>
 
 <header>

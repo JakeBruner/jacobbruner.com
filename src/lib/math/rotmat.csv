@@ -1,0 +1,8 @@
+1, 0, 0, 0, 0, 0, 0, 0,
+0, ca * cb, sa * cb, 0, 0, ca * sb, sa * sb, 0,
+0, -sa * cb, ca * cb, 0, 0, -sa * sb, ca * sb, 0,
+0, 0, 0, c2b, 0, 0, 0, -s2b,
+0, 0, 0, 0, 1, 0, 0, 0,
+0, -ca * sb, -sa * sb, 0, 0, ca * cb, sa * cb, 0,
+0, sa * sb, -ca * sb, 0, 0, -sa * cb, ca * cb, 0,
+0, 0, 0, s2b, 0, 0, 0, c2b
