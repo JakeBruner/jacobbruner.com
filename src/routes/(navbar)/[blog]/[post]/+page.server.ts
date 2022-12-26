@@ -8,15 +8,18 @@ import {
 } from "$lib/blog/blog";
 import { error, type ServerLoadEvent } from "@sveltejs/kit";
 
-type data = [FullPost, BlogType];
+// type data = {
+//   post: FullPost;
+//   blog: BlogType;
+// };
 
-export async function load({ params }: ServerLoadEvent): Promise<data | undefined> {
+export async function load({ params }: ServerLoadEvent) {
   // console.log(params.blog);
   let errormessage: string | null = null;
   try {
     if (params.blog) {
       isValidBlogType(params.blog);
-      const post: ImportedPost = await import(`../../../posts/${params.blog}/${params.post}.md`);
+      const post: ImportedPost = await import(`../../../../posts/${params.blog}/${params.post}.md`);
 
       const tagsArr = post.metadata.tags?.split(", ");
       // with error handling
@@ -34,7 +37,10 @@ export async function load({ params }: ServerLoadEvent): Promise<data | undefine
         pdfpath: post.metadata?.pdfpath,
         tags
       } as const;
-      return [aFullPost, params.blog];
+      return {
+        post: aFullPost,
+        subject: params.blog
+      };
     }
   } catch {
     errormessage = `Post "${params.post}" not found under ${params.blog}`;

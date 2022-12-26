@@ -1,10 +1,13 @@
 <script lang="ts">
-  import type { FullPost, BlogType } from "$lib/blog/blog";
+  // import type { FullPost, BlogType } from "$lib/blog/blog";
   import { BlogTagColors } from "$lib/blog/blog";
-  // import "/src/app.css"; // doesn't do this by default
-  export let data: [FullPost, BlogType];
-  const post = data[0];
-  const subject = data[1];
+  import type { PageData } from "./$types";
+
+  export let data: PageData;
+
+  $: post = data.post;
+  $: subject = data.subject;
+
   import { hexToRGB } from "$lib/blog/tags";
 </script>
 
