@@ -321,7 +321,7 @@ export default class E8 {
       const sat = Math.sqrt(x * x + y * y) * 0.9 + 0.3;
 
       // darkmode logic goes here! eventually
-      this.rootColors[n] = hsvToRgbString(hue, sat, this.darkmode ? 0.7 : 0.9);
+      this.rootColors[n] = hsvToRgbString(hue, sat, this.darkmode ? 0.7 : 0.8);
     }
   };
 
@@ -435,7 +435,7 @@ export default class E8 {
     this.edges = this.createEdges(this.roots);
 
     this.initialProjectionMatrix = new Array(2);
-    // this is the projection matrix defining the petri projection of E8, displaying it's beautiful 24-fold symmetry
+    // this is the projection matrix defining the petri projection of E8, displaying it's beautiful 30-fold symmetry
     this.initialProjectionMatrix[0] = [
       0.580162190775135, 0.240311047795148, 0.424708200277867, 0.0, -0.580162190775135,
       0.240311047795148, 0.0, 0.175919896606161

@@ -68,7 +68,7 @@
   const getOptions = (smallScreen: boolean): E8LatticeConstructor => {
     return {
       ctx,
-      speed: smallScreen ? 0.2 : 0.5,
+      speed: smallScreen ? 0.3 : 0.4,
       darkmode,
       scalefactor: smallScreen ? 0.9 : 2,
       showLines: true,
@@ -140,7 +140,9 @@
 
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
       darkmode = e.matches;
-      instance?.handleDarkmodeChange(darkmode);
+      instance?.stop();
+      instance = null;
+      instance = new E8(getOptions(smallScreen));
     });
 
     // // listen for resize above or below 768px
@@ -328,7 +330,7 @@
       bind:this={small_c}
     />
     <canvas
-      class="hidden md:block overflow-x-clip select-none opacity-90 origin-center touch-none "
+      class="hidden md:block overflow-x-clip select-none opacity-90 origin-center touch-none {/** maybe add scale */ ''} "
       style="overflow-clip-margin: auto;"
       on:mousemove={handleMouseMove}
       on:mouseleave={handleMouseLeave}
