@@ -127,7 +127,7 @@
   <div
     out:fade={{ duration: 200 }}
     class="loader fixed inset-0 opacity-100 h-full w-full z-[9999] bg-center bg-no-repeat"
-    style="background-image: url(/images/loading);"
+    style="background-image: url(/images/loader.gif);"
   />
 {/if}
 <slot />

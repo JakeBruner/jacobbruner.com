@@ -15,28 +15,7 @@
   let x: number = 0;
   let smallScreen: boolean = false;
 
-  // let dvh = false;
-
-  // const iosHasDVH = (): boolean => {
-  //   // check if ios safari above version 15.4
-  //   const ua = window.navigator.userAgent;
-  //   const webkitIOS =
-  //     (!!ua.match(/iPad/i) || !!ua.match(/iPhone/i) || !!ua.match(/Mac OS X/i)) &&
-  //     !!ua.match(/WebKit/i) &&
-  //     !ua.match(/CriOS/i) &&
-  //     !ua.match(/FxiOS/i);
-  //   if (webkitIOS) {
-  //     const version = ua.match(/Version\/(\d+)\.(\d+)/);
-  //     if (version) {
-  //       const major = parseInt(version[1], 10);
-  //       const minor = parseInt(version[2], 10);
-  //       if (major > 15 || (major === 15 && minor >= 4)) {
-  //         return true;
-  //       }
-  //     }
-  //   }
-  //   return false;
-  // };
+  let supportsCanvas: boolean;
 
   let ios: boolean;
 
@@ -116,9 +95,10 @@
 
     // dvh = iosHasDVH();
 
-    // check if window supports canvas
-    if (!("HTMLCanvasElement" in window)) {
-      console.log("Canvas not supported");
+    // check if window supports canvas and javascript
+    supportsCanvas = !!document.createElement("canvas").getContext;
+
+    if (!supportsCanvas) {
       return;
     }
 
@@ -297,7 +277,11 @@
                 {item.title}
                 <!-- hover box -->
                 <span
-                  class="absolute -z-20 w-full h-0 bottom-0 left-0 bg-gradient-to-bl from-primary-700/70 to-violet-700/70 group-hover:h-full transition-all duration-200 sm:duration-500 ease-in-out px-1"
+                  class={classnames(
+                    "absolute -z-20 w-full bottom-0 left-0",
+                    active ? "h-1/3 opacity-50 group-hover:opactiy-100" : "h-0",
+                    "bg-gradient-to-bl from-primary-700/70 to-violet-700/70 group-hover:h-full transition-all duration-200 sm:duration-500 ease-in-out px-1"
+                  )}
                   aria-hidden="true"
                 />
               </a>
@@ -316,12 +300,13 @@
   <div class="absolute bottom-0 ml-5 mb-16" />
 
   <div
-    class="absolute mr-auto right-0 bottom-0 mb-4 sm:mb-0 overflow-x-hidden origin-center transition-transform"
+    class="absolute mr-auto right-0 bottom-0 mb-4 sm:mb-0 overflow-x-hidden origin-center "
     style={`transform: translateX(
     ${x / 3 - (smallScreen ? 100 * moveSmallScreenCanvas(x) : 750 * moveLargeScreenCanvas(x))}px);`}
   >
     <canvas
       class="md:hidden block overflow-x-clip select-none opacity-90 origin-center"
+      alt="Projection of the E8 root system in 8-dimensional space."
       on:touchstart={handleTouchStart}
       on:touchmove={handleTouchMove}
       on:touchend={handleTouchEnd}
@@ -332,6 +317,7 @@
     <canvas
       class="hidden md:block overflow-x-clip select-none opacity-90 origin-center touch-none {/** maybe add scale */ ''} "
       style="overflow-clip-margin: auto;"
+      alt="Projection of the E8 root system in 8-dimensional space."
       on:mousemove={handleMouseMove}
       on:mouseleave={handleMouseLeave}
       on:touchstart={handleTouchStart}
@@ -340,6 +326,28 @@
       width={1000}
       height={1000}
       bind:this={c}
+    />
+  </div>
+  <!-- placeholder -->
+
+  <div
+    class="{!supportsCanvas ||
+      (instance &&
+        '!hidden')} absolute mr-auto right-0 bottom-0 mb-4 sm:mb-0 overflow-x-hidden origin-center"
+    style={`transform: translateX(
+    ${x / 3 - (smallScreen ? 100 * moveSmallScreenCanvas(x) : 750 * moveLargeScreenCanvas(x))}px);`}
+  >
+    <div
+      class="md:hidden block overflow-x-clip select-none opacity-90 origin-center bg-center bg-[url('/images/E8/E8SmallLight.png')] dark:bg-[url('/images/E8/E8SmallDark.png')] bg-cover bg-no-repeat"
+      alt="Projection of the E8 root system in 8-dimensional space."
+      style="width: 500px; height: 500px;"
+    />
+    <div
+      src={darkmode ? "/images/E8/E8LargeDark.png" : "/images/E8/E8LargeLight.png"}
+      alt="Projection of the E8 root system in 8-dimensional space."
+      class="hidden md:block overflow-x-clip select-none opacity-90 origin-center touch-none bg-center bg-[url('/images/E8/E8LargeLight.png')] dark:bg-[url('/images/E8/E8LargeDark.png')] bg-cover bg-no-repeat"
+      width={1000}
+      height={1000}
     />
   </div>
 </div>

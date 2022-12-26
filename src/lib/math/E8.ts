@@ -467,6 +467,7 @@ export default class E8 {
     requestAnimationFrame(this.draw);
 
     // slowly increase the speed to full
+    // takes 10 seconds
     const interval = setInterval(() => {
       this.speed += 0.0001;
       if (this.speed >= speed) {
