@@ -77,23 +77,29 @@
     out:fly={{ x: 0, y: -100, duration: 500, opacity: 0 }}
   >
     {#if $page.url.pathname !== "/"}
-      <div class="h-18" />
+      <div class="h-14" />
     {/if}
-    <div class="bg-primary-500/80 dark:bg-primary-700/80 mt-16 rounded-lg mx-0.5 backdrop-blur-sm">
-      <div class="mx-auto max-w-7xl py-2 px-2 sm:px-6 lg:px-8">
+    <div class="bg-primary-500/70 dark:bg-primary-700/50 mt-2 rounded-lg mx-2 backdrop-blur-sm">
+      <div class="mx-auto max-w-7xl py-0.5 sm:py-1 px-2 sm:px-6 lg:px-8">
         <div class="flex flex-wrap items-center justify-between">
           <div class="flex w-0 flex-1 items-center">
-            <span class="flex rounded-lg bg-primary-600 dark:bg-primary-700 p-2">
-              <Megaphone class="h-5 w-5 text-white dark:text-zinc-200" aria-hidden="true" />
-            </span>
-            <p class="ml-3 truncate font-medium text-white dark:text-zinc-200">
-              <span class="md:hidden">New: 'Group Theory and Cryptography'</span>
+            <a
+              class="flex rounded-lg bg-primary-600 dark:bg-primary-700 p-1 sm:p-2"
+              href="/Math/ECC"
+            >
+              <Megaphone
+                class="h-4 w-4 sm:h-5 sm:w-5 text-white dark:text-zinc-200"
+                aria-hidden="true"
+              />
+            </a>
+            <p class="ml-3 truncate font-medium text-white dark:text-zinc-200 text-xs md:text-sm">
+              <a class="md:hidden" href="/Math/ECC">New: 'Group Theory and Cryptography'</a>
               <span class="hidden md:inline"
                 >Check out my newest paper on Group Theory and Cryptography!</span
               >
             </p>
           </div>
-          <div class="order-3 mt-2 w-full flex-shrink-0 sm:order-2 sm:mt-0 sm:w-auto">
+          <div class="hidden sm:block mt-2 w-full flex-shrink-0 sm:order-2 sm:mt-0 sm:w-auto">
             <a
               href="/Math/ECC"
               class="flex items-center justify-center rounded-md border border-transparent bg-white dark:bg-zinc-200 px-4 py-1.5 text-sm font-medium text-primary-600 shadow-sm hover:bg-primary-50 dark:hover:bg-primary-100"
@@ -105,7 +111,7 @@
             <button
               type="button"
               on:click={closePopup}
-              class="-mr-1 flex rounded-md p-2 hover:bg-primary-500 dark:hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-white sm:-mr-2"
+              class="-mr-1 flex rounded-md p-1 sm:p-2 hover:bg-primary-500 dark:hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-white sm:-mr-2"
             >
               <span class="sr-only">Dismiss</span>
               <XMark class="h-6 w-6 text-white dark:text-zinc-100" aria-hidden="true" />
@@ -121,7 +127,7 @@
   <div
     out:fade={{ duration: 200 }}
     class="loader fixed inset-0 opacity-100 h-full w-full z-[9999] bg-center bg-no-repeat"
-    style="background-image: url(/images/loading);"
+    style="background-image: url(/images/loader.gif);"
   />
 {/if}
 <slot />

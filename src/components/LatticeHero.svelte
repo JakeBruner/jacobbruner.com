@@ -1,8 +1,7 @@
 <script lang="ts">
   import { navitems } from "$components/Header.svelte";
   import { page } from "$app/stores";
-
-  export let ios: boolean;
+  import { fly } from "svelte/transition";
 
   let c: HTMLCanvasElement;
   let small_c: HTMLCanvasElement;
@@ -17,15 +16,31 @@
   let x: number = 0;
   let smallScreen: boolean = false;
 
-  let dvh = false;
+  let supportsCanvas: boolean;
 
-  const supportsDVH = () => {
-    if (window) {
-      const ua = window.navigator.userAgent;
-      const iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
-      const webkit = !!ua.match(/WebKit/i);
-      const iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
-      return !iOSSafari;
+  let ios: boolean;
+
+  const isIosMobile = (): boolean => {
+    const ua = window.navigator.userAgent;
+    return (
+      (!!ua.match(/iPad/i) || !!ua.match(/iPhone/i)) &&
+      !!ua.match(/WebKit/i) &&
+      !ua.match(/CriOS/i) && //TODO see if these change canvas opacity
+      !ua.match(/FxiOS/i)
+    );
+  };
+
+  const needsManualHeight = (ios: boolean) => {
+    if (!ios) return false;
+    const ua = window.navigator.userAgent;
+    if (!ua.match(/WebKit/i)) return false;
+    const version = ua.match(/Version\/(\d+)\.(\d+)/);
+    if (version) {
+      const major = parseInt(version[1], 10);
+      const minor = parseInt(version[2], 10);
+      if (major < 15 || (major === 15 && minor < 4)) {
+        return true;
+      }
     }
     return false;
   };
@@ -33,7 +48,7 @@
   const getOptions = (smallScreen: boolean): E8LatticeConstructor => {
     return {
       ctx,
-      speed: smallScreen ? 0.2 : 0.08,
+      speed: smallScreen ? 0.3 : 0.4,
       darkmode,
       scalefactor: smallScreen ? 0.9 : 2,
       showLines: true,
@@ -41,8 +56,8 @@
       randomConjugator: true,
       strokeWidth: smallScreen ? 0.05 : 0.1,
       darkmodeStroke: "#3f3f46", // zinc-700
-      lightmodeStroke: "#a1a1aa", // zinc-300
-      opacity: smallScreen ? 0.5 : 1
+      lightmodeStroke: "#81718a", // purpleish version of zinc-400
+      opacity: smallScreen ? (ios ? 0.4 : 0.7) : 1
     };
   };
 
@@ -67,22 +82,43 @@
     }
   }
 
+  // let test: string;
+  let manualHeight: boolean;
+
+  let opacity = 0;
+
+  let mounted = false;
+
   onMount(() => {
+    mounted = true;
+    // test = window.navigator.userAgent;
     // scroll to top
     window.scrollTo(0, 0);
 
-    dvh = supportsDVH();
+    // on a separate thread, slowly increase opacity to 1
+    const interval = setInterval(() => {
+      opacity += 0.05;
+      if (opacity >= 1) {
+        clearInterval(interval);
+      }
+    }, 10);
 
-    // check if window supports canvas
-    if (!("HTMLCanvasElement" in window)) {
-      console.log("Canvas not supported");
+    ios = isIosMobile();
+
+    manualHeight = needsManualHeight(ios);
+
+    // dvh = iosHasDVH();
+
+    // check if window supports canvas and javascript
+    supportsCanvas = !!document.createElement("canvas").getContext;
+
+    if (!supportsCanvas) {
       return;
     }
 
     smallScreen = window.innerWidth < 768;
 
     if (smallScreen) {
-      // ios = true; // ios is true if the screen is small
       ctx = small_c.getContext("2d")!;
     } else {
       ctx = c.getContext("2d")!;
@@ -98,30 +134,21 @@
 
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
       darkmode = e.matches;
-      instance?.handleDarkmodeChange(darkmode);
-    });
-
-    // listen for resize above or below 768px
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
       instance?.stop();
       instance = null;
-    };
-  });
+      instance = new E8(getOptions(smallScreen));
+    });
 
-  $: if (x < 768) {
-    if (!smallScreen && instance) {
-      smallScreen = true;
-      instance.stop();
-      instance = null;
-      ctx = small_c.getContext("2d")!;
-    }
-  } else {
-    ios = false;
-  }
+    // // listen for resize above or below 768px
+
+    // window.addEventListener("resize", handleResize);
+
+    // return () => {
+    //   window.removeEventListener("resize", handleResize);
+    //   instance?.stop();
+    //   instance = null;
+    // };
+  });
 
   onDestroy(() => {
     if (instance) {
@@ -181,13 +208,9 @@
     // yeah technically this is accelerating...
     const radians = (totalDistance / 100000) * Math.PI;
 
-    if (mouseDown) {
-      instance?.manualRotate(-1 * radians);
-    } else {
-      instance?.manualRotate(radians);
-    }
+    instance?.manualRotate(radians);
+
     mouseLastAt = { x: mouseX, y: mouseY };
-    // console.log("mouse move", totalDistance, radians);
   };
 
   const handleTouchEnd = () => {
@@ -199,6 +222,7 @@
 
   import GradientWander from "./GradientWander.svelte";
   import classnames from "$lib/classnames";
+  import { cubicInOut } from "svelte/easing";
   // q: how to make use flexbox to make the child fill the parent height when the parent is absolute?
   // a: by using flexbox and setting the child to flex: 1
   // q: that didnt work
@@ -223,7 +247,12 @@
 
   const moveLargeScreenCanvas = invLerp(768, 2000);
 
-  $: console.log(moveSmallScreenCanvas(x));
+  // $: console.log(moveSmallScreenCanvas(x));
+
+  // q: If i want to have each `nav` item fade in on mount one after another, what would be the best way to do that with the transition:fade directive?
+  // a: use the `delay` option
+  // q: how do I activate it on mount?
+  // a: use the `in` option and set it to true
 </script>
 
 <svelte:window
@@ -238,43 +267,64 @@
 <!-- <button on:click={() => instance?.start()}>Start</button> -->
 
 <div
-  class="h-screen flex relative overflow-x-clip z-10 select-none xl:pb-10 xl:pt-6 xl:pl-20"
-  style={s(dvh && "height: 100dvh")}
+  class="dvh h-screen min-h-[700px] flex relative overflow-x-clip z-10 select-none xl:pb-10 xl:pt-6 xl:pl-20"
+  style={manualHeight ? `height: ${y}px !important` : ""}
 >
   <GradientWander />
-  <div class="mt-8 md:mt-10 mx-5 flex-col flex">
+  <div class="mt-12 md:mt-10 mx-5 flex-col flex">
     <h1 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold headingGradient flex-initial">
       Welcome to <br />
-      <span class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl">jacobbruner.com</span>
+      <span class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl decoration-clone"
+        >jacobbruner.com</span
+      >
     </h1>
     <div class="flex flex-col flex-1">
       <div class="flex-grow flex flex-row">
-        <div class="flex flex-col pt-12 pb-48 sm:py-20 relative flex-start mr-auto">
-          {#each navitems as item}
-            {@const active =
-              item.path === $page.url.pathname ||
-              (item.path === "/" && $page.url.pathname === "/test")}
-            <div class="relative z-20 basis-1/6 self-start">
-              <a
-                class={classnames(
-                  "group text-3xl sm:text-4xl md:text-5xl font-semibold text-transparent bg-clip-text self-start",
-                  "bigGradient hoverMove",
-                  "bg-gradient-to-bl from-teal-400 via-indigo-400 to-primary-500 bg-pos-0 hover:bg-pos-x-100",
-                  "transition-all duration-300 sm:duration-700 ease-in-out whitespace-nowrap relative"
-                )}
-                class:active
-                href={item.path}
+        {#if mounted}
+          <div class="flex flex-col pt-12 pb-48 sm:py-20 relative flex-start mr-auto">
+            {#each navitems as item, i}
+              {@const active =
+                item.path === $page.url.pathname ||
+                (item.path === "/" && $page.url.pathname === "/test")}
+
+              <div
+                class="relative z-20 basis-1/6 self-start"
+                in:fly={{
+                  delay: 50 * i,
+                  y: -30,
+                  x: 5,
+                  duration: 600,
+                  opacity: 0,
+                  easing: cubicInOut
+                }}
               >
-                {item.title}
-                <!-- hover box -->
-                <span
-                  class="absolute -z-20 w-full h-0 bottom-0 left-0 bg-gradient-to-bl from-primary-700/70 to-violet-700/70 group-hover:h-full transition-all duration-200 sm:duration-500 ease-in-out px-1"
-                  aria-hidden="true"
-                />
-              </a>
-            </div>
-          {/each}
-        </div>
+                <a
+                  class={classnames(
+                    "group text-3xl sm:text-4xl md:text-5xl font-semibold text-transparent bg-clip-text self-start",
+                    "bigGradient hoverMove",
+                    "bg-gradient-to-bl from-teal-500 via-indigo-500 to-primary-600 dark:from-teal-400 dark:via-indigo-400 dark:to-primary-500 bg-pos-0 hover:bg-pos-x-100",
+                    "transition-all duration-300 sm:duration-700 ease-in-out whitespace-nowrap relative"
+                  )}
+                  class:active
+                  href={item.path}
+                >
+                  {item.title}
+                  <!-- hover box -->
+                  <span
+                    class={classnames(
+                      "absolute -z-20 w-full bottom-0 left-0",
+                      active
+                        ? "h-1/3 from-primary-200/50 to-violet-400/50 group-hover:from-primary-400/70 group-hover:to-violet-400/50 dark:from-primary-700/50 dark:to-violet-700/50 dark:group-hover:from-primary-700/70 dark:group-hover:to-violet-700/50"
+                        : "h-0 from-primary-200/70 to-violet-400/70 dark:from-primary-700/70 dark:to-violet-700/70",
+                      "bg-gradient-to-bl  group-hover:h-full group-hover:opactiy-full transition-all duration-200 sm:duration-500 ease-in-out px-1"
+                    )}
+                    aria-hidden="true"
+                  />
+                </a>
+              </div>
+            {/each}
+          </div>
+        {/if}
         <div class="flex-grow hidden -z-50" />
       </div>
       <h3
@@ -287,14 +337,15 @@
   <div class="absolute bottom-0 ml-5 mb-16" />
 
   <div
-    class="absolute mr-auto right-0 bottom-0 mb-4 sm:mb-0 overflow-x-hidden origin-center transition-transform"
+    class="absolute mr-auto right-0 bottom-0 mb-4 sm:mb-0 overflow-x-hidden origin-center "
     style={`transform: translateX(
-    ${x / 3 - (smallScreen ? 100 * moveSmallScreenCanvas(x) : 750 * moveLargeScreenCanvas(x))}px);`}
+    ${
+      x / 3 - (smallScreen ? 100 * moveSmallScreenCanvas(x) : 750 * moveLargeScreenCanvas(x))
+    }px); opacity: ${opacity}`}
   >
-    <!-- y = 2 - (x - 390) / (768 - 390) -->
-
     <canvas
-      class="md:hidden block overflow-x-clip select-none opacity-90 origin-center touch-none"
+      class="md:hidden block overflow-x-clip select-none opacity-90 origin-center"
+      alt="Projection of the E8 root system in 8-dimensional space."
       on:touchstart={handleTouchStart}
       on:touchmove={handleTouchMove}
       on:touchend={handleTouchEnd}
@@ -303,7 +354,9 @@
       bind:this={small_c}
     />
     <canvas
-      class="hidden md:block overflow-x-clip select-none opacity-90 origin-center touch-none"
+      class="hidden md:block overflow-x-clip select-none opacity-90 origin-center touch-none {/** maybe add scale */ ''} "
+      style="overflow-clip-margin: auto;"
+      alt="Projection of the E8 root system in 8-dimensional space."
       on:mousemove={handleMouseMove}
       on:mouseleave={handleMouseLeave}
       on:touchstart={handleTouchStart}
@@ -314,13 +367,37 @@
       bind:this={c}
     />
   </div>
+  <!-- placeholder -->
+
+  <div
+    class="{!supportsCanvas ||
+      (instance &&
+        '!hidden')} absolute mr-auto right-0 bottom-0 mb-4 sm:mb-0 overflow-x-hidden origin-center"
+    style={`transform: translateX(
+    ${
+      x / 3 - (smallScreen ? 100 * moveSmallScreenCanvas(x) : 750 * moveLargeScreenCanvas(x))
+    }px); opacity: ${opacity}`}
+  >
+    <div
+      class="md:hidden block overflow-x-clip select-none opacity-90 origin-center bg-center bg-[url('/images/E8/E8SmallLight.png')] dark:bg-[url('/images/E8/E8SmallDark.png')] bg-cover bg-no-repeat"
+      alt="Projection of the E8 root system in 8-dimensional space."
+      style="width: 500px; height: 500px;"
+    />
+    <div
+      src={darkmode ? "/images/E8/E8LargeDark.png" : "/images/E8/E8LargeLight.png"}
+      alt="Projection of the E8 root system in 8-dimensional space."
+      class="hidden md:block overflow-x-clip select-none opacity-90 origin-center touch-none bg-center bg-[url('/images/E8/E8LargeLight.png')] dark:bg-[url('/images/E8/E8LargeDark.png')] bg-cover bg-no-repeat"
+      width={1000}
+      height={1000}
+    />
+  </div>
 </div>
 
 <!-- <canvas class="" width={x} height={y} bind:this={c} /> -->
 <style>
   @supports (height: 100dvh) {
-    .ios {
-      height: 100dvh;
+    .dvh {
+      height: 100dvh !important;
     }
   }
   .bigGradient {
@@ -331,8 +408,8 @@
   }
 
   .headingGradient {
-    @apply text-transparent bg-clip-text;
-    @apply bg-gradient-to-bl from-primary-500 via-violet-600 to-pink-500 leading-relaxed;
+    @apply text-transparent bg-clip-text -z-20;
+    @apply bg-gradient-to-bl from-primary-500 via-violet-600 to-pink-500 dark:from-primary-500 dark:via-violet-600 dark:to-pink-500 leading-relaxed;
     @apply transition-colors duration-500 ease-in-out;
   }
 </style>
