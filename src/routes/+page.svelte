@@ -77,7 +77,7 @@
 </svelte:head>
 
 <main>
-  <div class="h-screen relative">
+  <div class="h-screen relative min-h-[650px]">
     <LatticeHero />
   </div>
   <!-- thinline with gradient fading to zinc 800 on both sides-->
@@ -103,7 +103,7 @@
       <div class="flex md:w-1/2 align-middle">
         <div class="w-full my-auto">
           <p
-            class="xl:leading-relaxed xl:text-2xl lg:text-xl text-justify leading-snug text-lg py-10 md:py-5 md:px-10 px-3 font-light dark:text-zinc-300"
+            class="xl:leading-relaxed xl:text-2xl lg:text-xl  leading-snug text-lg py-10 md:py-5 md:px-10 px-3 font-light dark:text-zinc-300"
           >
             Jacob Bruner is a 18 year-old student at The Dwight School in New York City. During his
             senior year in high-school, he is exploring his various creative interests through his

@@ -257,7 +257,7 @@
 <!-- <button on:click={() => instance?.start()}>Start</button> -->
 
 <div
-  class="dvh h-screen flex relative overflow-x-clip z-10 select-none xl:pb-10 xl:pt-6 xl:pl-20"
+  class="dvh h-screen min-h-[700px] flex relative overflow-x-clip z-10 select-none xl:pb-10 xl:pt-6 xl:pl-20"
   style={manualHeight ? `height: ${y}px !important` : ""}
 >
   <GradientWander />
@@ -278,7 +278,7 @@
                 class={classnames(
                   "group text-3xl sm:text-4xl md:text-5xl font-semibold text-transparent bg-clip-text self-start",
                   "bigGradient hoverMove",
-                  "bg-gradient-to-bl from-teal-400 via-indigo-400 to-primary-500 bg-pos-0 hover:bg-pos-x-100",
+                  "bg-gradient-to-bl from-teal-500 via-indigo-500 to-primary-600 dark:from-teal-400 dark:via-indigo-400 dark:to-primary-500 bg-pos-0 hover:bg-pos-x-100",
                   "transition-all duration-300 sm:duration-700 ease-in-out whitespace-nowrap relative"
                 )}
                 class:active
@@ -289,8 +289,10 @@
                 <span
                   class={classnames(
                     "absolute -z-20 w-full bottom-0 left-0",
-                    active ? "h-1/3 opacity-50 group-hover:opactiy-100" : "h-0",
-                    "bg-gradient-to-bl from-primary-700/70 to-violet-700/70 group-hover:h-full transition-all duration-200 sm:duration-500 ease-in-out px-1"
+                    active
+                      ? "h-1/3 from-primary-200/50 to-violet-400/50 group-hover:from-primary-400/70 group-hover:to-violet-400/50 dark:from-primary-700/50 dark:to-violet-700/50 dark:group-hover:from-primary-700/70 dark:group-hover:to-violet-700/50"
+                      : "h-0 from-primary-200/70 to-violet-400/70 dark:from-primary-700/70 dark:to-violet-700/70",
+                    "bg-gradient-to-bl  group-hover:h-full group-hover:opactiy-full transition-all duration-200 sm:duration-500 ease-in-out px-1"
                   )}
                   aria-hidden="true"
                 />
@@ -381,8 +383,8 @@
   }
 
   .headingGradient {
-    @apply text-transparent bg-clip-text;
-    @apply bg-gradient-to-bl from-primary-500 via-violet-600 to-pink-500 leading-relaxed;
+    @apply text-transparent bg-clip-text -z-20;
+    @apply bg-gradient-to-bl from-primary-500 via-violet-600 to-pink-500 dark:from-primary-500 dark:via-violet-600 dark:to-pink-500 leading-relaxed;
     @apply transition-colors duration-500 ease-in-out;
   }
 </style>

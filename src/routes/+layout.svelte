@@ -77,10 +77,10 @@
     out:fly={{ x: 0, y: -100, duration: 500, opacity: 0 }}
   >
     {#if $page.url.pathname !== "/"}
-      <div class="h-16" />
+      <div class="h-14" />
     {/if}
-    <div class="bg-primary-500/80 dark:bg-primary-700/50 mt-2 rounded-lg mx-2 backdrop-blur-sm">
-      <div class="mx-auto max-w-7xl py-0.5 sm:py-2 px-2 sm:px-6 lg:px-8">
+    <div class="bg-primary-500/70 dark:bg-primary-700/50 mt-2 rounded-lg mx-2 backdrop-blur-sm">
+      <div class="mx-auto max-w-7xl py-0.5 sm:py-1 px-2 sm:px-6 lg:px-8">
         <div class="flex flex-wrap items-center justify-between">
           <div class="flex w-0 flex-1 items-center">
             <a
