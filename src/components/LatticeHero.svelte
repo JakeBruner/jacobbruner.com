@@ -345,7 +345,7 @@
   >
     <canvas
       class="md:hidden block overflow-x-clip select-none opacity-90 origin-center"
-      alt="Projection of the E8 root system in 8-dimensional space."
+      aria-label="Projection of the E8 root system in 8-dimensional space."
       on:touchstart={handleTouchStart}
       on:touchmove={handleTouchMove}
       on:touchend={handleTouchEnd}
@@ -356,7 +356,7 @@
     <canvas
       class="hidden md:block overflow-x-clip select-none opacity-90 origin-center touch-none {/** maybe add scale */ ''} "
       style="overflow-clip-margin: auto;"
-      alt="Projection of the E8 root system in 8-dimensional space."
+      aria-label="Projection of the E8 root system in 8-dimensional space."
       on:mousemove={handleMouseMove}
       on:mouseleave={handleMouseLeave}
       on:touchstart={handleTouchStart}
@@ -380,15 +380,13 @@
   >
     <div
       class="md:hidden block overflow-x-clip select-none opacity-90 origin-center bg-center bg-[url('/images/E8/E8SmallLight.png')] dark:bg-[url('/images/E8/E8SmallDark.png')] bg-cover bg-no-repeat"
-      alt="Projection of the E8 root system in 8-dimensional space."
+      aria-label="Projection of the E8 root system in 8-dimensional space."
       style="width: 500px; height: 500px;"
     />
     <div
-      src={darkmode ? "/images/E8/E8LargeDark.png" : "/images/E8/E8LargeLight.png"}
-      alt="Projection of the E8 root system in 8-dimensional space."
+      aria-label="Projection of the E8 root system in 8-dimensional space."
       class="hidden md:block overflow-x-clip select-none opacity-90 origin-center touch-none bg-center bg-[url('/images/E8/E8LargeLight.png')] dark:bg-[url('/images/E8/E8LargeDark.png')] bg-cover bg-no-repeat"
-      width={1000}
-      height={1000}
+      style="width: 1000px; height: 1000px;"
     />
   </div>
 </div>
