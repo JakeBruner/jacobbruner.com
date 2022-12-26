@@ -81,7 +81,9 @@
     <LatticeHero />
   </div>
   <!-- thinline with gradient fading to zinc 800 on both sides-->
-  <div class="w-full h-px bg-gradient-to-r from-transparent via-zinc-800 to-transparent" />
+  <div
+    class="w-full h-px bg-gradient-to-r from-transparent dark:via-zinc-800 via-zinc-200 to-transparent"
+  />
 
   <section class="mt-20 mb-2 px-6 xl:px-30">
     <!-- MD IS MY BREAKPOINT FOR THIS TO BE A COLUMN -->

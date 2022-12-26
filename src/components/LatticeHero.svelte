@@ -56,7 +56,7 @@
       randomConjugator: true,
       strokeWidth: smallScreen ? 0.05 : 0.1,
       darkmodeStroke: "#3f3f46", // zinc-700
-      lightmodeStroke: "#a1a1aa", // zinc-300
+      lightmodeStroke: "#81718a", // purpleish version of zinc-400
       opacity: smallScreen ? (ios ? 0.4 : 0.7) : 1
     };
   };
@@ -274,7 +274,9 @@
   <div class="mt-12 md:mt-10 mx-5 flex-col flex">
     <h1 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold headingGradient flex-initial">
       Welcome to <br />
-      <span class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl">jacobbruner.com</span>
+      <span class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl decoration-clone"
+        >jacobbruner.com</span
+      >
     </h1>
     <div class="flex flex-col flex-1">
       <div class="flex-grow flex flex-row">
