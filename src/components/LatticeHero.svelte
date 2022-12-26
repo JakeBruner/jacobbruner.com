@@ -84,10 +84,20 @@
   // let test: string;
   let manualHeight: boolean;
 
+  let opacity = 0;
+
   onMount(() => {
     // test = window.navigator.userAgent;
     // scroll to top
     window.scrollTo(0, 0);
+
+    // on a separate thread, slowly increase opacity to 1
+    const interval = setInterval(() => {
+      opacity += 0.05;
+      if (opacity >= 1) {
+        clearInterval(interval);
+      }
+    }, 10);
 
     ios = isIosMobile();
 
@@ -302,7 +312,9 @@
   <div
     class="absolute mr-auto right-0 bottom-0 mb-4 sm:mb-0 overflow-x-hidden origin-center "
     style={`transform: translateX(
-    ${x / 3 - (smallScreen ? 100 * moveSmallScreenCanvas(x) : 750 * moveLargeScreenCanvas(x))}px);`}
+    ${
+      x / 3 - (smallScreen ? 100 * moveSmallScreenCanvas(x) : 750 * moveLargeScreenCanvas(x))
+    }px); opacity: ${opacity}`}
   >
     <canvas
       class="md:hidden block overflow-x-clip select-none opacity-90 origin-center"
@@ -335,7 +347,9 @@
       (instance &&
         '!hidden')} absolute mr-auto right-0 bottom-0 mb-4 sm:mb-0 overflow-x-hidden origin-center"
     style={`transform: translateX(
-    ${x / 3 - (smallScreen ? 100 * moveSmallScreenCanvas(x) : 750 * moveLargeScreenCanvas(x))}px);`}
+    ${
+      x / 3 - (smallScreen ? 100 * moveSmallScreenCanvas(x) : 750 * moveLargeScreenCanvas(x))
+    }px); opacity: ${opacity}`}
   >
     <div
       class="md:hidden block overflow-x-clip select-none opacity-90 origin-center bg-center bg-[url('/images/E8/E8SmallLight.png')] dark:bg-[url('/images/E8/E8SmallDark.png')] bg-cover bg-no-repeat"
