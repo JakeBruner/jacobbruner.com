@@ -1,6 +1,7 @@
 <script lang="ts">
   import { navitems } from "$components/Header.svelte";
   import { page } from "$app/stores";
+  import { fly } from "svelte/transition";
 
   let c: HTMLCanvasElement;
   let small_c: HTMLCanvasElement;
@@ -86,7 +87,10 @@
 
   let opacity = 0;
 
+  let mounted = false;
+
   onMount(() => {
+    mounted = true;
     // test = window.navigator.userAgent;
     // scroll to top
     window.scrollTo(0, 0);
@@ -218,6 +222,7 @@
 
   import GradientWander from "./GradientWander.svelte";
   import classnames from "$lib/classnames";
+  import { cubicInOut } from "svelte/easing";
   // q: how to make use flexbox to make the child fill the parent height when the parent is absolute?
   // a: by using flexbox and setting the child to flex: 1
   // q: that didnt work
@@ -243,6 +248,11 @@
   const moveLargeScreenCanvas = invLerp(768, 2000);
 
   // $: console.log(moveSmallScreenCanvas(x));
+
+  // q: If i want to have each `nav` item fade in on mount one after another, what would be the best way to do that with the transition:fade directive?
+  // a: use the `delay` option
+  // q: how do I activate it on mount?
+  // a: use the `in` option and set it to true
 </script>
 
 <svelte:window
@@ -268,38 +278,51 @@
     </h1>
     <div class="flex flex-col flex-1">
       <div class="flex-grow flex flex-row">
-        <div class="flex flex-col pt-12 pb-48 sm:py-20 relative flex-start mr-auto">
-          {#each navitems as item}
-            {@const active =
-              item.path === $page.url.pathname ||
-              (item.path === "/" && $page.url.pathname === "/test")}
-            <div class="relative z-20 basis-1/6 self-start">
-              <a
-                class={classnames(
-                  "group text-3xl sm:text-4xl md:text-5xl font-semibold text-transparent bg-clip-text self-start",
-                  "bigGradient hoverMove",
-                  "bg-gradient-to-bl from-teal-500 via-indigo-500 to-primary-600 dark:from-teal-400 dark:via-indigo-400 dark:to-primary-500 bg-pos-0 hover:bg-pos-x-100",
-                  "transition-all duration-300 sm:duration-700 ease-in-out whitespace-nowrap relative"
-                )}
-                class:active
-                href={item.path}
+        {#if mounted}
+          <div class="flex flex-col pt-12 pb-48 sm:py-20 relative flex-start mr-auto">
+            {#each navitems as item, i}
+              {@const active =
+                item.path === $page.url.pathname ||
+                (item.path === "/" && $page.url.pathname === "/test")}
+
+              <div
+                class="relative z-20 basis-1/6 self-start"
+                in:fly={{
+                  delay: 50 * i,
+                  y: -30,
+                  x: 5,
+                  duration: 600,
+                  opacity: 0,
+                  easing: cubicInOut
+                }}
               >
-                {item.title}
-                <!-- hover box -->
-                <span
+                <a
                   class={classnames(
-                    "absolute -z-20 w-full bottom-0 left-0",
-                    active
-                      ? "h-1/3 from-primary-200/50 to-violet-400/50 group-hover:from-primary-400/70 group-hover:to-violet-400/50 dark:from-primary-700/50 dark:to-violet-700/50 dark:group-hover:from-primary-700/70 dark:group-hover:to-violet-700/50"
-                      : "h-0 from-primary-200/70 to-violet-400/70 dark:from-primary-700/70 dark:to-violet-700/70",
-                    "bg-gradient-to-bl  group-hover:h-full group-hover:opactiy-full transition-all duration-200 sm:duration-500 ease-in-out px-1"
+                    "group text-3xl sm:text-4xl md:text-5xl font-semibold text-transparent bg-clip-text self-start",
+                    "bigGradient hoverMove",
+                    "bg-gradient-to-bl from-teal-500 via-indigo-500 to-primary-600 dark:from-teal-400 dark:via-indigo-400 dark:to-primary-500 bg-pos-0 hover:bg-pos-x-100",
+                    "transition-all duration-300 sm:duration-700 ease-in-out whitespace-nowrap relative"
                   )}
-                  aria-hidden="true"
-                />
-              </a>
-            </div>
-          {/each}
-        </div>
+                  class:active
+                  href={item.path}
+                >
+                  {item.title}
+                  <!-- hover box -->
+                  <span
+                    class={classnames(
+                      "absolute -z-20 w-full bottom-0 left-0",
+                      active
+                        ? "h-1/3 from-primary-200/50 to-violet-400/50 group-hover:from-primary-400/70 group-hover:to-violet-400/50 dark:from-primary-700/50 dark:to-violet-700/50 dark:group-hover:from-primary-700/70 dark:group-hover:to-violet-700/50"
+                        : "h-0 from-primary-200/70 to-violet-400/70 dark:from-primary-700/70 dark:to-violet-700/70",
+                      "bg-gradient-to-bl  group-hover:h-full group-hover:opactiy-full transition-all duration-200 sm:duration-500 ease-in-out px-1"
+                    )}
+                    aria-hidden="true"
+                  />
+                </a>
+              </div>
+            {/each}
+          </div>
+        {/if}
         <div class="flex-grow hidden -z-50" />
       </div>
       <h3
