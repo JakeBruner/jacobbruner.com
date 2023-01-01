@@ -469,7 +469,7 @@ export default class E8 {
     // slowly increase the speed to full
     // takes 10 seconds
     const interval = setInterval(() => {
-      this.speed += 0.0001;
+      this.speed += 0.0003;
       if (this.speed >= speed) {
         clearInterval(interval);
       }

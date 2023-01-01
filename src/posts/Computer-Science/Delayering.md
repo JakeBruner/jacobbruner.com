@@ -6,7 +6,7 @@ excerpt: A timelapse of a delayering process on a silicon microchip as part of a
 thumbnailpath: /thumbnails/internship.png
 tags: Video, Work
 ---
-<iframe width="654" height="1162" src="https://www.youtube.com/embed/-ajvcQHhbqU" title="Chip Delayering Timelapse" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<div class="w-full aspect-w-1 aspect-h-1"><iframe src="https://www.youtube.com/embed/-ajvcQHhbqU" title="Chip Delayering Timelapse" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" class="rounded-md" allowfullscreen></iframe></div>
 
 Over the past summer (2022), I was paid to work alongside an awesome crew of engineers at the Wyoming-based "Square One Robotics." Most notable was my work with a couple individuals on a DoD contract to delayer silicon microchips for reverse-engineering purposes. It overall was a phenomenal experienece.
 

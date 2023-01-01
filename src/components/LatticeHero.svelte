@@ -229,9 +229,9 @@
   // a: because the parent is absolute, so the child is relative to the viewport, not the parent
   // q: how to make the child fill the parent height when the parent is absolute?
 
-  const s = (...args: (string | boolean | undefined)[]) => {
-    return args.filter((x) => x).join(" ");
-  };
+  // const s = (...args: (string | boolean | undefined)[]) => {
+  //   return args.filter((x) => x).join(" ");
+  // };
 
   const invLerp = (a: number, b: number) => {
     if (a > b) throw new Error("a must be less than b");
@@ -344,7 +344,7 @@
     }px); opacity: ${opacity}`}
   >
     <canvas
-      class="md:hidden block overflow-x-clip select-none opacity-90 origin-center"
+      class="md:hidden block overflow-x-clip select-none origin-center"
       aria-label="Projection of the E8 root system in 8-dimensional space."
       on:touchstart={handleTouchStart}
       on:touchmove={handleTouchMove}
@@ -354,7 +354,7 @@
       bind:this={small_c}
     />
     <canvas
-      class="hidden md:block overflow-x-clip select-none opacity-90 origin-center touch-none {/** maybe add scale */ ''} "
+      class="hidden md:block overflow-x-clip select-none origin-center touch-none {/** maybe add scale */ ''} "
       style="overflow-clip-margin: auto;"
       aria-label="Projection of the E8 root system in 8-dimensional space."
       on:mousemove={handleMouseMove}
