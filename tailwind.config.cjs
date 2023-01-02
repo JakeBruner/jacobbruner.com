@@ -2,7 +2,9 @@ const defaultTheme = require("tailwindcss/defaultTheme");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/**/*.{html,js,svelte,ts, md}"],
+  content: ["./src/**/*.{html,js,svelte,ts,md}"],
+  // blog tailwind classes \/ \/
+  safelist: ["max-w-2xl"],
   theme: {
     extend: {
       colors: {
