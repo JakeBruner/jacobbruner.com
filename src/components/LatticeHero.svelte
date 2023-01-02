@@ -92,8 +92,6 @@
   onMount(() => {
     mounted = true;
     // test = window.navigator.userAgent;
-    // scroll to top
-    window.scrollTo(0, 0);
 
     // on a separate thread, slowly increase opacity to 1
     const interval = setInterval(() => {

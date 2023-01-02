@@ -69,7 +69,13 @@
   import Typewriter from "$components/Typewriter.svelte";
   $: typewriterEffect = isInView[7];
 
+  import { ChevronUp } from "svelte-heros-v2";
+
   import LatticeHero from "$components/LatticeHero.svelte";
+
+  import { onMount } from "svelte";
+  import { dev } from "$app/environment";
+  onMount(() => !dev && window.scrollTo(0, 0));
 </script>
 
 <svelte:head>
@@ -84,8 +90,20 @@
   <div
     class="w-full h-px bg-gradient-to-r from-transparent dark:via-zinc-800 via-zinc-200 to-transparent"
   />
+  <!-- little description of the animation above on the right side -->
+  <div class="relative w-full">
+    <div
+      class="absolute top-0 right-0 pt-3 pr-3 md:pt-6 md:pr-8 max-w-[17rem] md:max-w-md xl:max-w-xl text-right text-zinc-500 dark:text-zinc-400 text-sm md:text-base"
+    >
+      <ChevronUp class="w-5 h-5 ml-auto mr-1" />
+      <span class="font-thin"
+        >A projection of the 8-dimensional E8 root system, the remarkable Gosset 4<sub>21</sub>
+        polytope, performing an 8-d rotation from the exceptional lie group G<sub>2</sub>.</span
+      >
+    </div>
+  </div>
 
-  <section class="mt-20 mb-2 px-6 xl:px-30">
+  <section class="mt-40 md:mt-32 mb-2 px-6 xl:px-30">
     <!-- MD IS MY BREAKPOINT FOR THIS TO BE A COLUMN -->
     <div
       class="xl:max-w-6xl mx-auto md:flex md:flex-row lg:px-20 md:pb-20 md:px-30 justify-center content-center align-middle"
