@@ -29,7 +29,7 @@
     "@threlte/core": "^5.0.8",
     "@threlte/extras": "^4.9.2",
     "@tsconfig/svelte": "^3.0.0",
-    "@types/node": "^18.11.15",
+    "@types/node": "^18.11.18",
     "@types/three": "^0.146.0",
     "@types/webgl2": "^0.0.6",
     "@typescript-eslint/eslint-plugin": "^5.46.1",
