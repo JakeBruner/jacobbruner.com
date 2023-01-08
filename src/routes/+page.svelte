@@ -103,17 +103,17 @@
     </div>
   </div>
 
-  <section class="mt-40 md:mt-32 mb-2 px-6 xl:px-30">
+  <section class="mt-40 md:mt-32 mb-2 px-6 xl:px-20">
     <!-- MD IS MY BREAKPOINT FOR THIS TO BE A COLUMN -->
     <div
-      class="xl:max-w-6xl mx-auto md:flex md:flex-row lg:px-20 md:pb-20 md:px-30 justify-center content-center align-middle"
+      class=" mx-auto md:flex md:flex-row lg:px-20 md:pb-20 md:px-30 justify-center content-center align-middle"
     >
       <div class="md:w-1/2 md:h-full flex align-middle">
         <div
-          class="w-[350px] h-auto lg:w-[420px] mx-auto p-5 shadow-lg shadow-zinc-300 dark:shadow-zinc-800 rounded-md"
+          class="w-[350px] h-auto lg:w-[420px] ml-auto p-5 shadow-lg shadow-zinc-300 dark:shadow-zinc-800 rounded-md"
         >
           <img
-            class="md:shrink-0 max-h-full object-cover overflow-hidden top-0"
+            class="md:shrink-0 max-h-full object-cover overflow-hidden top-0 right-0"
             src="/images/websitephoto.jpg"
             alt="Jacob Bruner"
           />
