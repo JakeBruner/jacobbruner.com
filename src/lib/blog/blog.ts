@@ -98,10 +98,11 @@ export const getPostsInfo = async (subject: BlogType): Promise<PostInfo[]> => {
     iterableModules.map(async ([url, module]) => {
       // .map just happens to do what i need
       const { metadata }: ImportedPost = await module();
-      console.log(metadata.title);
-      if (!metadata) throw new Error("metadata is undefined");
-      // console.log(metadata.date.split("-")[1]);
-      // if (metadata.date.split("-")[1].length < 2) console.log("hi");
+
+      if (!metadata)
+        throw new Error(
+          "metadata is undefined meaning input is malformed. Possibly check frontmatter md syntax for unescaped characters."
+        );
 
       const utcdate = new Date(metadata.date);
 
