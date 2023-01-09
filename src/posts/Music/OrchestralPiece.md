@@ -1,6 +1,6 @@
 ---
-title: "Nadir", an orchestral work by myself
-date: 2023-1-8
+title: "'Zenith', an orchestral work by myself"
+date: 2023-01-08
 layout: blog
 excerpt: My first original composition for orchestra, culminating my multi-year long process of understanding different insturments and their quirks in a grandiose 150+ hr project.
 thumbnailpath: /thumbnails/zenith.png
