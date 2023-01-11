@@ -4,10 +4,15 @@
   import type { Tone } from "./types";
 
   export let tone: Tone;
+
+  // TODO make this a store
+  // how
+  // 1. make a store
+  // 2. make a store that is a derived store
 </script>
 
 <div
-  class="px-6 py-4 w-full h-22 dark:bg-zinc-750 shadow-md rounded-[10px] flex flex-row items-center align-middle"
+  class="px-6 py-4 w-full h-22 dark:bg-zinc-750 shadow-md rounded-2xl flex flex-row items-center align-middle"
 >
   <!-- volume slider -->
   <SpeakerWave variation="solid" class="h-4 w-4 mr-2 text-zinc-300" />
