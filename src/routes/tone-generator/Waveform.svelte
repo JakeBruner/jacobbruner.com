@@ -15,10 +15,10 @@
       this.c = c;
       this.ctx = c.getContext("2d")!;
 
-      this.ctx.fillStyle = "#111111";
+      this.ctx.fillStyle = "#18181b"; // zinc-900
       this.ctx.fillRect(0, 0, c.width, c.height);
 
-      this.ctx.fillStyle = "#808080";
+      this.ctx.fillStyle = "#71717a"; // zinc-500
       this.ctx.fillRect(0, c.height / 2 - 1, c.width, 2);
 
       this.drawSineWave();
@@ -27,10 +27,10 @@
     drawSineWave = () => {
       this.ctx.beginPath;
       this.ctx.moveTo(0, this.c.height / 2);
-      this.ctx.lineWidth = 2;
-      this.ctx.strokeStyle = "#ffffff";
+      this.ctx.lineWidth = 3;
+      this.ctx.strokeStyle = "#10b981"; // emerald-600
       // this.ctx.fillStyle = "rgba(1,0,1,0.1)";
-      this.ctx.fillStyle = "#fafafa";
+      this.ctx.fillStyle = "#a7f3d06f"; // emerald-300/6f
 
       for (let x = 0; x < this.c.width; x++) {
         const y = Math.sin((x / this.c.width) * 2 * Math.PI);
@@ -40,7 +40,7 @@
         if (y > 0) {
           this.ctx.fillRect(x, (this.c.height / 2) * (y + 1), 1, y * (1 - this.c.height / 2));
         } else {
-          this.ctx.fillRect(x, this.c.height / 2, 1, (this.c.height / 2) * (y + 1));
+          this.ctx.fillRect(x, (y + 1) * (this.c.height / 2), 1, (this.c.height / 2) * y * -1);
         }
       }
 
@@ -53,6 +53,6 @@
   });
 </script>
 
-<div class="h-full w-32 border-3 bg-zinc-500 rounded-sm">
+<div class="h-full w-32 border-3 bg-zinc-400 rounded-sm">
   <canvas class="h-full w-full p-0.5 rounded-sm" bind:this={c} />
 </div>

@@ -1,20 +1,56 @@
 <script lang="ts">
   import { Play, Pause, ArrowDownOnSquare } from "svelte-heros-v2";
+  import { onMount } from "svelte";
   import ToneUI from "./ToneUI.svelte";
+  import c from "$lib/c";
+
+  let playing = false;
+  let ctx: AudioContext | null = null;
+
+  onMount(() => {
+    return () => {
+      ctx && ctx.close();
+      ctx = null;
+    };
+  });
+
+  const devonlyInit = () => {
+    if (ctx) return;
+    ctx = new AudioContext();
+  };
+
+  let testfreq = 440;
 </script>
 
 <svelte:head>
   <title>Tone Generator</title>
 </svelte:head>
 
-<header class="flex flex-row py-3 px-5 dark:bg-zinc-900 align-middle items-center z-10">
+<svelte:window on:mousedown={devonlyInit} />
+
+<header class="flex flex-row py-5 px-5 dark:bg-zinc-900 align-middle items-center z-10">
   <h1>Tone Generator</h1>
+  <span class={c(ctx ? "text-green-500" : "text-red-500", "text-4xl")}>.</span>
   <div class="flex-grow" />
-  <Play variation="solid" class="h-10 w-10" />
-  <Pause variation="solid" class="h-10 w-10" />
+  <button
+    class={c("rounded-md bg-inherit disabled:bg-zinc-750 transition-colors duration-10")}
+    on:click={() => (playing = !playing)}
+    disabled={playing}
+  >
+    <Play variation="solid" class={c("h-10 w-10", playing && "opacity-75")} ariaLabel="start" />
+  </button>
+  <button
+    class={c("rounded-md bg-inherit disabled:bg-zinc-750 transition-colors duration-10")}
+    on:click={() => (playing = !playing)}
+    disabled={!playing}
+  >
+    <Pause variation="solid" class={c("h-10 w-10", !playing && "opacity-75")} ariaLabel="pause" />
+  </button>
   <div class="px-2" />
   <ArrowDownOnSquare variation="outline" class="h-10 w-10 -translate-y-0.5" />
 </header>
-<main class="m-5 p-7 dark:bg-zinc-800 rounded-xl">
-  <ToneUI />
+<main>
+  <div class="mb-5 mx-5 p-7 dark:bg-zinc-800 rounded-xl min-h-[800px]">
+    <ToneUI freq={testfreq} />
+  </div>
 </main>
