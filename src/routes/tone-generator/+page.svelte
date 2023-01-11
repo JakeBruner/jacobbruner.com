@@ -3,6 +3,7 @@
   import { onMount } from "svelte";
   import ToneUI from "./ToneUI.svelte";
   import c from "$lib/c";
+  import type { Tone } from "./types";
 
   let playing = false;
   let ctx: AudioContext | null = null;
@@ -19,7 +20,10 @@
     ctx = new AudioContext();
   };
 
-  let testfreq = 440;
+  let test: Tone = {
+    frequency: 400,
+    volume: 0.5
+  };
 </script>
 
 <svelte:head>
@@ -51,6 +55,6 @@
 </header>
 <main>
   <div class="mb-5 mx-5 p-7 dark:bg-zinc-800 rounded-xl min-h-[800px]">
-    <ToneUI freq={testfreq} />
+    <ToneUI tone={test} />
   </div>
 </main>

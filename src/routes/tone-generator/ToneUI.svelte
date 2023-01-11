@@ -1,8 +1,9 @@
 <script lang="ts">
   import { SpeakerWave, SpeakerXMark } from "svelte-heros-v2";
   import Waveform from "./Waveform.svelte";
+  import type { Tone } from "./types";
 
-  export let freq = 440;
+  export let tone: Tone;
 </script>
 
 <div
@@ -10,7 +11,8 @@
 >
   <!-- volume slider -->
   <SpeakerWave variation="solid" class="h-4 w-4 mr-2 text-zinc-300" />
-  <div class="w-24 border-2 border-zinc-400 rounded-sm h-5 relative z-10">
+
+  <div class="flex-grow max-w-3xs border-2 border-zinc-400 rounded-sm h-5 relative z-10">
     <!-- TODO make the width vary with screen width -->
     <span style:width="50%" class="bg-zinc-950 h-[1.04rem] absolute -z-10 left-0" />
   </div>
@@ -26,12 +28,12 @@
   <!-- TODO handle disabled state -->
   <input
     type="numeric"
-    class="w-14 rounded-md bg-zinc-700 text-xl"
-    bind:value={freq}
-    on:wheel|preventDefault={(e) => (e.deltaY > 0 ? freq-- : freq++)}
+    class="w-14 rounded-md bg-zinc-700 text-xl text-center"
+    bind:value={tone.frequency}
+    on:wheel|preventDefault={(e) => (e.deltaY > 0 ? tone.frequency-- : tone.frequency++)}
   />
 
-  <span class="text-zinc-300 text-base">Hz</span>
+  <span class="text-zinc-300 text-base pl-1">Hz</span>
 </div>
 
 <style>
