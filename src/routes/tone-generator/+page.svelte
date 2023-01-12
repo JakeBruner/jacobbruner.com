@@ -32,6 +32,8 @@
       wave: "sine"
     });
 
+    osc.start();
+
     // console.log(tones);
     console.log("AudioContext initialized");
   };
@@ -107,6 +109,7 @@
           wave: "sine"
         });
         tones = tones;
+        osc.start();
         // console.log("There are now", tones.length, "tones");
       }}
     >
