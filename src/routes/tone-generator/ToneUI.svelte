@@ -13,6 +13,40 @@
     // tone.node.frequency.value = newFreq;
     // tone.node.frequency.setValueAtTime(newFreq, 0);
   }
+
+  let dial: HTMLDivElement;
+  let indicator: HTMLDivElement;
+
+  let pan = 0;
+
+  const handleMouseDown = () => {
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener(
+      "mouseup",
+      () => window.removeEventListener("mousemove", handleMouseMove),
+      { once: true }
+    );
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    const { left, top, width, height } = dial.getBoundingClientRect();
+    const diffX = e.clientX - (left + width / 2);
+    const diffY = e.clientY - (top + height / 2);
+    const angle =
+      Math.trunc(diffY) === 0
+        ? Math.sign(diffX) === 1
+          ? 0
+          : -180
+        : Math.atan2(diffY, diffX) * (180 / Math.PI);
+    console.log(diffY, diffY === 0);
+
+    // console.log(angle, angle <= 0);
+
+    if ((angle >= -180 && angle <= 0) || Math.trunc(angle) === 180) {
+      pan = angle * (10 / 9) + 100;
+      indicator.style.transform = `rotate(${angle + 90}deg)`;
+    }
+  };
 </script>
 
 {#if tone}
@@ -54,41 +88,26 @@
         />
         <span class="text-zinc-300 text-base pl-1">Hz</span>
         <div class="px-4" />
-        <div class="dial-container">
-          <div class="dial" id="pan-dial">
-            <div class="dial-indicator" />
+        <!-- dial -->
+        <div class="flex flex-col">
+          <div class="relative w-10 h-10 block">
+            <div
+              class="rounded-full w-full h-full border-2 border-zinc-300"
+              bind:this={dial}
+              on:mousedown={handleMouseDown}
+            >
+              <div
+                class="absolute w-1 h-5 bg-zinc-100 origin-bottom top-0 left-[18px] rounded-sm"
+                bind:this={indicator}
+              />
+            </div>
+          </div>
+          <div class="mx-auto bg-zinc-800 rounded-md px-1 mt-1 text-xs">
+            {Math.trunc(pan)}
           </div>
         </div>
       </div>
-      <Plus variation="solid" class="peer  my-auto h-5 w-5 ml-2.5 text-zinc-300 " />
+      <Plus variation="solid" class="peer my-auto h-5 w-5 ml-2.5 text-zinc-300 " />
     </div>
   </div>
 {/if}
-
-<style>
-  .dial-container {
-    width: 100px;
-    height: 100px;
-    position: relative;
-  }
-
-  .dial {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    border: 2px solid black;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-
-  .dial-indicator {
-    width: 10px;
-    height: 50px;
-    background-color: red;
-    position: absolute;
-    top: 25px;
-    left: 45px;
-    transform-origin: bottom center;
-  }
-</style>
