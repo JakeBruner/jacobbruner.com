@@ -5,7 +5,7 @@
 
   export let tone: Tone;
 
-  console.log(tone.node.frequency.value);
+  // console.log(tone.node.frequency.value);
 
   let newFreq = tone.node.frequency.value;
 
@@ -38,7 +38,7 @@
           ? 0
           : -180
         : Math.atan2(diffY, diffX) * (180 / Math.PI);
-    console.log(diffY, diffY === 0);
+    // console.log(diffY, diffY === 0);
 
     // console.log(angle, angle <= 0);
 
@@ -47,15 +47,21 @@
       indicator.style.transform = `rotate(${angle + 90}deg)`;
     }
   };
+
+  let hovering = false;
 </script>
 
 {#if tone}
   <div class="shadow-md">
     <div
-      class="w-full bg-gradient-to-tr from-zinc-700 via-zinc-700 to-zinc-600 shadow-inner z-0 rounded-2xl flex flex-row relative"
+      class="w-full bg-gradient-to-tr from-zinc-700 via-zinc-700 to-zinc-600 shadow-inner z-0 rounded-2xl flex flex-row-reverse relative"
+      style="justify-content: start;"
     >
+      <div class="h-auto flex peer -mr-2 w-10" style="justify-self: end">
+        <Plus variation="solid" class="ml-0.5 my-auto h-6 w-6 text-zinc-300" />
+      </div>
       <div
-        class=" rounded-2xl flex flex-row px-6 py-4 items-center align-middle z-10 w-[95%] peer-hover:w-[90%] transition-transform duration-150 dark:bg-zinc-750 shadow-inner"
+        class="rounded-2xl flex flex-row px-6 py-4 items-center align-middle z-10 w-[96%] peer-hover:w-[94%] transition-all duration-150 ease-in-out dark:bg-zinc-750 shadow-inner"
       >
         <!-- volume slider -->
         <SpeakerWave variation="solid" class="h-4 w-4 mr-2 text-zinc-300" />
@@ -89,7 +95,7 @@
         <span class="text-zinc-300 text-base pl-1">Hz</span>
         <div class="px-4" />
         <!-- dial -->
-        <div class="flex flex-col">
+        <div class="flex flex-col translate-y-1">
           <div class="relative w-10 h-10 block">
             <div
               class="rounded-full w-full h-full border-2 border-zinc-300"
@@ -97,8 +103,11 @@
               on:mousedown={handleMouseDown}
             >
               <div
-                class="absolute w-1 h-5 bg-zinc-100 origin-bottom top-0 left-[18px] rounded-sm"
+                class="absolute w-1 h-1/2 bg-zinc-100 origin-bottom bottom-1/2 left-[18.5px] rounded-sm z-10"
                 bind:this={indicator}
+              />
+              <div
+                class="rounded-full absolute top-0.5 left-0.5 w-[90%] h-[90%] border-4 border-dotted border-zinc-400/80 -z-10 rotate-15"
               />
             </div>
           </div>
@@ -107,7 +116,6 @@
           </div>
         </div>
       </div>
-      <Plus variation="solid" class="peer my-auto h-5 w-5 ml-2.5 text-zinc-300 " />
     </div>
   </div>
 {/if}

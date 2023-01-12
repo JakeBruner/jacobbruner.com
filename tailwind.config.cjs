@@ -52,6 +52,9 @@ module.exports = {
       maxWidth: {
         '2xs': '16rem',
         '3xs': '12rem',
+      },
+      rotate: {
+        '15': '15deg'
       }
     }
   },
