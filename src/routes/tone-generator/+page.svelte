@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Play, Pause, ArrowDownOnSquare } from "svelte-heros-v2";
+  import { Play, Pause, ArrowDownOnSquare, Plus } from "svelte-heros-v2";
   import { onMount } from "svelte";
   import ToneUI from "./ToneUI.svelte";
   import c from "$lib/c";
@@ -8,7 +8,8 @@
   let playing = false;
   let ctx: AudioContext | null = null;
 
-  let osc: OscillatorNode | null = null;
+  let uid = 0;
+  let tones: Tone[] = [];
 
   onMount(() => {
     return () => {
@@ -20,20 +21,28 @@
   const devonlyInit = () => {
     if (ctx) return;
     ctx = new AudioContext();
+
+    const osc = new OscillatorNode(ctx, { type: "sine", frequency: 400 });
+    osc.connect(ctx.destination);
+    // console.log(osc.frequency.value);
+    tones.push({
+      id: uid++,
+      node: osc,
+      isOrphan: false,
+      wave: "sine"
+    });
+
+    // console.log(tones);
+    console.log("AudioContext initialized");
   };
 
-  let test: Tone = {
-    frequency: 400,
-    volume: 0.5
-  };
-
-  $: {
-    if (ctx) {
-      osc = ctx.createOscillator();
-      osc.connect(ctx.destination);
-      osc.start();
-    }
-  }
+  // $: {
+  //   if (ctx) {
+  //     osc = ctx.createOscillator();
+  //     osc.connect(ctx.destination);
+  //     osc.start();
+  //   }
+  // }
 
   $: if (playing) {
     ctx && ctx.resume();
@@ -41,11 +50,9 @@
     ctx && ctx.suspend();
   }
 
-  $: if (osc) {
-    osc.frequency.value = test.frequency;
-    // not working
-    // a: because the gain node is not connected to the oscillator
-  }
+  // $: if (osc) {
+  //   osc.frequency.value = test.frequency;
+  // }
 
   // $: test && console.log(test.frequency);
 </script>
@@ -54,7 +61,7 @@
   <title>Tone Generator</title>
 </svelte:head>
 
-<svelte:window on:mousedown={devonlyInit} />
+<svelte:window on:mousedown|once={devonlyInit} />
 
 <header class="flex flex-row py-5 px-5 dark:bg-zinc-900 align-middle items-center z-10">
   <h1>Tone Generator</h1>
@@ -78,7 +85,36 @@
   <ArrowDownOnSquare variation="outline" class="h-10 w-10 -translate-y-0.5" />
 </header>
 <main>
-  <div class="mb-5 mx-5 p-7 dark:bg-zinc-800 rounded-3xl min-h-[800px]">
-    <ToneUI bind:tone={test} />
+  <div class="mb-5 mx-5 p-7 dark:bg-zinc-800 rounded-3xl min-h-[800px] flex flex-col space-y-4">
+    {#if tones.length > 0}
+      {#each tones as tone (tone.node)}
+        <ToneUI bind:tone />
+      {/each}
+    {/if}
+
+    <button
+      type="button"
+      class="relative block w-full rounded-2xl border-2 border-dashed border-zinc-300 dark:border-zinc-400 text-center  hover:border-zinc-400/80"
+      style="height: 98px;"
+      on:click={() => {
+        if (!ctx) return;
+        const osc = new OscillatorNode(ctx, { type: "sine", frequency: 400 });
+        osc.connect(ctx.destination);
+        tones.push({
+          id: uid++,
+          node: osc,
+          isOrphan: false,
+          wave: "sine"
+        });
+        tones = tones;
+        // console.log("There are now", tones.length, "tones");
+      }}
+    >
+      <Plus class="mx-auto text-zinc-200 hover" />
+
+      <span class="mt-2 block text-sm font-medium text-zinc-200 dark:text-zinc-300"
+        >Add a new tone</span
+      >
+    </button>
   </div>
 </main>

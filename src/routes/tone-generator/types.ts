@@ -1,7 +1,7 @@
 export interface Tone {
-  frequency: number;
-  volume: number;
-  // waveform: Wave;
-  // Children: Tone[] | undefined;
+  id: number;
+  node: OscillatorNode;
+  isOrphan: boolean;
+  wave?: string; // TODO custom type;
   // isOrphan: boolean;
 }
