@@ -92,7 +92,7 @@
   <span class={c(ctx ? "text-green-500" : "text-red-500", "text-4xl")}>.</span>
   <div class="flex-grow min-width-none" />
   <!-- fft canvas -->
-  <canvas class="w-40 h-10 border-b border-zinc-600" bind:this={fftcanvas} />
+  <canvas class="w-40 h-10 border-b border-zinc-600 " bind:this={fftcanvas} />
   <div class="flex-grow flex-shrink min-width-none" />
   <button
     class={c("rounded-md bg-inherit disabled:bg-zinc-750 transition-colors duration-10")}

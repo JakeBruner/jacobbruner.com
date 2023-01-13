@@ -2,6 +2,7 @@
   import { SpeakerWave, SpeakerXMark, Plus } from "svelte-heros-v2";
   import Waveform from "./Waveform.svelte";
   import type { Tone } from "./types";
+  import c from "$lib/c";
 
   export let tone: Tone;
 
@@ -11,8 +12,8 @@
   let dial: HTMLDivElement;
   let indicator: HTMLDivElement;
 
-  let pan = 0;
-  let gain = 0;
+  let volume: HTMLSpanElement;
+  let volumeParent: HTMLDivElement;
 
   const handleMouseDown = () => {
     window.addEventListener("mousemove", handleMouseMove);
@@ -42,35 +43,75 @@
       indicator.style.transform = `rotate(${angle + 90}deg)`;
     }
   };
+
+  const handleVolume = (e: MouseEvent) => {
+    const { left, width } = volumeParent.getBoundingClientRect();
+    const { clientX } = e;
+    const x = clientX - left;
+    const percent = x / width;
+    // console.log(percent);
+    tone.gainNode.gain.value = percent;
+    volume.style.width = `${percent}`;
+  };
+
+  let storedGain: number | null = null;
 </script>
 
 {#if tone}
   <div class="shadow-md">
     <div
-      class="w-full bg-gradient-to-tr from-zinc-700 via-zinc-700 to-zinc-600 shadow-inner z-0 rounded-2xl flex flex-row-reverse relative"
-      style="justify-content: start;"
+      class="w-full bg-gradient-to-tr from-zinc-700 via-zinc-700 to-zinc-600 shadow-inner z-0 rounded-2xl flex flex-row-reverse relative justify-endf"
     >
-      <div class="h-auto flex peer -mr-2 w-10" style="justify-self: end">
+      <div class="h-auto flex peer -mr-2 w-10 place-self-start">
         <Plus variation="solid" class="ml-0.5 my-auto h-6 w-6 text-zinc-300" />
       </div>
       <div
         class="rounded-2xl flex flex-row px-6 py-4 items-center align-middle z-10 w-[96%] peer-hover:w-[94%] transition-all duration-150 ease-in-out dark:bg-zinc-750 shadow-inner"
       >
         <!-- volume slider -->
-        <SpeakerWave variation="solid" class="h-4 w-4 mr-2 text-zinc-300" />
-        <div class="flex-grow max-w-3xs border-2 border-zinc-400 rounded-sm h-5 relative z-10">
-          <!-- TODO make the width vary with screen width -->
+
+        <button>
+          {#if tone.gainNode.gain.value === 0}
+            <SpeakerXMark
+              variation="solid"
+              class="h-4 w-4 mr-2 text-zinc-300"
+              on:click={() => {
+                tone.gainNode.gain.value = storedGain ?? 0.5;
+                storedGain = null;
+              }}
+            />
+          {:else}
+            <SpeakerWave
+              variation="solid"
+              class="h-4 w-4 mr-2 text-zinc-300"
+              on:click={() => {
+                storedGain = tone.gainNode.gain.value;
+                tone.gainNode.gain.value = 0;
+              }}
+            />
+          {/if}
+        </button>
+        <div
+          class={c(
+            "flex-grow max-w-3xs border-2 border-zinc-400 rounded-sm h-5 relative z-10",
+            tone.gainNode.gain.value === 0 ? "cursor-not-allowed" : "cursor-pointer"
+          )}
+          bind:this={volumeParent}
+        >
           <span
-            style:width={tone.gainNode.gain.value + "%"}
-            class="bg-zinc-950 h-[1.04rem] absolute -z-10 left-0"
-            on:mousedown={(e) => {
-              const { left, width } = e.currentTarget.getBoundingClientRect();
-              const { clientX } = e;
-              const x = clientX - left;
-              const percent = x / width;
-              console.log(percent);
-              tone.gainNode.gain.value = percent;
-              e.currentTarget.style.width = `${percent}`;
+            style:width={(tone.gainNode.gain.value || storedGain || 0) * 100 + "%"}
+            bind:this={volume}
+            class={c(
+              "bg-zinc-950 h-[1.04rem] absolute -z-10 left-0",
+              tone.gainNode.gain.value === 0 && "opacity-50 "
+            )}
+            on:mousedown={() => {
+              window.addEventListener("mousemove", handleVolume);
+              window.addEventListener(
+                "mouseup",
+                () => window.removeEventListener("mousemove", handleVolume),
+                { once: true }
+              );
             }}
           />
         </div>
