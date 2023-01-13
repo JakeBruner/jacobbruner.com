@@ -6,45 +6,53 @@
   import type { Tone } from "./types";
 
   let playing = false;
-  let ctx: AudioContext | null = null;
+  let ctx: AudioContext;
+  let analyzer: AnalyserNode;
+  let bufferLength: number;
+  let fftcanvas: HTMLCanvasElement;
+  let fftctx: CanvasRenderingContext2D;
+  let frequencies: Uint8Array;
+  let barwidth: number;
 
   let uid = 0;
   let tones: Tone[] = [];
 
   onMount(() => {
+    // @ts-expect-error
+    ctx = new (AudioContext || window.webkitAudioContext)();
+    analyzer = new AnalyserNode(ctx, { fftSize: 2048 });
+    bufferLength = analyzer.frequencyBinCount;
+    frequencies = new Uint8Array(bufferLength);
+    barwidth = (fftcanvas.width / bufferLength) * 2;
+
+    fftctx = fftcanvas.getContext("2d")!;
+
     return () => {
       ctx && ctx.close();
-      ctx = null;
     };
   });
 
   const devonlyInit = () => {
-    if (ctx) return;
-    ctx = new AudioContext();
-
-    const osc = new OscillatorNode(ctx, { type: "sine", frequency: 400 });
-    osc.connect(ctx.destination);
+    const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: 400 });
+    const gainNode = new GainNode(ctx);
+    const panNode = new StereoPannerNode(ctx);
+    oscNode.connect(panNode).connect(gainNode).connect(analyzer).connect(ctx.destination);
     // console.log(osc.frequency.value);
     tones.push({
       id: uid++,
-      node: osc,
+      oscNode,
+      gainNode,
+      panNode,
       isOrphan: false,
       wave: "sine"
     });
 
-    osc.start();
+    oscNode.start();
+    requestAnimationFrame(animate);
 
     // console.log(tones);
     console.log("AudioContext initialized");
   };
-
-  // $: {
-  //   if (ctx) {
-  //     osc = ctx.createOscillator();
-  //     osc.connect(ctx.destination);
-  //     osc.start();
-  //   }
-  // }
 
   $: if (playing) {
     ctx && ctx.resume();
@@ -52,11 +60,25 @@
     ctx && ctx.suspend();
   }
 
-  // $: if (osc) {
-  //   osc.frequency.value = test.frequency;
-  // }
+  const SF = 1 / 3.5;
 
-  // $: test && console.log(test.frequency);
+  const animate = () => {
+    if (ctx.state === "running" && fftcanvas) {
+      fftctx.fillStyle = "white";
+      let x = 0;
+      fftctx.clearRect(0, 0, fftcanvas.width, fftcanvas.height);
+      analyzer.getByteFrequencyData(frequencies);
+      for (let i = 0; i < bufferLength; i++) {
+        let barheight = frequencies[i] * SF;
+        fftctx.fillRect(x, fftcanvas.height - barheight, barwidth, barheight);
+        x += barwidth;
+      }
+
+      requestAnimationFrame(animate);
+    } else {
+      requestAnimationFrame(animate);
+    }
+  };
 </script>
 
 <svelte:head>
@@ -68,7 +90,10 @@
 <header class="flex flex-row py-5 px-5 dark:bg-zinc-900 align-middle items-center z-10">
   <h1>Tone Generator</h1>
   <span class={c(ctx ? "text-green-500" : "text-red-500", "text-4xl")}>.</span>
-  <div class="flex-grow" />
+  <div class="flex-grow min-width-none" />
+  <!-- fft canvas -->
+  <canvas class="w-40 h-10 border-b border-zinc-600" bind:this={fftcanvas} />
+  <div class="flex-grow flex-shrink min-width-none" />
   <button
     class={c("rounded-md bg-inherit disabled:bg-zinc-750 transition-colors duration-10")}
     on:click={() => (playing = !playing)}
@@ -89,7 +114,7 @@
 <main>
   <div class="mb-5 mx-5 p-7 dark:bg-zinc-800 rounded-3xl min-h-[800px] flex flex-col space-y-4">
     {#if tones.length > 0}
-      {#each tones as tone (tone.node)}
+      {#each tones as tone (tone.id)}
         <ToneUI bind:tone />
       {/each}
     {/if}
@@ -100,16 +125,20 @@
       style="height: 98px;"
       on:click={() => {
         if (!ctx) return;
-        const osc = new OscillatorNode(ctx, { type: "sine", frequency: 400 });
-        osc.connect(ctx.destination);
+        const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: 400 });
+        const gainNode = new GainNode(ctx);
+        const panNode = new StereoPannerNode(ctx);
+        oscNode.connect(panNode).connect(gainNode).connect(analyzer).connect(ctx.destination);
         tones.push({
           id: uid++,
-          node: osc,
+          oscNode,
+          gainNode,
+          panNode,
           isOrphan: false,
           wave: "sine"
         });
         tones = tones;
-        osc.start();
+        oscNode.start();
         // console.log("There are now", tones.length, "tones");
       }}
     >

@@ -5,19 +5,14 @@
 
   export let tone: Tone;
 
-  // console.log(tone.node.frequency.value);
-
-  let newFreq = tone.node.frequency.value;
-
-  $: if (newFreq !== tone.node.frequency.value) {
-    // tone.node.frequency.value = newFreq;
-    // tone.node.frequency.setValueAtTime(newFreq, 0);
-  }
+  //TODO make a function prop that is passed down from page
+  // which constructs a new child node from the existing one that is linked.
 
   let dial: HTMLDivElement;
   let indicator: HTMLDivElement;
 
   let pan = 0;
+  let gain = 0;
 
   const handleMouseDown = () => {
     window.addEventListener("mousemove", handleMouseMove);
@@ -43,12 +38,10 @@
     // console.log(angle, angle <= 0);
 
     if ((angle >= -180 && angle <= 0) || Math.trunc(angle) === 180) {
-      pan = angle * (10 / 9) + 100;
+      tone.panNode.pan.value = (angle * (10 / 9) + 100) / 100;
       indicator.style.transform = `rotate(${angle + 90}deg)`;
     }
   };
-
-  let hovering = false;
 </script>
 
 {#if tone}
@@ -68,14 +61,16 @@
         <div class="flex-grow max-w-3xs border-2 border-zinc-400 rounded-sm h-5 relative z-10">
           <!-- TODO make the width vary with screen width -->
           <span
-            style:width="75%"
+            style:width={tone.gainNode.gain.value + "%"}
             class="bg-zinc-950 h-[1.04rem] absolute -z-10 left-0"
             on:mousedown={(e) => {
               const { left, width } = e.currentTarget.getBoundingClientRect();
               const { clientX } = e;
               const x = clientX - left;
               const percent = x / width;
-              // tone.node.gain.value = percent;
+              console.log(percent);
+              tone.gainNode.gain.value = percent;
+              e.currentTarget.style.width = `${percent}`;
             }}
           />
         </div>
@@ -88,9 +83,9 @@
         <input
           type="numeric"
           class="w-14 rounded-md bg-zinc-700 text-xl text-center touch-none"
-          bind:value={tone.node.frequency.value}
+          bind:value={tone.oscNode.frequency.value}
           on:wheel|preventDefault={(e) =>
-            e.deltaY > 0 ? tone.node.frequency.value-- : tone.node.frequency.value++}
+            e.deltaY > 0 ? tone.oscNode.frequency.value-- : tone.oscNode.frequency.value++}
         />
         <span class="text-zinc-300 text-base pl-1">Hz</span>
         <div class="px-4" />
@@ -112,7 +107,7 @@
             </div>
           </div>
           <div class="mx-auto bg-zinc-800 rounded-md px-1 mt-1 text-xs">
-            {Math.trunc(pan)}
+            {Math.trunc(tone.panNode.pan.value * 100)}
           </div>
         </div>
       </div>

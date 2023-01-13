@@ -1,6 +1,8 @@
 export interface Tone {
   id: number;
-  node: OscillatorNode;
+  oscNode: OscillatorNode;
+  gainNode: GainNode;
+  panNode: StereoPannerNode;
   isOrphan: boolean;
   wave?: string; // TODO custom type;
   // isOrphan: boolean;
