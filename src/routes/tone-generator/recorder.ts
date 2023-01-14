@@ -1,23 +1,52 @@
 import type { Tone } from "./type";
 
+const EncodeTypes = ["ogg", "mp3", "flac", "webm"] as const;
+
+type EncodeType = typeof EncodeTypes[number];
+
 export default class ToneRecorder {
   private ctx: AudioContext;
   private outputNode: MediaStreamAudioDestinationNode;
   private mediaRecorder: MediaRecorder;
+  private encodetype: EncodeType;
   tones: Tone[];
 
-  constructor(audioctx: AudioContext, tones: Tone[]) {
+  constructor(audioctx: AudioContext, tones: Tone[], encodetype: EncodeType) {
     this.ctx = audioctx;
     this.tones = tones;
     this.outputNode = this.ctx.createMediaStreamDestination();
+    // this.mediaRecorder = new MediaRecorder(this.outputNode.stream, {
+    //   mimeType: "audio/ogg;"
+    // });
+
+    //check supported encodes
+    const supportedEncodes: EncodeType[] = [];
+    EncodeTypes.forEach((e) => {
+      if (MediaRecorder.isTypeSupported(`audio/${e};`)) {
+        supportedEncodes.push(e);
+      }
+    });
+
+    console.log("supported encodes: ", supportedEncodes);
+
+    if (supportedEncodes.length === 0) {
+      throw new Error("no supported encodes");
+    }
+
+    if (!supportedEncodes.includes(encodetype)) {
+      console.error(
+        `invalid encode type, defaulting to ${
+          supportedEncodes[0]
+        }. supported encodes: ${supportedEncodes.join(",")}`
+      );
+      encodetype = supportedEncodes[0];
+    }
+
+    this.encodetype = encodetype;
     this.mediaRecorder = new MediaRecorder(this.outputNode.stream, {
-      mimeType: "audio/ogg;"
+      mimeType: `audio/${encodetype};`
     });
   }
-
-  // public connectStream(stream: MediaStream) {
-  //   this.outputNode.connect(this.ctx.destination);
-  // }
 
   public startRecording() {
     this.tones.forEach((t) => {
@@ -46,7 +75,20 @@ export default class ToneRecorder {
       console.log("waiting for stop");
       this.mediaRecorder.onstop = (e: Event) => {
         console.log("stopped");
-        const blob = new Blob(chunks, { type: "audio/ogg;" });
+
+        let blob: Blob;
+
+        if (this.encodetype === "ogg") {
+          blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
+        } else if (this.encodetype === "mp3") {
+          blob = new Blob(chunks, { type: "audio/mp3; codecs=mp3" });
+        } else if (this.encodetype === "flac") {
+          blob = new Blob(chunks, { type: "audio/flac; codecs=flac" });
+        } else if (this.encodetype === "webm") {
+          blob = new Blob(chunks, { type: "audio/webm; codecs=opus" });
+        } else {
+          throw new Error(`unsupported encode type: ${this.encodetype}`);
+        }
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         document.body.appendChild(a);

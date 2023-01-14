@@ -76,7 +76,7 @@
 
     // recorder.connectOscillator(oscNode);
 
-    recorder = new ToneRecorder(ctx, tones);
+    recorder = new ToneRecorder(ctx, tones, "ogg");
 
     // console.log(tones);
     console.log("AudioContext initialized");

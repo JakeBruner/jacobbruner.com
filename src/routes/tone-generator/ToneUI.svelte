@@ -1,7 +1,7 @@
 <script lang="ts">
   import { SpeakerWave, SpeakerXMark, Plus } from "svelte-heros-v2";
   import Waveform from "./Waveform.svelte";
-  import type { Tone } from "./types";
+  import type { Tone } from "./type";
   import c from "$lib/c";
 
   export let tone: Tone;
