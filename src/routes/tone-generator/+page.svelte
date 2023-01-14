@@ -3,11 +3,11 @@
   import { onMount } from "svelte";
   import ToneUI from "./ToneUI.svelte";
   import c from "$lib/c";
-  import type { Tone } from "./types";
+  import type { Tone } from "./type";
 
-  import Recorder from "./recorder";
+  import ToneRecorder from "./recorder";
 
-  let recorder: Recorder;
+  let recorder: ToneRecorder;
 
   let playing = false;
   let ctx: AudioContext;
@@ -48,8 +48,6 @@
     //     console.log(err);
     //   });
 
-    recorder = new Recorder();
-
     return () => {
       ctx && ctx.close();
     };
@@ -59,8 +57,9 @@
     const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: 400 });
     const gainNode = new GainNode(ctx);
     const panNode = new StereoPannerNode(ctx);
+
     oscNode.connect(panNode).connect(gainNode).connect(analyzer).connect(ctx.destination);
-    // console.log(osc.frequency.value);
+
     tones.push({
       id: uid++,
       oscNode,
@@ -71,9 +70,13 @@
     });
 
     oscNode.start();
+
+    // oscNode.start();
     requestAnimationFrame(animate);
 
-    recorder.connectOscillator(oscNode);
+    // recorder.connectOscillator(oscNode);
+
+    recorder = new ToneRecorder(ctx, tones);
 
     // console.log(tones);
     console.log("AudioContext initialized");
@@ -145,7 +148,20 @@
     <Pause variation="solid" class={c("h-10 w-10", !playing && "opacity-75")} ariaLabel="pause" />
   </button>
   <div class="px-2" />
-  <ArrowDownOnSquare variation="outline" class="h-10 w-10 -translate-y-0.5" />
+  <ArrowDownOnSquare
+    on:click={() => {
+      // tones.forEach((t) => {
+      //   t.oscNode.stop();
+      // });
+      recorder.startRecording();
+      recorder.saveRecording("tonegen-" + Date.now().toString());
+      // tones.forEach((t) => {
+      //   t.oscNode.start();
+      // });
+    }}
+    variation="outline"
+    class="h-10 w-10 -translate-y-0.5"
+  />
   <div class="px-2" />
   <button class="rounded-full w-5 h-5 bg-zinc-200" on:click={() => recorder.stopRecording()} />
 </header>
@@ -167,6 +183,7 @@
         const gainNode = new GainNode(ctx);
         const panNode = new StereoPannerNode(ctx);
         oscNode.connect(panNode).connect(gainNode).connect(analyzer).connect(ctx.destination);
+
         tones.push({
           id: uid++,
           oscNode,
@@ -178,7 +195,7 @@
         tones = tones;
         oscNode.start();
 
-        recorder.connectOscillator(oscNode);
+        // recorder.connectOscillator(oscNode);
         // console.log("There are now", tones.length, "tones");
       }}
     >
@@ -189,4 +206,5 @@
       >
     </button>
   </div>
+  <button class="py-2 px-4 rounded-md bg-zinc-200" on:click={() => {}}> Stop Recording </button>
 </main>
