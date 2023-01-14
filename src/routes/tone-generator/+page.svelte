@@ -79,13 +79,24 @@
       requestAnimationFrame(animate);
     }
   };
+
+  typeof KeyboardEvent;
 </script>
 
 <svelte:head>
   <title>Tone Generator</title>
 </svelte:head>
 
-<svelte:window on:mousedown|once={devonlyInit} />
+<svelte:window
+  on:mousedown|once={devonlyInit}
+  on:keypress|={(e) => {
+    // console.log(e);
+    if (e.code === "Space") {
+      e.preventDefault();
+      playing = ctx.state === "suspended";
+    }
+  }}
+/>
 
 <header class="flex flex-row py-5 px-5 dark:bg-zinc-900 align-middle items-center z-10">
   <h1>Tone Generator</h1>

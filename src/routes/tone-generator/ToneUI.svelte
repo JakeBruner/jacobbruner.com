@@ -48,8 +48,11 @@
     const { left, width } = volumeParent.getBoundingClientRect();
     const { clientX } = e;
     const x = clientX - left;
-    const percent = x / width;
-    // console.log(percent);
+    let percent = x / width;
+
+    if (percent > 1) percent = 1;
+    if (percent < 0) percent = 0;
+
     tone.gainNode.gain.value = percent;
     volume.style.width = `${percent}`;
   };
@@ -60,10 +63,15 @@
 {#if tone}
   <div class="shadow-md">
     <div
-      class="w-full bg-gradient-to-tr from-zinc-700 via-zinc-700 to-zinc-600 shadow-inner z-0 rounded-2xl flex flex-row-reverse relative justify-endf"
+      class="w-full bg-gradient-to-tr from-zinc-700 via-zinc-700 to-zinc-600 shadow-inner z-0 rounded-2xl flex flex-row-reverse relative justify-between align-middle"
     >
-      <div class="h-auto flex peer -mr-2 w-10 place-self-start">
-        <Plus variation="solid" class="ml-0.5 my-auto h-6 w-6 text-zinc-300" />
+      <div
+        class="flex peer  hover:scale-110 transition-transform ease-in-out duration-150 -mr-2 w-10"
+      >
+        <Plus
+          variation="solid"
+          class="ml-0.5 peer-hover:bg-red-500 my-auto h-6 w-6 text-zinc-300"
+        />
       </div>
       <div
         class="rounded-2xl flex flex-row px-6 py-4 items-center align-middle z-10 w-[96%] peer-hover:w-[94%] transition-all duration-150 ease-in-out dark:bg-zinc-750 shadow-inner"
