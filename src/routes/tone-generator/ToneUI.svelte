@@ -130,8 +130,8 @@
         <!-- frequency picker -->
         <!-- TODO handle disabled state -->
         <input
-          type="numeric"
-          class="w-14 rounded-md bg-zinc-700 text-xl text-center touch-none"
+          type="number"
+          class="w-24 rounded-md bg-zinc-700 text-xl text-center touch-none"
           bind:value={tone.oscNode.frequency.value}
           on:wheel|preventDefault={(e) =>
             e.deltaY > 0 ? tone.oscNode.frequency.value-- : tone.oscNode.frequency.value++}
@@ -163,3 +163,17 @@
     </div>
   </div>
 {/if}
+
+<style>
+  /* Chrome, Safari, Edge, Opera */
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+</style>

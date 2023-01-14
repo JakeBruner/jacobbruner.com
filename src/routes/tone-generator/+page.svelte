@@ -5,6 +5,10 @@
   import c from "$lib/c";
   import type { Tone } from "./types";
 
+  import Recorder from "./recorder";
+
+  let recorder: Recorder;
+
   let playing = false;
   let ctx: AudioContext;
   let analyzer: AnalyserNode;
@@ -26,6 +30,25 @@
     barwidth = (fftcanvas.width / bufferLength) * 2;
 
     fftctx = fftcanvas.getContext("2d")!;
+
+    // // get user media
+    // navigator.mediaDevices
+    //   .getUserMedia({ audio: {
+    //     echoCancellation: false,
+    //     noiseSuppression: false,
+    //     autoGainControl: false,
+    //     latency: 0
+    //   } })
+    //   .then((stream) => {
+    //     recordedStream = stream;
+    //     console.log("got stream");
+    //   })
+    //   .catch((err) => {
+    //     alert("Could not get audio input");
+    //     console.log(err);
+    //   });
+
+    recorder = new Recorder();
 
     return () => {
       ctx && ctx.close();
@@ -49,6 +72,8 @@
 
     oscNode.start();
     requestAnimationFrame(animate);
+
+    recorder.connectOscillator(oscNode);
 
     // console.log(tones);
     console.log("AudioContext initialized");
@@ -121,6 +146,8 @@
   </button>
   <div class="px-2" />
   <ArrowDownOnSquare variation="outline" class="h-10 w-10 -translate-y-0.5" />
+  <div class="px-2" />
+  <button class="rounded-full w-5 h-5 bg-zinc-200" on:click={() => recorder.stopRecording()} />
 </header>
 <main>
   <div class="mb-5 mx-5 p-7 dark:bg-zinc-800 rounded-3xl min-h-[800px] flex flex-col space-y-4">
@@ -150,6 +177,8 @@
         });
         tones = tones;
         oscNode.start();
+
+        recorder.connectOscillator(oscNode);
         // console.log("There are now", tones.length, "tones");
       }}
     >
