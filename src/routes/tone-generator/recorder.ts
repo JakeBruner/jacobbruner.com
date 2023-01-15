@@ -101,4 +101,82 @@ export default class ToneRecorder {
       };
     });
   }
+
+  public async saveRecordingAsWav(filename: string) {
+    console.log("saving recording as wav");
+    const chunks: Blob[] = [];
+    this.mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+
+    return new Promise((resolve) => {
+      console.log("waiting for stop");
+      this.mediaRecorder.onstop = async (e) => {
+        console.log("stopped");
+
+        const blob = new Blob(chunks, { type: "audio/ogg;" });
+
+        const arrayBuffer = await blob.arrayBuffer();
+
+        const audioBuffer = this.ctx.decodeAudioData(
+          arrayBuffer,
+          () => {
+            console.log("decoded");
+          },
+          (e) => {
+            console.error("decode error", e);
+          }
+        );
+
+        const blob2 = audioBufferToWav(await audioBuffer);
+
+        const url = window.URL.createObjectURL(blob2);
+        const a = document.createElement("a");
+        document.body.appendChild(a);
+        a.style.display = "none";
+        a.href = url;
+        a.download = filename;
+        a.click();
+        window.URL.revokeObjectURL(url);
+        resolve(e);
+      };
+    });
+  }
 }
+
+const audioBufferToWav = (buffer: AudioBuffer) => {
+  const numChannels = buffer.numberOfChannels;
+  const sampleRate = buffer.sampleRate;
+  const bitDepth = 32;
+  const samples = buffer.getChannelData(0);
+  const bufferLength = samples.byteLength;
+
+  const wavData = new Float32Array(44 + bufferLength);
+  const view = new DataView(wavData.buffer);
+
+  // write the wav header
+  // 0x46464952 = 1380533830 = "RIFF"
+  view.setUint32(0, 1380533830, false); // "RIFF"
+  view.setUint32(4, 36 + bufferLength, true); // file length - 8
+  // 0x45564157 = 1163280727 = "WAVE"
+  view.setUint32(8, 1163280727, false); // "WAVE"
+
+  // fmt sub-chunk
+  // 0x20746d66 = 544501094 = "fmt "
+  view.setUint32(12, 544501094, false); // "fmt "
+  view.setUint32(16, 16, true); // sub-chunk size
+  view.setUint16(20, 1, true); // audio format (1 = PCM)
+  view.setUint16(22, numChannels, true); // number of channels
+  view.setUint32(24, sampleRate, true); // sample rate
+  view.setUint32(28, (sampleRate * numChannels * bitDepth) / 8, true); // byte rate
+  view.setUint16(32, (numChannels * bitDepth) / 8, true); // block align
+  view.setUint16(34, bitDepth, true); // bits per sample
+
+  // data sub-chunk
+  // 0x61746164 = 1635017060 = "data"
+  view.setUint32(36, 1635017060, false); // "data"
+  view.setUint32(40, bufferLength, true); // sub-chunk size
+
+  // write the PCM samples
+  wavData.set(samples, 44);
+
+  return new Blob([view], { type: "audio/wav" });
+};

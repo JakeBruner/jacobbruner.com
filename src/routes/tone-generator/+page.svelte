@@ -154,7 +154,8 @@
       //   t.oscNode.stop();
       // });
       recorder.startRecording();
-      recorder.saveRecording("tonegen-" + Date.now().toString());
+      // recorder.saveRecording("tonegen-" + Date.now().toString());
+      recorder.saveRecordingAsWav("tonegen-" + Date.now().toString());
       // tones.forEach((t) => {
       //   t.oscNode.start();
       // });
