@@ -142,41 +142,101 @@ export default class ToneRecorder {
   }
 }
 
-const audioBufferToWav = (buffer: AudioBuffer) => {
-  const numChannels = buffer.numberOfChannels;
-  const sampleRate = buffer.sampleRate;
-  const bitDepth = 32;
-  const samples = buffer.getChannelData(0);
-  const bufferLength = samples.byteLength;
+type DecodeOptions = {
+  sampleRate: number;
+  numChannels: number;
+  numFrames: number;
+  isFloat: boolean;
+};
 
-  const wavData = new Float32Array(44 + bufferLength);
-  const view = new DataView(wavData.buffer);
+const audioBufferToWav = (buffer: AudioBuffer): Blob => {
+  const [left, right] = [buffer.getChannelData(0), buffer.getChannelData(1)];
 
-  // write the wav header
-  // 0x46464952 = 1380533830 = "RIFF"
-  view.setUint32(0, 1380533830, false); // "RIFF"
-  view.setUint32(4, 36 + bufferLength, true); // file length - 8
-  // 0x45564157 = 1163280727 = "WAVE"
-  view.setUint32(8, 1163280727, false); // "WAVE"
+  // interleave left and right channels
+  const interleaved = new Float32Array(left.length + right.length);
+  for (let i = 0; i < left.length; i++) {
+    interleaved[i * 2] = left[i];
+    interleaved[i * 2 + 1] = right[i];
+  }
 
-  // fmt sub-chunk
-  // 0x20746d66 = 544501094 = "fmt "
-  view.setUint32(12, 544501094, false); // "fmt "
-  view.setUint32(16, 16, true); // sub-chunk size
-  view.setUint16(20, 1, true); // audio format (1 = PCM)
-  view.setUint16(22, numChannels, true); // number of channels
-  view.setUint32(24, sampleRate, true); // sample rate
-  view.setUint32(28, (sampleRate * numChannels * bitDepth) / 8, true); // byte rate
-  view.setUint16(32, (numChannels * bitDepth) / 8, true); // block align
-  view.setUint16(34, bitDepth, true); // bits per sample
+  const wavBytes = getWavBytes(interleaved.buffer, {
+    isFloat: true,
+    numChannels: 2,
+    sampleRate: buffer.sampleRate
+  });
 
-  // data sub-chunk
-  // 0x61746164 = 1635017060 = "data"
-  view.setUint32(36, 1635017060, false); // "data"
-  view.setUint32(40, bufferLength, true); // sub-chunk size
+  return new Blob([wavBytes], { type: "audio/wav" });
+};
 
-  // write the PCM samples
-  wavData.set(samples, 44);
+const writeWavHeader = (options: DecodeOptions) => {
+  const { sampleRate, numChannels, numFrames, isFloat } = options;
 
-  return new Blob([view], { type: "audio/wav" });
+  const bytesPerSample = isFloat ? 4 : 2;
+  const format = isFloat ? 3 : 1; // https://i.stack.imgur.com/BuSmb.png
+
+  const blockAlign = numChannels * bytesPerSample;
+  const byteRate = sampleRate * blockAlign;
+  const dataSize = numFrames * blockAlign;
+
+  const buffer = new ArrayBuffer(44);
+  const view = new DataView(buffer);
+
+  let p = 0;
+
+  function writestring(s: string) {
+    for (let i = 0; i < s.length; i++) {
+      view.setUint8(p, s.charCodeAt(i));
+      p++;
+    }
+  }
+  function writeUint32(d: number) {
+    view.setUint32(p, d, true);
+    p += 4;
+  }
+  function writeUint16(d: number) {
+    view.setUint16(p, d, true);
+    p += 2;
+  }
+
+  writestring("RIFF"); // ChunkID
+  writeUint32(36 + dataSize); // ChunkSize
+  writestring("WAVE"); // Format
+  writestring("fmt "); // Subchunk1ID
+  writeUint32(16); // Subchunk1Size
+  writeUint16(format); // AudioFormat
+  writeUint16(numChannels); // NumChannels
+  writeUint32(sampleRate); // SampleRate
+  writeUint32(byteRate); // ByteRate
+  writeUint16(blockAlign); // BlockAlign
+  writeUint16(bytesPerSample * 8); // BitsPerSample
+  writestring("data"); // Subchunk2ID
+  writeUint32(dataSize); // Subchunk2Size
+
+  return new Uint8Array(buffer);
+};
+
+/**
+ * @returns {Uint8Array} wav bytes
+ */
+const getWavBytes = (
+  buffer: ArrayBufferLike,
+  options: Omit<DecodeOptions, "numFrames"> = {
+    sampleRate: 44100,
+    numChannels: 2,
+    isFloat: false
+  }
+) => {
+  const type = options.isFloat ? Float32Array : Uint16Array;
+  const numFrames = buffer.byteLength / type.BYTES_PER_ELEMENT;
+
+  const headerBytes = writeWavHeader({
+    ...options,
+    numFrames
+  });
+  const wavBytes = new Uint8Array(headerBytes.length + buffer.byteLength);
+
+  wavBytes.set(headerBytes, 0);
+  wavBytes.set(new Uint8Array(buffer), headerBytes.length);
+
+  return wavBytes;
 };
