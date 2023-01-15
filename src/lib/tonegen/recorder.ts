@@ -4,6 +4,8 @@ const EncodeTypes = ["ogg", "mp3", "flac", "webm"] as const;
 
 type EncodeType = typeof EncodeTypes[number];
 
+import { audioBufferToWav } from "./wav";
+
 export default class ToneRecorder {
   private ctx: AudioContext;
   private outputNode: MediaStreamAudioDestinationNode;
@@ -112,7 +114,9 @@ export default class ToneRecorder {
       this.mediaRecorder.onstop = async (e) => {
         console.log("stopped");
 
-        const blob = new Blob(chunks, { type: "audio/ogg;" });
+        // arbitrary encoding: whatever is native to the browser
+        const blob = new Blob(chunks, { type: `audio/${this.encodetype};` });
+        console.log("converting to audio buffer using intermediary format", this.encodetype);
 
         const arrayBuffer = await blob.arrayBuffer();
 
@@ -126,7 +130,7 @@ export default class ToneRecorder {
           }
         );
 
-        const blob2 = audioBufferToWav(await audioBuffer);
+        const blob2 = audioBufferToWav(await audioBuffer, { isFloat: false });
 
         const url = window.URL.createObjectURL(blob2);
         const a = document.createElement("a");
@@ -141,102 +145,3 @@ export default class ToneRecorder {
     });
   }
 }
-
-type DecodeOptions = {
-  sampleRate: number;
-  numChannels: number;
-  numFrames: number;
-  isFloat: boolean;
-};
-
-const audioBufferToWav = (buffer: AudioBuffer): Blob => {
-  const [left, right] = [buffer.getChannelData(0), buffer.getChannelData(1)];
-
-  // interleave left and right channels
-  const interleaved = new Float32Array(left.length + right.length);
-  for (let i = 0; i < left.length; i++) {
-    interleaved[i * 2] = left[i];
-    interleaved[i * 2 + 1] = right[i];
-  }
-
-  const wavBytes = getWavBytes(interleaved.buffer, {
-    isFloat: true,
-    numChannels: 2,
-    sampleRate: buffer.sampleRate
-  });
-
-  return new Blob([wavBytes], { type: "audio/wav" });
-};
-
-const writeWavHeader = (options: DecodeOptions) => {
-  const { sampleRate, numChannels, numFrames, isFloat } = options;
-
-  const bytesPerSample = isFloat ? 4 : 2;
-  const format = isFloat ? 3 : 1; // https://i.stack.imgur.com/BuSmb.png
-
-  const blockAlign = numChannels * bytesPerSample;
-  const byteRate = sampleRate * blockAlign;
-  const dataSize = numFrames * blockAlign;
-
-  const buffer = new ArrayBuffer(44);
-  const view = new DataView(buffer);
-
-  let p = 0;
-
-  function writestring(s: string) {
-    for (let i = 0; i < s.length; i++) {
-      view.setUint8(p, s.charCodeAt(i));
-      p++;
-    }
-  }
-  function writeUint32(d: number) {
-    view.setUint32(p, d, true);
-    p += 4;
-  }
-  function writeUint16(d: number) {
-    view.setUint16(p, d, true);
-    p += 2;
-  }
-
-  writestring("RIFF"); // ChunkID
-  writeUint32(36 + dataSize); // ChunkSize
-  writestring("WAVE"); // Format
-  writestring("fmt "); // Subchunk1ID
-  writeUint32(16); // Subchunk1Size
-  writeUint16(format); // AudioFormat
-  writeUint16(numChannels); // NumChannels
-  writeUint32(sampleRate); // SampleRate
-  writeUint32(byteRate); // ByteRate
-  writeUint16(blockAlign); // BlockAlign
-  writeUint16(bytesPerSample * 8); // BitsPerSample
-  writestring("data"); // Subchunk2ID
-  writeUint32(dataSize); // Subchunk2Size
-
-  return new Uint8Array(buffer);
-};
-
-/**
- * @returns {Uint8Array} wav bytes
- */
-const getWavBytes = (
-  buffer: ArrayBufferLike,
-  options: Omit<DecodeOptions, "numFrames"> = {
-    sampleRate: 44100,
-    numChannels: 2,
-    isFloat: false
-  }
-) => {
-  const type = options.isFloat ? Float32Array : Uint16Array;
-  const numFrames = buffer.byteLength / type.BYTES_PER_ELEMENT;
-
-  const headerBytes = writeWavHeader({
-    ...options,
-    numFrames
-  });
-  const wavBytes = new Uint8Array(headerBytes.length + buffer.byteLength);
-
-  wavBytes.set(headerBytes, 0);
-  wavBytes.set(new Uint8Array(buffer), headerBytes.length);
-
-  return wavBytes;
-};

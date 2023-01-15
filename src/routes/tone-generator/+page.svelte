@@ -1,11 +1,11 @@
 <script lang="ts">
   import { Play, Pause, ArrowDownOnSquare, Plus } from "svelte-heros-v2";
   import { onMount } from "svelte";
-  import ToneUI from "./ToneUI.svelte";
+  import ToneUI from "$components/tonegen/ToneUI.svelte";
   import c from "$lib/c";
-  import type { Tone } from "./type";
+  import type { Tone } from "$lib/tonegen/type";
 
-  import ToneRecorder from "./recorder";
+  import ToneRecorder from "$lib/tonegen/recorder";
 
   let recorder: ToneRecorder;
 
