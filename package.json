@@ -27,7 +27,7 @@
     "@fontsource/nunito": "^4.5.11",
     "@fontsource/rubik": "^4.5.13",
     "@sveltejs/adapter-auto": "^1.0.0",
-    "@sveltejs/kit": "^1.0.1",
+    "@sveltejs/kit": "^1.1.1",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/typography": "^0.5.8",
     "@threlte/core": "^5.0.8",
