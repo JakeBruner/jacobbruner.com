@@ -131,12 +131,22 @@
         <!-- TODO handle disabled state -->
         <input
           type="number"
-          class="w-24 rounded-md bg-zinc-700 text-xl text-center touch-none"
+          class="w-24 rounded-md bg-zinc-700 text-lg text-center touch-none"
           bind:value={tone.oscNode.frequency.value}
           on:wheel|preventDefault={(e) =>
             e.deltaY > 0 ? tone.oscNode.frequency.value-- : tone.oscNode.frequency.value++}
         />
         <span class="text-zinc-300 text-base pl-1">Hz</span>
+        <div class="px-2" />
+        <!-- double frequency button -->
+        <button
+          class="py-1 px-1 mr-1 rounded-md bg-zinc-500 hover:bg-zinc-600 text-sm text-center touch-none text-zinc-300"
+          on:click={() => (tone.oscNode.frequency.value *= 2)}>2x</button
+        >
+        <button
+          class="py-1 px-1 rounded-md bg-zinc-500 hover:bg-zinc-600 text-sm text-center touch-none text-zinc-300"
+          on:click={() => (tone.oscNode.frequency.value /= 2)}>½x</button
+        >
         <div class="px-4" />
         <!-- dial -->
         <div class="flex flex-col translate-y-1">

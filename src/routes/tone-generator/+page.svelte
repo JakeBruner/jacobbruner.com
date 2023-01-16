@@ -21,6 +21,8 @@
   let uid = 0;
   let tones: Tone[] = [];
 
+  const gainOptions = { gain: 0.75 };
+
   onMount(() => {
     // @ts-expect-error
     ctx = new (AudioContext || window.webkitAudioContext)();
@@ -55,7 +57,7 @@
 
   const devonlyInit = () => {
     const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: 400 });
-    const gainNode = new GainNode(ctx);
+    const gainNode = new GainNode(ctx, gainOptions);
     const panNode = new StereoPannerNode(ctx);
 
     oscNode.connect(panNode).connect(gainNode).connect(analyzer).connect(ctx.destination);
@@ -181,7 +183,7 @@
       on:click={() => {
         if (!ctx) return;
         const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: 400 });
-        const gainNode = new GainNode(ctx);
+        const gainNode = new GainNode(ctx, gainOptions);
         const panNode = new StereoPannerNode(ctx);
         oscNode.connect(panNode).connect(gainNode).connect(analyzer).connect(ctx.destination);
 
