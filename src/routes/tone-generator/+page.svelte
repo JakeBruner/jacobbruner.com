@@ -203,7 +203,6 @@
       }}
     >
       <Plus class="mx-auto text-zinc-200 hover" />
-
       <span class="mt-2 block text-sm font-medium text-zinc-200 dark:text-zinc-300"
         >Add a new tone</span
       >

@@ -58,6 +58,8 @@
   };
 
   let storedGain: number | null = null;
+
+  let popupActive = true;
 </script>
 
 {#if tone}
@@ -66,15 +68,55 @@
       class="w-full bg-gradient-to-tr from-zinc-700 via-zinc-700 to-zinc-600 shadow-inner z-0 rounded-2xl flex flex-row-reverse relative justify-between align-middle"
     >
       <div
-        class="flex peer  hover:scale-110 transition-transform ease-in-out duration-150 -mr-2 w-10"
+        class={c(
+          "flex relative peer transition-transform ease-in-out duration-150 -mr-2 w-10",
+          popupActive ? "scale-100 z-50" : "hover:scale-110"
+        )}
       >
         <Plus
           variation="solid"
-          class="ml-0.5 peer-hover:bg-red-500 my-auto h-6 w-6 text-zinc-300"
+          class={c("ml-0.5 my-auto h-6 w-6", popupActive ? "text-zinc-400" : "text-zinc-300")}
         />
+        <div class="absolute h-48 w-40 top-1/2 right-0 rounded-md bg-zinc-400/80 backdrop-blur-sm">
+          <!-- <div class="grid grid-cols-3 gap-2 p-2">
+            <div class="col-span-3 text-zinc-50 text-lg font-medium text-center">Add interval</div>
+            <button class="col-span-1 bg-white text-zinc-500 text-lg font-medium rounded-md"
+              >3^</button
+            >
+            
+            <button class="col-span-1 bg-white text-zinc-500 text-lg font-medium rounded-md"
+              >4^</button
+            >
+            <button class="col-span-1 bg-white text-zinc-500 text-lg font-medium rounded-md"
+              >5^</button
+            >
+          </div> -->
+          <!-- q: can you make this a table? -->
+          <table class="w-full">
+            <thead>
+              <tr>
+                <th class="text-zinc-50 text-lg font-medium text-center">Add interval</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-zinc-50 text-lg font-medium text-center">3^</td>
+              </tr>
+              <tr>
+                <td class="text-zinc-50 text-lg font-medium text-center">4^</td>
+              </tr>
+              <tr>
+                <td class="text-zinc-50 text-lg font-medium text-center">5^</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
       <div
-        class="rounded-2xl flex flex-row px-6 py-4 items-center align-middle z-10 w-[96%] peer-hover:w-[94%] transition-all duration-150 ease-in-out dark:bg-zinc-750 shadow-inner"
+        class={c(
+          "rounded-2xl flex flex-row px-6 py-4 items-center align-middle z-0 transition-all duration-150 ease-in-out dark:bg-zinc-750 shadow-inner",
+          popupActive ? "w-[94%] -z-10" : "w-[96%] peer-hover:w-[94%]"
+        )}
       >
         <!-- volume slider -->
 
