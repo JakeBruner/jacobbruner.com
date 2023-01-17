@@ -134,6 +134,7 @@
                       <td class="font-medium text-center text-base font-mono">
                         <button
                           class="w-7 p-px rounded-md bg-zinc-500 hover:bg-zinc-500/75 text-zinc-50 hover:text-zinc-100"
+                          title={"equal tempered " + interval.name}
                           on:click={() => {
                             console.log("click");
                             popupActive = false;
@@ -144,6 +145,7 @@
                       <td class="font-medium text-center text-base font-mono">
                         <button
                           class="w-7 p-px rounded-md bg-zinc-500 hover:bg-zinc-500/75 text-zinc-50 hover:text-zinc-100"
+                          title={"just tempered " + interval.name}
                           on:click={() => {
                             popupActive = false;
                             spawnChild(tone, interval, "just");
@@ -153,6 +155,7 @@
                       <td class="font-medium text-center text-base font-mono">
                         <button
                           class="w-7 p-px rounded-md bg-zinc-500 hover:bg-zinc-500/75 text-zinc-50 hover:text-zinc-100"
+                          title={"pythagoran tempered " + interval.name}
                           on:click={() => {
                             popupActive = false;
                             spawnChild(tone, interval, "pyth");
