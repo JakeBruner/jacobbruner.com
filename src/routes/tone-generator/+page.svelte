@@ -172,7 +172,7 @@
   <div class="mb-5 mx-5 p-7 dark:bg-zinc-800 rounded-3xl min-h-[800px] flex flex-col space-y-4">
     {#if tones.length > 0}
       {#each tones as tone (tone.id)}
-        <ToneUI bind:tone />
+        <ToneUI bind:tone spawnChild={} />
       {/each}
     {/if}
 
@@ -180,7 +180,10 @@
       type="button"
       class="relative block w-full rounded-2xl border-2 border-dashed border-zinc-300 dark:border-zinc-400 text-center  hover:border-zinc-400/80"
       style="height: 98px;"
-      on:click={() => {
+      on:click|self={(e) => {
+
+        e.target.blur();
+
         if (!ctx) return;
         const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: 400 });
         const gainNode = new GainNode(ctx, gainOptions);
