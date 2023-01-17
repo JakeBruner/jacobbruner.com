@@ -12,6 +12,7 @@ export default class ToneRecorder {
   private mediaRecorder: MediaRecorder;
   private encodetype: EncodeType;
   tones: Tone[];
+  public status: "recording" | "encoding" | "stopped" = "stopped";
 
   constructor(audioctx: AudioContext, tones: Tone[], encodetype: EncodeType) {
     this.ctx = audioctx;
@@ -57,6 +58,7 @@ export default class ToneRecorder {
       // t.oscNode.disconnect(this.ctx.destination);
       t.oscNode.connect(this.outputNode);
     });
+    this.status = "recording";
     this.mediaRecorder.start();
   }
 
@@ -70,6 +72,7 @@ export default class ToneRecorder {
 
   // save to file
   public async saveRecording(filename: string) {
+    this.status = "encoding";
     console.log("saving recording");
     const chunks: Blob[] = [];
     this.mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
@@ -99,12 +102,14 @@ export default class ToneRecorder {
         a.download = filename;
         a.click();
         window.URL.revokeObjectURL(url);
+        this.status = "stopped";
         resolve(e);
       };
     });
   }
 
   public async saveRecordingAsWav(filename: string) {
+    this.status = "encoding";
     console.log("saving recording as wav");
     const chunks: Blob[] = [];
     this.mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
@@ -140,6 +145,7 @@ export default class ToneRecorder {
         a.download = filename;
         a.click();
         window.URL.revokeObjectURL(url);
+        this.status = "stopped";
         resolve(e);
       };
     });

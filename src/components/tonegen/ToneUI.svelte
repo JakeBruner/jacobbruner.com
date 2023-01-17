@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { SpeakerWave, SpeakerXMark, Plus } from "svelte-heros-v2";
+  import { SpeakerWave, SpeakerXMark, Plus, XMark } from "svelte-heros-v2";
   import Waveform from "./Waveform.svelte";
   import type { Tone } from "$lib/tonegen/type";
   import c from "$lib/c";
@@ -10,6 +10,7 @@
   export let tone: Tone;
 
   export let spawnChild: (tone: Tone, interval: Interval, tuning: Tuning) => void;
+  export let removeTone: (id: number) => void;
 
   //TODO make a function prop that is passed down from page
   // which constructs a new child node from the existing one that is linked.
@@ -84,7 +85,7 @@
 {#if tone}
   <div class="shadow-md">
     <div
-      class="w-full bg-gradient-to-tr from-zinc-700 via-zinc-700 to-zinc-600 shadow-inner z-0 rounded-2xl flex flex-row-reverse justify-between align-middle"
+      class="w-full bg-gradient-to-tr from-zinc-700 via-zinc-700 to-zinc-600 shadow-inner z-0 rounded-2xl flex flex-row-reverse justify-between align-middle "
     >
       <div
         class={c(
@@ -168,10 +169,13 @@
       </div>
       <div
         class={c(
-          "rounded-2xl flex flex-row px-6 py-4 items-center align-middle z-0 transition-all duration-150 ease-in-out dark:bg-zinc-750 shadow-inner",
+          "rounded-2xl flex flex-row px-6 py-4 items-center align-middle z-0 transition-all duration-150 ease-in-out dark:bg-zinc-750 shadow-inner relative",
           popupActive ? "w-[94%] -z-10" : "w-[96%] peer-hover:w-[94%]"
         )}
       >
+        <div class="absolute top-0 left-0 z-30 p-2">
+          <XMark class="h-4 w-4 text-zinc-400" on:click={() => removeTone(tone.id)} />
+        </div>
         <!-- volume slider -->
 
         <button>

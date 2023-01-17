@@ -118,7 +118,16 @@
     // console.log(tones);
   };
 
-  typeof KeyboardEvent;
+  const removeTone = (id: number) => {
+    const tone = tones.find((t) => t.id === id);
+    if (tone) {
+      tone.oscNode.stop();
+      tone.oscNode.disconnect();
+      tone.gainNode.disconnect();
+      tone.panNode.disconnect();
+      tones = tones.filter((t) => t.id !== id);
+    }
+  };
 </script>
 
 <svelte:head>
@@ -158,21 +167,32 @@
     <Pause variation="solid" class={c("h-10 w-10", !playing && "opacity-75")} ariaLabel="pause" />
   </button>
   <div class="px-2" />
-  <ArrowDownOnSquare
-    on:click={() => {
-      // tones.forEach((t) => {
-      //   t.oscNode.stop();
-      // });
-      recorder.startRecording();
-      // recorder.saveRecording("tonegen-" + Date.now().toString());
-      recorder.saveRecordingAsWav("tonegen-" + Date.now().toString());
-      // tones.forEach((t) => {
-      //   t.oscNode.start();
-      // });
-    }}
-    variation="outline"
-    class="h-10 w-10 -translate-y-0.5"
-  />
+  <button
+    class={c(
+      "rounded-md bg-inherit disabled:bg-zinc-750 transition-colors duration-10",
+      recorder?.status && recorder?.status !== "stopped" && "bg-zinc-500"
+    )}
+    disabled={recorder?.status !== "stopped"}
+  >
+    <ArrowDownOnSquare
+      class={c(
+        "h-10 w-10 -translate-y-0.5",
+        recorder?.status && recorder?.status !== "stopped" && "opacity-75"
+      )}
+      on:click={() => {
+        // tones.forEach((t) => {
+        //   t.oscNode.stop();
+        // });
+        recorder.startRecording();
+        // recorder.saveRecording("tonegen-" + Date.now().toString());
+        recorder.saveRecordingAsWav("tonegen-" + Date.now().toString());
+        // tones.forEach((t) => {
+        //   t.oscNode.start();
+        // });
+      }}
+      variation="outline"
+    />
+  </button>
   <div class="px-2" />
   <button class="rounded-full w-5 h-5 bg-zinc-200" on:click={() => recorder.stopRecording()} />
 </header>
@@ -182,7 +202,7 @@
   >
     {#if tones.length > 0}
       {#each tones as tone (tone.id)}
-        <ToneUI bind:tone {spawnChild} />
+        <ToneUI bind:tone {spawnChild} {removeTone} />
       {/each}
     {/if}
 
