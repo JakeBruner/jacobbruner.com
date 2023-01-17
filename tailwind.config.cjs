@@ -49,6 +49,13 @@ module.exports = {
           'pos-0': '0% 0%',
           'pos-x-100': '100% 0%',
       },
+      maxWidth: {
+        '2xs': '16rem',
+        '3xs': '12rem',
+      },
+      rotate: {
+        '15': '15deg'
+      }
     }
   },
   corePlugins: {
