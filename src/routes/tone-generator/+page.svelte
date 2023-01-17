@@ -113,6 +113,7 @@
       wave: "sine"
     });
     tones = tones;
+    oscNode.start();
 
     // console.log(tones);
   };
@@ -176,7 +177,9 @@
   <button class="rounded-full w-5 h-5 bg-zinc-200" on:click={() => recorder.stopRecording()} />
 </header>
 <main>
-  <div class="mb-5 mx-5 p-7 dark:bg-zinc-800 rounded-3xl min-h-[800px] flex flex-col space-y-4">
+  <div
+    class="relative mb-5 mx-5 p-7 dark:bg-zinc-800 rounded-3xl min-h-[800px] flex flex-col space-y-4"
+  >
     {#if tones.length > 0}
       {#each tones as tone (tone.id)}
         <ToneUI bind:tone {spawnChild} />
@@ -191,7 +194,7 @@
         e.currentTarget.blur();
 
         if (!ctx) return;
-        const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: 400 });
+        const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: 440 });
         const gainNode = new GainNode(ctx, gainOptions);
         const panNode = new StereoPannerNode(ctx);
         oscNode.connect(panNode).connect(gainNode).connect(analyzer).connect(ctx.destination);
@@ -217,5 +220,5 @@
       >
     </button>
   </div>
-  <button class="py-2 px-4 rounded-md bg-zinc-200" on:click={() => {}}> Stop Recording </button>
+  <!-- <button class="py-2 px-4 rounded-md bg-zinc-200" on:click={() => {}}> Stop Recording </button> -->
 </main>

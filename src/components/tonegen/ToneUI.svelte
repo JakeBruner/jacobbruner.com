@@ -66,24 +66,35 @@
 
   let popupActive = false;
   $: console.log(popupActive);
+
+  const togglePopup = () => {
+    popupActive = !popupActive;
+    if (popupActive) {
+      window.addEventListener("click", () => {
+        popupActive = false;
+      });
+    } else {
+      window.removeEventListener("click", () => {
+        popupActive = false;
+      });
+    }
+  };
 </script>
 
 {#if tone}
   <div class="shadow-md">
     <div
-      class="w-full bg-gradient-to-tr from-zinc-700 via-zinc-700 to-zinc-600 shadow-inner z-0 rounded-2xl flex flex-row-reverse relative justify-between align-middle"
+      class="w-full bg-gradient-to-tr from-zinc-700 via-zinc-700 to-zinc-600 shadow-inner z-0 rounded-2xl flex flex-row-reverse justify-between align-middle"
     >
       <div
         class={c(
-          "flex relative peer transition-transform ease-in-out duration-150 -mr-2 w-10",
+          "flex peer transition-transform ease-in-out duration-150 -mr-2 w-10",
           popupActive ? "scale-100 z-50" : "hover:scale-110"
         )}
-        on:click|self={() => {
-          popupActive = !popupActive;
-        }}
+        on:click|self={togglePopup}
         on:keydown|self={(e) => {
           if (e.key === "Enter") {
-            popupActive = !popupActive;
+            togglePopup();
           }
         }}
       >
@@ -95,63 +106,65 @@
           }}
           class={c("ml-0.5 my-auto h-6 w-6", popupActive ? "text-zinc-400" : "text-zinc-300")}
         />
-        {#if popupActive}
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <div
-            class="absolute z-50 p-2 w-40 top-1/2 right-0 rounded-md bg-zinc-400/80 backdrop-blur-sm"
-            transition:fade
-            on:click|stopPropagation
-          >
-            <table class="w-full table-fixed">
-              <thead>
-                <tr>
-                  <th colspan="3" class="text-zinc-50 text-lg font-semibold text-center"
-                    >Add interval</th
-                  >
-                </tr>
-                <tr>
-                  <th class="text-zinc-50 text-sm font-medium text-center">Equal</th>
-                  <th class="text-zinc-50 text-sm font-medium text-center">Just</th>
-                  <th class="text-zinc-50 text-sm font-medium text-center">Pyth.</th>
-                </tr>
-              </thead>
-              <tbody>
-                {#each Intervals as interval}
+        <div class="overflow-hidden ">
+          {#if popupActive}
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <div
+              class="absolute z-50 p-2 w-40 top-1/2 right-0 rounded-md bg-zinc-400/80 backdrop-blur-sm"
+              transition:fade
+              on:click|stopPropagation
+            >
+              <table class="z-50 w-full table-fixed">
+                <thead>
                   <tr>
-                    <td class="font-medium text-center text-base font-mono">
-                      <button
-                        class="w-7 p-px rounded-md bg-zinc-500 hover:bg-zinc-500/75 text-zinc-50 hover:text-zinc-100"
-                        on:click={() => {
-                          console.log("click");
-                          popupActive = false;
-                          spawnChild(tone, interval, "equal");
-                        }}>{interval.unicode}</button
-                      >
-                    </td>
-                    <td class="font-medium text-center text-base font-mono">
-                      <button
-                        class="w-7 p-px rounded-md bg-zinc-500 hover:bg-zinc-500/75 text-zinc-50 hover:text-zinc-100"
-                        on:click={() => {
-                          popupActive = false;
-                          spawnChild(tone, interval, "just");
-                        }}>{interval.unicode}</button
-                      >
-                    </td>
-                    <td class="font-medium text-center text-base font-mono">
-                      <button
-                        class="w-7 p-px rounded-md bg-zinc-500 hover:bg-zinc-500/75 text-zinc-50 hover:text-zinc-100"
-                        on:click={() => {
-                          popupActive = false;
-                          spawnChild(tone, interval, "pyth");
-                        }}>{interval.unicode}</button
-                      >
-                    </td>
+                    <th colspan="3" class="text-zinc-50 text-lg font-semibold text-center"
+                      >Add interval</th
+                    >
                   </tr>
-                {/each}
-              </tbody>
-            </table>
-          </div>
-        {/if}
+                  <tr>
+                    <th class="text-zinc-50 text-sm font-medium text-center">Equal</th>
+                    <th class="text-zinc-50 text-sm font-medium text-center">Just</th>
+                    <th class="text-zinc-50 text-sm font-medium text-center">Pyth.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {#each Intervals as interval}
+                    <tr>
+                      <td class="font-medium text-center text-base font-mono">
+                        <button
+                          class="w-7 p-px rounded-md bg-zinc-500 hover:bg-zinc-500/75 text-zinc-50 hover:text-zinc-100"
+                          on:click={() => {
+                            console.log("click");
+                            popupActive = false;
+                            spawnChild(tone, interval, "equal");
+                          }}>{interval.unicode}</button
+                        >
+                      </td>
+                      <td class="font-medium text-center text-base font-mono">
+                        <button
+                          class="w-7 p-px rounded-md bg-zinc-500 hover:bg-zinc-500/75 text-zinc-50 hover:text-zinc-100"
+                          on:click={() => {
+                            popupActive = false;
+                            spawnChild(tone, interval, "just");
+                          }}>{interval.unicode}</button
+                        >
+                      </td>
+                      <td class="font-medium text-center text-base font-mono">
+                        <button
+                          class="w-7 p-px rounded-md bg-zinc-500 hover:bg-zinc-500/75 text-zinc-50 hover:text-zinc-100"
+                          on:click={() => {
+                            popupActive = false;
+                            spawnChild(tone, interval, "pyth");
+                          }}>{interval.unicode}</button
+                        >
+                      </td>
+                    </tr>
+                  {/each}
+                </tbody>
+              </table>
+            </div>
+          {/if}
+        </div>
       </div>
       <div
         class={c(
