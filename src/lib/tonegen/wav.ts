@@ -11,6 +11,7 @@ export const audioBufferToWav = (buffer: AudioBuffer, options: { isFloat: boolea
   const [left, right] = [buffer.getChannelData(0), buffer.getChannelData(1)];
 
   // case 1: float32array
+
   if (options.isFloat) {
     const interleaved = new Float32Array(left.length + right.length);
     for (let src = 0, dst = 0; src < left.length; src++, dst += 2) {

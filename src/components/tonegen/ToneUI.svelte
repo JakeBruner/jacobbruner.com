@@ -133,7 +133,12 @@
                     <tr>
                       <td class="font-medium text-center text-base font-mono">
                         <button
-                          class="w-7 p-px rounded-md bg-zinc-500 hover:bg-zinc-500/75 text-zinc-50 hover:text-zinc-100"
+                          class={c(
+                            "w-7 p-px rounded-md bg-zinc-500 hover:bg-zinc-500/75 text-zinc-50 hover:text-zinc-100",
+                            interval.name === "diminished fifth" && "hidden",
+                            interval.name === "augmented fourth" && "translate-y-3"
+                          )}
+                          class:hidden={interval.name === "diminished fifth"}
                           title={"equal tempered " + interval.name}
                           on:click={() => {
                             console.log("click");
@@ -146,6 +151,7 @@
                         <button
                           class="w-7 p-px rounded-md bg-zinc-500 hover:bg-zinc-500/75 text-zinc-50 hover:text-zinc-100"
                           title={"just tempered " + interval.name}
+                          class:hidden={interval.just === interval.equal}
                           on:click={() => {
                             popupActive = false;
                             spawnChild(tone, interval, "just");
@@ -156,6 +162,8 @@
                         <button
                           class="w-7 p-px rounded-md bg-zinc-500 hover:bg-zinc-500/75 text-zinc-50 hover:text-zinc-100"
                           title={"pythagoran tempered " + interval.name}
+                          class:hidden={interval.pyth === interval.equal ||
+                            interval.pyth === interval.just}
                           on:click={() => {
                             popupActive = false;
                             spawnChild(tone, interval, "pyth");
@@ -244,15 +252,17 @@
         <!-- double frequency button -->
         <button
           class="py-1 px-1 mr-1 rounded-md bg-zinc-500 hover:bg-zinc-600 text-sm text-center touch-none text-zinc-300"
+          title="double frequency"
           on:click={() => (tone.oscNode.frequency.value *= 2)}>2x</button
         >
         <button
           class="py-1 px-1 rounded-md bg-zinc-500 hover:bg-zinc-600 text-sm text-center touch-none text-zinc-300"
+          title="half frequency"
           on:click={() => (tone.oscNode.frequency.value /= 2)}>½x</button
         >
         <div class="px-4" />
         <!-- dial -->
-        <div class="flex flex-col translate-y-1">
+        <div class="flex flex-col translate-y-1" title="pan stereo channels">
           <div class="relative w-10 h-10 block">
             <div
               class="rounded-full w-full h-full border-2 border-zinc-300"

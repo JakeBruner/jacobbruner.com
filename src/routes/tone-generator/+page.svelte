@@ -41,7 +41,7 @@
   });
 
   const devonlyInit = () => {
-    const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: 440 });
+    const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: 400 });
     const gainNode = new GainNode(ctx, gainOptions);
     const panNode = new StereoPannerNode(ctx);
 
@@ -79,12 +79,12 @@
 
   const animate = () => {
     if (ctx.state === "running" && fftcanvas) {
-      fftctx.fillStyle = "white";
       let x = 0;
       fftctx.clearRect(0, 0, fftcanvas.width, fftcanvas.height);
       analyzer.getByteFrequencyData(frequencies);
       for (let i = 0; i < bufferLength; i++) {
         let barheight = frequencies[i] * SF;
+        fftctx.fillStyle = `hsl(${barheight * 2}, 100%, 50%)`;
         fftctx.fillRect(x, fftcanvas.height - barheight, barwidth, barheight);
         x += barwidth;
       }
@@ -96,7 +96,7 @@
   };
 
   const spawnChild = (tone: Tone, interval: Interval, tuning: Tuning) => {
-    console.log(interval, tuning);
+    // console.log(interval, tuning);
     const frequency = interval[tuning] * tone.oscNode.frequency.value;
     const oscNode = new OscillatorNode(ctx, { type: "sine", frequency });
     const gainNode = new GainNode(ctx, gainOptions);
@@ -214,7 +214,7 @@
         e.currentTarget.blur();
 
         if (!ctx) return;
-        const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: 440 });
+        const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: 400 });
         const gainNode = new GainNode(ctx, gainOptions);
         const panNode = new StereoPannerNode(ctx);
         oscNode.connect(panNode).connect(gainNode).connect(analyzer).connect(ctx.destination);
