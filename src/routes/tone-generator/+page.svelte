@@ -5,6 +5,8 @@
   import c from "$lib/c";
   import type { Tone } from "$lib/tonegen/type";
 
+  import type { Interval, Tuning } from "$lib/tonegen/intervals";
+
   import ToneRecorder from "$lib/tonegen/recorder";
 
   let recorder: ToneRecorder;
@@ -33,30 +35,13 @@
 
     fftctx = fftcanvas.getContext("2d")!;
 
-    // // get user media
-    // navigator.mediaDevices
-    //   .getUserMedia({ audio: {
-    //     echoCancellation: false,
-    //     noiseSuppression: false,
-    //     autoGainControl: false,
-    //     latency: 0
-    //   } })
-    //   .then((stream) => {
-    //     recordedStream = stream;
-    //     console.log("got stream");
-    //   })
-    //   .catch((err) => {
-    //     alert("Could not get audio input");
-    //     console.log(err);
-    //   });
-
     return () => {
       ctx && ctx.close();
     };
   });
 
   const devonlyInit = () => {
-    const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: 400 });
+    const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: 440 });
     const gainNode = new GainNode(ctx, gainOptions);
     const panNode = new StereoPannerNode(ctx);
 
@@ -108,6 +93,28 @@
     } else {
       requestAnimationFrame(animate);
     }
+  };
+
+  const spawnChild = (tone: Tone, interval: Interval, tuning: Tuning) => {
+    console.log(interval, tuning);
+    const frequency = interval[tuning] * tone.oscNode.frequency.value;
+    const oscNode = new OscillatorNode(ctx, { type: "sine", frequency });
+    const gainNode = new GainNode(ctx, gainOptions);
+    const panNode = new StereoPannerNode(ctx);
+
+    oscNode.connect(panNode).connect(gainNode).connect(analyzer).connect(ctx.destination);
+
+    tones.push({
+      id: uid++,
+      oscNode,
+      gainNode,
+      panNode,
+      isOrphan: true,
+      wave: "sine"
+    });
+    tones = tones;
+
+    // console.log(tones);
   };
 
   typeof KeyboardEvent;
@@ -172,7 +179,7 @@
   <div class="mb-5 mx-5 p-7 dark:bg-zinc-800 rounded-3xl min-h-[800px] flex flex-col space-y-4">
     {#if tones.length > 0}
       {#each tones as tone (tone.id)}
-        <ToneUI bind:tone spawnChild={} />
+        <ToneUI bind:tone {spawnChild} />
       {/each}
     {/if}
 
@@ -181,8 +188,7 @@
       class="relative block w-full rounded-2xl border-2 border-dashed border-zinc-300 dark:border-zinc-400 text-center  hover:border-zinc-400/80"
       style="height: 98px;"
       on:click|self={(e) => {
-
-        e.target.blur();
+        e.currentTarget.blur();
 
         if (!ctx) return;
         const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: 400 });

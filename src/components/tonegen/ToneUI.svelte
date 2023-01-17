@@ -64,7 +64,8 @@
 
   let storedGain: number | null = null;
 
-  let popupActive = true;
+  let popupActive = false;
+  $: console.log(popupActive);
 </script>
 
 {#if tone}
@@ -77,10 +78,10 @@
           "flex relative peer transition-transform ease-in-out duration-150 -mr-2 w-10",
           popupActive ? "scale-100 z-50" : "hover:scale-110"
         )}
-        on:click={() => {
+        on:click|self={() => {
           popupActive = !popupActive;
         }}
-        on:keydown={(e) => {
+        on:keydown|self={(e) => {
           if (e.key === "Enter") {
             popupActive = !popupActive;
           }
@@ -88,12 +89,18 @@
       >
         <Plus
           variation="solid"
+          on:click={() => {
+            // console.log("clicked plus");
+            popupActive = !popupActive;
+          }}
           class={c("ml-0.5 my-auto h-6 w-6", popupActive ? "text-zinc-400" : "text-zinc-300")}
         />
         {#if popupActive}
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
           <div
-            class="absolute z-50 p-2 w-40 top-1/2 right-0 rounded-md bg-zinc-400/80 backdrop-blur-sm pointer-events-none"
+            class="absolute z-50 p-2 w-40 top-1/2 right-0 rounded-md bg-zinc-400/80 backdrop-blur-sm"
             transition:fade
+            on:click|stopPropagation
           >
             <table class="w-full table-fixed">
               <thead>
@@ -115,6 +122,7 @@
                       <button
                         class="w-7 p-px rounded-md bg-zinc-500 hover:bg-zinc-500/75 text-zinc-50 hover:text-zinc-100"
                         on:click={() => {
+                          console.log("click");
                           popupActive = false;
                           spawnChild(tone, interval, "equal");
                         }}>{interval.unicode}</button
