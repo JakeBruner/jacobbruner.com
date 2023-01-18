@@ -150,28 +150,35 @@
   <span class={c(ctx ? "text-green-500" : "text-red-500", "text-4xl")}>.</span>
   <div class="flex-grow min-width-none" />
   <!-- fft canvas -->
-  <canvas class="w-40 h-10 border-b border-zinc-600 " bind:this={fftcanvas} />
+  <canvas class="w-40 h-10 border-b dark:border-zinc-600 border-zinc-300" bind:this={fftcanvas} />
   <div class="flex-grow flex-shrink min-width-none" />
   <button
-    class={c("rounded-md bg-inherit disabled:bg-zinc-750 transition-colors duration-10")}
+    class={c(
+      "rounded-md bg-inherit disabled:dark:bg-zinc-750 disabled:bg-zinc-200 transition-colors duration-10"
+    )}
     on:click={() => (playing = !playing)}
     disabled={playing}
+    title="Play"
   >
     <Play variation="solid" class={c("h-10 w-10", playing && "opacity-75")} ariaLabel="start" />
   </button>
   <button
-    class={c("rounded-md bg-inherit disabled:bg-zinc-750 transition-colors duration-10")}
+    class={c(
+      "rounded-md bg-inherit disabled:dark:bg-zinc-750 disabled:bg-zinc-200 transition-colors duration-10"
+    )}
     on:click={() => (playing = false)}
     disabled={!playing}
+    title="Pause"
   >
     <Pause variation="solid" class={c("h-10 w-10", !playing && "opacity-75")} ariaLabel="pause" />
   </button>
   <div class="px-2" />
   <button
     class={c(
-      "rounded-md bg-inherit disabled:bg-zinc-750 transition-colors duration-10",
-      recorder?.status && recorder?.status !== "stopped" && "bg-zinc-500"
+      "rounded-md bg-inherit disabled:dark:bg-zinc-750 disabled:bg-zinc-200 transition-colors duration-10",
+      recorder?.status !== "stopped" && "bg-zinc-500"
     )}
+    title="Record"
     disabled={recorder?.status !== "stopped"}
   >
     <ArrowDownOnSquare
@@ -180,9 +187,7 @@
         recorder?.status && recorder?.status !== "stopped" && "opacity-75"
       )}
       on:click={() => {
-        // tones.forEach((t) => {
-        //   t.oscNode.stop();
-        // });
+        if (!recorder) return;
         recorder.startRecording();
         // recorder.saveRecording("tonegen-" + Date.now().toString());
         recorder.saveRecordingAsWav("tonegen-" + Date.now().toString());
@@ -191,10 +196,15 @@
         // });
       }}
       variation="outline"
+      disabled={recorder?.status !== "stopped"}
+      ariaLabel="record"
     />
   </button>
   <div class="px-2" />
-  <button class="rounded-full w-5 h-5 bg-zinc-200" on:click={() => recorder.stopRecording()} />
+  <button
+    class="rounded-full w-5 h-5 dark:bg-zinc-200 bg-zinc-600"
+    on:click={() => recorder.stopRecording()}
+  />
 </header>
 <main>
   <div
@@ -208,7 +218,7 @@
 
     <button
       type="button"
-      class="relative block w-full rounded-2xl border-2 border-dashed border-zinc-800 dark:border-zinc-400 text-center  hover:border-black hover:dark:border-zinc-400/80 group transition-all duration-100 hover:bg-zinc-200/50"
+      class="relative block w-full rounded-2xl border-2 border-dashed border-zinc-800 dark:border-zinc-400 text-center  hover:border-black hover:dark:border-zinc-400/80 group transition-all duration-100 hover:bg-zinc-200/50 hover:dark:bg-zinc-900/50"
       style="height: 98px;"
       on:click|self={(e) => {
         e.currentTarget.blur();
