@@ -55,7 +55,10 @@ module.exports = {
       },
       rotate: {
         '15': '15deg'
-      }
+      },
+      scale: {
+        '101': '1.01',
+      },
     }
   },
   corePlugins: {

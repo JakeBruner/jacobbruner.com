@@ -135,7 +135,7 @@
 </svelte:head>
 
 <svelte:window
-  on:mousedown|once={devonlyInit}
+  on:mousedown|once|trusted={devonlyInit}
   on:keypress|={(e) => {
     // console.log(e);
     if (e.code === "Space") {
@@ -198,7 +198,7 @@
 </header>
 <main>
   <div
-    class="relative mb-5 mx-5 p-7 dark:bg-zinc-800 rounded-3xl min-h-[800px] flex flex-col space-y-4"
+    class="relative mb-5 mx-5 p-7 bg-zinc-100 dark:bg-zinc-800 rounded-3xl min-h-[800px] flex flex-col space-y-4"
   >
     {#if tones.length > 0}
       {#each tones as tone (tone.id)}
@@ -208,7 +208,7 @@
 
     <button
       type="button"
-      class="relative block w-full rounded-2xl border-2 border-dashed border-zinc-300 dark:border-zinc-400 text-center  hover:border-zinc-400/80"
+      class="relative block w-full rounded-2xl border-2 border-dashed border-zinc-800 dark:border-zinc-400 text-center  hover:border-black hover:dark:border-zinc-400/80 group transition-all duration-100 hover:bg-zinc-200/50"
       style="height: 98px;"
       on:click|self={(e) => {
         e.currentTarget.blur();
@@ -234,11 +234,14 @@
         // console.log("There are now", tones.length, "tones");
       }}
     >
-      <Plus class="mx-auto text-zinc-200 hover" />
-      <span class="mt-2 block text-sm font-medium text-zinc-200 dark:text-zinc-300"
+      <Plus
+        class="mx-auto text-zinc-800 dark:text-zinc-200 group-hover:text-zinc-900 group-hover:dark:text-zinc-300 group-hover:scale-105"
+      />
+      <span
+        class="mt-2 block text-sm font-medium text-zinc-800 dark:text-zinc-300 group-hover:text-black group-hover:dark:text-zinc-300 group-hover:scale-101"
         >Add a new tone</span
       >
     </button>
   </div>
-  <!-- <button class="py-2 px-4 rounded-md bg-zinc-200" on:click={() => {}}> Stop Recording </button> -->
+  <!-- <button class="py-2 px-4 rounded-md bg-zinc-200" on:click={() f=> {}}> Stop Recording </button> -->
 </main>
