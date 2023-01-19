@@ -4,6 +4,26 @@
   import type { Tone } from "$lib/tonegen/type";
   import c from "$lib/c";
 
+  const noteNames = {
+    A: 0,
+    "A#": 1,
+    Bb: 1,
+    B: 2,
+    C: 3,
+    "C#": 4,
+    Db: 4,
+    D: 5,
+    "D#": 6,
+    Eb: 6,
+    E: 7,
+    F: 8,
+    "F#": 9,
+    Gb: 9,
+    G: 10,
+    "G#": 11,
+    Ab: 11
+  };
+
   import { Intervals, type Interval, type Tuning } from "$lib/tonegen/intervals";
   import { fade } from "svelte/transition";
 
@@ -80,6 +100,28 @@
       });
     }
   };
+
+  const getNoteFrequency = (note: string): number | null => {
+    if (!/^[A-G](b|#)?[0-9]$/.test(note)) {
+      return null;
+    }
+
+    const noteName = note.slice(0, -1);
+    const octave = parseInt(note.slice(-1));
+
+    // @ts-ignore
+    const noteNumber: number = noteNames[noteName];
+
+    const basefreq = 440;
+    const factor = Math.pow(2, (octave - 4) * noteNumber) / 12;
+
+    return basefreq * factor;
+  };
+
+  // let pendingFrequency: string;
+
+  // $: pendingFrequency = tone.oscNode.frequency.value.toString();
+  console.log("test C4", getNoteFrequency("A4"));
 </script>
 
 {#if tone}
@@ -241,9 +283,25 @@
         <!-- frequency picker -->
         <!-- TODO handle disabled state -->
         <input
-          type="number"
+          type="alphanumeric"
           class="w-24 rounded-md bg-zinc-700 text-lg text-center touch-none"
-          bind:value={tone.oscNode.frequency.value}
+          value={tone.oscNode.frequency.value}
+          on:change={(e) => {
+            // try to parse the input as a number
+            let parsed = parseInt(e.currentTarget.value);
+
+            if (isNaN(parsed)) {
+              parsed = getNoteFrequency(e.currentTarget.value) || 400;
+            } else {
+              e.currentTarget.value = Math.round(parsed);
+            }
+
+            if (parsed) {
+              tone.oscNode.frequency.value = parsed;
+              // round
+              e.currentTarget.value = Math.round(parsed);
+            }
+          }}
           on:wheel|preventDefault={(e) =>
             e.deltaY > 0 ? tone.oscNode.frequency.value-- : tone.oscNode.frequency.value++}
         />
@@ -289,14 +347,14 @@
 
 <style>
   /* Chrome, Safari, Edge, Opera */
-  input[type="number"]::-webkit-outer-spin-button,
-  input[type="number"]::-webkit-inner-spin-button {
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
 
   /* Firefox */
-  input[type="number"] {
+  input {
     -moz-appearance: textfield;
   }
 </style>
