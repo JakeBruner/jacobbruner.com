@@ -96,7 +96,6 @@
   };
 
   const spawnChild = (tone: Tone, interval: Interval, tuning: Tuning) => {
-    // console.log(interval, tuning);
     const frequency = interval[tuning] * tone.oscNode.frequency.value;
     const oscNode = new OscillatorNode(ctx, { type: "sine", frequency });
     const gainNode = new GainNode(ctx, gainOptions);
@@ -114,8 +113,6 @@
     });
     tones = tones;
     oscNode.start();
-
-    // console.log(tones);
   };
 
   const removeTone = (id: number) => {
