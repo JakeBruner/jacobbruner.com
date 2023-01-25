@@ -25,6 +25,13 @@
   // import { fly } from "svelte/transition";
   const projectList = [
     {
+      slug: "/tone-generator",
+      title: "Multi-Tone Generator",
+      utctimestamp: 0,
+      formatteddate: "January 20th, 2023",
+      thumbnailpath: "/thumbnails/tones.png"
+    },
+    {
       slug: "/elliptic-curve",
       title: "Elliptic Curve Cayley Table Generator",
       utctimestamp: 1, // yes I know this is abuse of my functionality
@@ -153,7 +160,7 @@
     <!-- look at how neat this is! -->
 
     <div
-      class="mt-12 grid gap-16 max-w-md md:max-w-none mx-auto md:grid-cols-3 md:gap-x-5 md:gap-y-12 items-center"
+      class="mt-12 grid gap-16 max-w-md md:max-w-none mx-auto md:grid-cols-2 md:gap-x-5 md:gap-y-12 items-center"
     >
       {#each projectList as post, i}
         {@const arraypos = i + 4}
