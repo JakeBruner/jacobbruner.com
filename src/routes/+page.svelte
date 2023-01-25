@@ -166,7 +166,7 @@
         {@const arraypos = i + 4}
         <div use:inview={options} on:change={handleChange} id={arraypos.toString()}>
           {#if isInView[arraypos]}
-            <Post {post} id={i} />
+            <Post class="max-w-md" {post} id={i} />
           {/if}
         </div>
       {/each}
