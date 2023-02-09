@@ -1,16 +1,21 @@
 <script lang="ts">
-  import type { PostInfo, BlogTags } from "$lib/blog/blog";
+  import type { PostInfo } from "$lib/blog/blog";
   import { BlogTagColors } from "$lib/blog/blog";
   import { fly } from "svelte/transition";
   import { hexToRGB } from "$lib/blog/tags";
+  import { c } from "$lib/c";
   export let post: PostInfo;
   const tags = post?.tags;
   export let subject = "";
   export let id = 0;
+
+  let _classes: string | undefined = undefined;
+  export { _classes as class };
+
 </script>
 
 <div
-  class="group rounded-lg bg-white dark:bg-zinc-900 flex flex-col justify-between shadow-md hover:shadow-lg self-center transition ease-in-out duration-200 dark:shadow-white/5 hover:dark:shadow-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-850 hover:scale-[100.5%] hover:-translate-y-1"
+  class={c("group rounded-lg bg-white dark:bg-zinc-900 flex flex-col justify-between shadow-md hover:shadow-lg self-center transition ease-in-out duration-200 dark:shadow-white/5 hover:dark:shadow-white/5 hover:bg-zinc-50 dark:hover:bg-zinc-850 hover:scale-[100.5%] hover:-translate-y-1", _classes)}
   in:fly={{ x: 0, y: -30, duration: 700, delay: id * 40, opacity: 0 }}
 >
   <!--* if there is no subject, link directly to the slug -->

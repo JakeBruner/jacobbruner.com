@@ -42,7 +42,8 @@ export const BlogTagColors = {
   Creative: "#f43f5e" /** rose-500 */,
   News: "#0ea5e9" /** sky-500 */,
   Website: "#06b6d4" /** cyan-500 */,
-  Work: "#dc2626" /** red-600 */
+  Work: "#dc2626" /** red-600 */,
+  Physics: "#ca8a04" /** yellow-600 */
 } as const;
 
 export type BlogTags = keyof typeof BlogTagColors;

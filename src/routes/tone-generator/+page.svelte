@@ -96,7 +96,6 @@
   };
 
   const spawnChild = (tone: Tone, interval: Interval, tuning: Tuning) => {
-    // console.log(interval, tuning);
     const frequency = interval[tuning] * tone.oscNode.frequency.value;
     const oscNode = new OscillatorNode(ctx, { type: "sine", frequency });
     const gainNode = new GainNode(ctx, gainOptions);
@@ -114,8 +113,6 @@
     });
     tones = tones;
     oscNode.start();
-
-    // console.log(tones);
   };
 
   const removeTone = (id: number) => {
@@ -135,7 +132,7 @@
 </svelte:head>
 
 <svelte:window
-  on:mousedown|once={devonlyInit}
+  on:mousedown|once|trusted={devonlyInit}
   on:keypress|={(e) => {
     // console.log(e);
     if (e.code === "Space") {
@@ -150,28 +147,35 @@
   <span class={c(ctx ? "text-green-500" : "text-red-500", "text-4xl")}>.</span>
   <div class="flex-grow min-width-none" />
   <!-- fft canvas -->
-  <canvas class="w-40 h-10 border-b border-zinc-600 " bind:this={fftcanvas} />
+  <canvas class="w-40 h-10 border-b dark:border-zinc-600 border-zinc-300" bind:this={fftcanvas} />
   <div class="flex-grow flex-shrink min-width-none" />
   <button
-    class={c("rounded-md bg-inherit disabled:bg-zinc-750 transition-colors duration-10")}
+    class={c(
+      "rounded-md bg-inherit disabled:dark:bg-zinc-750 disabled:bg-zinc-200 transition-colors duration-10"
+    )}
     on:click={() => (playing = !playing)}
     disabled={playing}
+    title="Play"
   >
     <Play variation="solid" class={c("h-10 w-10", playing && "opacity-75")} ariaLabel="start" />
   </button>
   <button
-    class={c("rounded-md bg-inherit disabled:bg-zinc-750 transition-colors duration-10")}
+    class={c(
+      "rounded-md bg-inherit disabled:dark:bg-zinc-750 disabled:bg-zinc-200 transition-colors duration-10"
+    )}
     on:click={() => (playing = false)}
     disabled={!playing}
+    title="Pause"
   >
     <Pause variation="solid" class={c("h-10 w-10", !playing && "opacity-75")} ariaLabel="pause" />
   </button>
   <div class="px-2" />
   <button
     class={c(
-      "rounded-md bg-inherit disabled:bg-zinc-750 transition-colors duration-10",
-      recorder?.status && recorder?.status !== "stopped" && "bg-zinc-500"
+      "rounded-md bg-inherit disabled:dark:bg-zinc-750 disabled:bg-zinc-200 transition-colors duration-10",
+      recorder?.status !== "stopped" && "bg-zinc-500"
     )}
+    title="Record"
     disabled={recorder?.status !== "stopped"}
   >
     <ArrowDownOnSquare
@@ -180,9 +184,7 @@
         recorder?.status && recorder?.status !== "stopped" && "opacity-75"
       )}
       on:click={() => {
-        // tones.forEach((t) => {
-        //   t.oscNode.stop();
-        // });
+        if (!recorder) return;
         recorder.startRecording();
         // recorder.saveRecording("tonegen-" + Date.now().toString());
         recorder.saveRecordingAsWav("tonegen-" + Date.now().toString());
@@ -191,14 +193,19 @@
         // });
       }}
       variation="outline"
+      disabled={recorder?.status !== "stopped"}
+      ariaLabel="record"
     />
   </button>
   <div class="px-2" />
-  <button class="rounded-full w-5 h-5 bg-zinc-200" on:click={() => recorder.stopRecording()} />
+  <button
+    class="rounded-full w-5 h-5 dark:bg-zinc-200 bg-zinc-600"
+    on:click={() => recorder.stopRecording()}
+  />
 </header>
 <main>
   <div
-    class="relative mb-5 mx-5 p-7 dark:bg-zinc-800 rounded-3xl min-h-[800px] flex flex-col space-y-4"
+    class="relative mb-5 mx-5 p-7 bg-zinc-100 dark:bg-zinc-800 rounded-3xl min-h-[800px] flex flex-col space-y-4"
   >
     {#if tones.length > 0}
       {#each tones as tone (tone.id)}
@@ -208,7 +215,7 @@
 
     <button
       type="button"
-      class="relative block w-full rounded-2xl border-2 border-dashed border-zinc-300 dark:border-zinc-400 text-center  hover:border-zinc-400/80"
+      class="relative block w-full rounded-2xl border-2 border-dashed border-zinc-800 dark:border-zinc-400 text-center  hover:border-black hover:dark:border-zinc-400/80 group transition-all duration-100 hover:bg-zinc-200/50 hover:dark:bg-zinc-900/50"
       style="height: 98px;"
       on:click|self={(e) => {
         e.currentTarget.blur();
@@ -234,11 +241,14 @@
         // console.log("There are now", tones.length, "tones");
       }}
     >
-      <Plus class="mx-auto text-zinc-200 hover" />
-      <span class="mt-2 block text-sm font-medium text-zinc-200 dark:text-zinc-300"
+      <Plus
+        class="mx-auto text-zinc-800 dark:text-zinc-200 group-hover:text-zinc-900 group-hover:dark:text-zinc-300 group-hover:scale-105"
+      />
+      <span
+        class="mt-2 block text-sm font-medium text-zinc-800 dark:text-zinc-300 group-hover:text-black group-hover:dark:text-zinc-300 group-hover:scale-101"
         >Add a new tone</span
       >
     </button>
   </div>
-  <!-- <button class="py-2 px-4 rounded-md bg-zinc-200" on:click={() => {}}> Stop Recording </button> -->
+  <!-- <button class="py-2 px-4 rounded-md bg-zinc-200" on:click={() f=> {}}> Stop Recording </button> -->
 </main>
