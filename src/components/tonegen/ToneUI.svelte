@@ -82,7 +82,7 @@
 
   let storedGain: number | null = null;
 
-  let popupActive = true;
+  let popupActive = false;
   // $: console.log(popupActive);
 
   const togglePopup = (e: MouseEvent | KeyboardEvent) => {
@@ -311,7 +311,12 @@
           class="w-24 rounded-md bg-zinc-200 dark:bg-zinc-700 text-lg text-center touch-none dark:text-zinc-300 text-zinc-800"
           value={tone.oscNode.frequency.value}
           on:change={(e) => {
-            // try to parse the input as a number
+
+            if (!e.currentTarget || e.currentTarget.value === "") {
+              e.currentTarget.value = tone.oscNode.frequency.value;
+              return;
+            }
+            
             let parsed = parseInt(e.currentTarget.value);
 
             if (isNaN(parsed)) {
