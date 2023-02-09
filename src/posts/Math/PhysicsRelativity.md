@@ -3,7 +3,7 @@ title: 'Relativistic Predictions: Beta Particle in Magnetic Field'
 date: 2023-01-30
 layout: blog
 excerpt: A lab studying to what extent the measured radius of curvature of a beta particle in a uniform magnetic field deviates from relativistic predictions.
-pdfpath: /pdfs/MYPPendulums.pdf
+pdfpath: /pdfs/PhysicsRelativity.pdf
 thumbnailpath: thumbnails/PhysicsRelativity.png
 tags: LaTeX, Physics
 ---
