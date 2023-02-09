@@ -1,5 +1,5 @@
 <script lang="ts">
-  export const prerender = true;
+  // export const prerender = true;
   import type { PostInfo, BlogType } from "$lib/blog/blog";
 
   import PostsGrid from "$components/PostsGrid.svelte";
