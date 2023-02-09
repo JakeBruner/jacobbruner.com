@@ -117,7 +117,7 @@
     >
       <div class="md:w-1/2 md:h-full flex align-middle">
         <div
-          class="w-[350px] h-auto lg:w-[420px] ml-auto p-5 shadow-lg shadow-zinc-300 dark:shadow-zinc-800 rounded-md"
+          class="w-[350px] h-auto lg:w-[420px] 2xl:w-[500px] ml-auto p-5 shadow-lg shadow-zinc-300 dark:shadow-zinc-800 rounded-md mr-auto xl:mr-20"
         >
           <img
             class="md:shrink-0 max-h-full object-cover overflow-hidden top-0 right-0"
@@ -160,13 +160,13 @@
     <!-- look at how neat this is! -->
 
     <div
-      class="mt-12 grid gap-16 max-w-md md:max-w-none mx-auto md:grid-cols-2 md:gap-x-5 md:gap-y-12 items-center"
+      class="mt-12 md:mt-18 xl:mt-24 grid gap-16 max-w-md md:max-w-5xl mx-auto md:grid-cols-2 md:gap-x-5 md:gap-y-12 items-center"
     >
       {#each projectList as post, i}
         {@const arraypos = i + 4}
         <div use:inview={options} on:change={handleChange} id={arraypos.toString()}>
           {#if isInView[arraypos]}
-            <Post class="max-w-md" {post} id={i} />
+            <Post class="" {post} id={i} />
           {/if}
         </div>
       {/each}
