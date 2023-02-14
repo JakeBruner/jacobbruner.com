@@ -85,7 +85,7 @@
       <div
         class={classnames(
           "md:hidden fixed -z-10 w-1/2 mt-[60px] min-h-screen right-0 inset-y-0 transition-all duration-300 ease-in-out bg-white dark:bg-zinc-900 opacity-60",
-          menuOpen ? "right-0" : "-right-full"
+          menuOpen ? "right-0" : "right-[-100%]"
         )}
       />
       <aside
