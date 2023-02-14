@@ -300,10 +300,10 @@
             }}
           />
         </div>
-        <div class="px-4" />
+        <div class="px-2 xs:px-4" />
         <!-- waveform canvas -->
-        <Waveform />
-        <div class="px-4" />
+        <Waveform class="sm:block hidden" />
+        <div class="sm:px-4" />
         <!-- frequency picker -->
         <!-- TODO handle disabled state -->
         <input
@@ -311,12 +311,11 @@
           class="w-24 rounded-md bg-zinc-200 dark:bg-zinc-700 text-lg text-center touch-none dark:text-zinc-300 text-zinc-800"
           value={tone.oscNode.frequency.value}
           on:change={(e) => {
-
             if (!e.currentTarget || e.currentTarget.value === "") {
               e.currentTarget.value = tone.oscNode.frequency.value;
               return;
             }
-            
+
             let parsed = parseInt(e.currentTarget.value);
 
             if (isNaN(parsed)) {
@@ -347,9 +346,9 @@
           title="half frequency"
           on:click={() => (tone.oscNode.frequency.value /= 2)}>½x</button
         >
-        <div class="px-4" />
+        <div class="px-1 sm:px-4" />
         <!-- dial -->
-        <div class="flex flex-col translate-y-1" title="pan stereo channels">
+        <div class="flex-col translate-y-1 sm:flex hidden" title="pan stereo channels">
           <div class="relative w-10 h-10 block">
             <div
               class="rounded-full w-full h-full border-2 dark:border-zinc-300 border-zinc-500"
@@ -366,7 +365,7 @@
             </div>
           </div>
           <div
-            class="mx-auto bg-zinc-200 dark:bg-zinc-800 text-zinc-700 rounded-md px-1 mt-1 text-xs"
+            class="mx-auto bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-400 rounded-md px-1 mt-1 text-xs"
           >
             {Math.trunc(tone.panNode.pan.value * 100)}
           </div>

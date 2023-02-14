@@ -7,6 +7,10 @@
 
   // }
 
+  let _classes = "";
+
+  export { _classes as class };
+
   class WaveCanvas {
     c: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
@@ -53,6 +57,6 @@
   });
 </script>
 
-<div class="h-full w-32 border-3 bg-zinc-400 rounded-sm">
+<div class={"h-full w-32 border-3 bg-zinc-400 rounded-sm " + _classes}>
   <canvas class="h-full w-full p-0.5 rounded-sm" bind:this={c} />
 </div>

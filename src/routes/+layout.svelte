@@ -51,12 +51,21 @@
     });
   }
 
+  const noPopupPages = ["/tone-generator"];
+
   let popup = false;
   onMount(() => {
-    if (!(localStorage.getItem("popup") === "closed")) {
+    if (
+      !(localStorage.getItem("popup") === "closed") &&
+      !noPopupPages.includes($page.url.pathname)
+    ) {
       popup = true;
     }
   });
+
+  $: if (popup && !noPopupPages.includes($page.url.pathname)) {
+    popup = false;
+  }
 
   $: if (popup && $page.url.pathname === "/Math/ECC") {
     popup = false;
