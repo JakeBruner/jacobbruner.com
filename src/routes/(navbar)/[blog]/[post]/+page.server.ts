@@ -2,7 +2,6 @@ import {
   isValidBlogType,
   convertDateToString,
   type FullPost,
-  type BlogType,
   type ImportedPost,
   correctBlogTags
 } from "$lib/blog/blog";

@@ -9,10 +9,12 @@
   $: subject = data.subject;
 
   import { hexToRGB } from "$lib/blog/tags";
+
+  // using pdf.js
 </script>
 
 <svelte:head>
-  <title>{subject} | {post.title}</title>
+  <title>{subject} | {post?.title}</title>
 </svelte:head>
 
 <article class="md:container md:mx-auto xl:px-40 lg:px-28 mx-auto py-6 md:py-16 px-4 sm:px-6 ">
@@ -46,7 +48,7 @@
       </button>
     </div>
     <h2 class="pt-3 text-3xl md:text-4xl text-zinc-900 dark:text-zinc-100 font-semibold">
-      {post.title}
+      {post?.title}
     </h2>
 
     {#if post?.tags}
@@ -69,13 +71,21 @@
         </div>
       </div>
     {:else}
-      <p class="pt-1 pb-4 text-zinc-500 dark:text-zinc-400">{post.formatteddate}</p>
+      <p class="pt-1 pb-4 text-zinc-500 dark:text-zinc-400">{post?.formatteddate}</p>
     {/if}
 
     <!-- TODO do I want this here? -->
     {#if post?.videoid}
       <div class="w-full mb-6 aspect-w-16 aspect-h-9">
-        <embed
+        <!-- <embed
+          src="https://www.youtube.com/embed/{post?.videoid}"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          class="rounded"
+          title=""
+        /> -->
+        <iframe
           src="https://www.youtube.com/embed/{post?.videoid}"
           frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -87,14 +97,25 @@
     {/if}
     {#if post?.audiopath}
       <div class="mb-6">
-        <audio type="mp3" controls>
+        <!-- <audio type="mp3" controls>
           <source src={post?.audiopath} />
+        </audio> -->
+        <audio controls>
+          <source src={post?.audiopath} type="audio/mpeg" />
+          <span class="italic">Your browser does not support this audio element.</span>
         </audio>
       </div>
     {/if}
     {#if post?.pdfpath}
       <div class="mb-8 aspect-h-11 aspect-w-8">
-        <iframe class="" title="Pdf file" src={post?.pdfpath} frameborder="0" />
+        <!-- <iframe class="" title="Pdf file" src={post?.pdfpath} frameborder="0" /> -->
+        <embed
+          src={post?.pdfpath}
+          type="application/pdf"
+          width="100%"
+          height="100%"
+          title="Pdf file"
+        />
       </div>
     {/if}
     <div
@@ -106,7 +127,7 @@
        dark:prose-p:text-zinc-300 max-w-none prose-p:leading-normal prose-base
         lg:prose-xl prose-zinc dark:prose-invert subpixel-antialiased optimize-legibility"
     >
-      {@html post.html}
+      {@html post?.html}
     </div>
   </div>
 </article>
