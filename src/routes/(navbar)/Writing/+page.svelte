@@ -17,7 +17,7 @@
 <div class="pt-8 md:pt-16 pb-20 px-4 sm:px-6 lg:pt-20 lg:pb-28 lg:px-8">
   <div class="max-w-lg mx-auto lg:max-w-7xl">
     <div class="border-b border-b-zinc-200  dark:border-b-zinc-700 pb-6">
-      <h2 class="text-3xl tracking-tight font-semibold  sm:text-4xl">[ˈɹaɪtɪŋ]</h2>
+      <h2 class="text-3xl tracking-tight font-semibold sm:text-4xl">/ˈɹaɪtɪŋ/ [ˈɹʷɑi̯ɾɪŋ]</h2>
     </div>
 
     <PostsGrid {subject} posts={data.p} />
