@@ -12,6 +12,8 @@
   let composer: GPUComposer;
   let running: boolean;
 
+  const r = 3;
+
   onMount(() => {
     composer = new GPUComposer({ canvas, verboseLogging: false });
 
@@ -52,7 +54,7 @@
       const time = performance.now() / 1000; // Time in seconds
       // raymarchingProgram.setUniform("time", time, "FLOAT");
 
-      const cameraPosition = [Math.sin(time) * 3, 0, Math.cos(time) * 3];
+      const cameraPosition = [Math.sin(time) * r, 0, Math.cos(time) * r];
       raymarchingProgram.setUniform("cameraPosition", cameraPosition, "FLOAT");
 
       composer.step({

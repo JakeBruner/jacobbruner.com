@@ -4,7 +4,7 @@ uniform vec3 cameraTarget;
 uniform float time;
 uniform float u_fov;
 uniform vec2 u_resolution;
-const int MAX_ITERATIONS = 128;
+const int MAX_ITERATIONS = 64;
 const float HIT_THRESHOLD = 0.001;
 const int MAX_STEPS = 256;
 
@@ -28,6 +28,15 @@ float mandelbulb(vec3 position) {
   return 0.5 * log(r) * r / dr;
 }
 
+vec3 normal(vec3 position) {
+  const float EPS = 0.0001;
+  return normalize(vec3(
+    mandelbulb(position + vec3(EPS, 0.0, 0.0)) - mandelbulb(position - vec3(EPS, 0.0, 0.0)),
+    mandelbulb(position + vec3(0.0, EPS, 0.0)) - mandelbulb(position - vec3(0.0, EPS, 0.0)),
+    mandelbulb(position + vec3(0.0, 0.0, EPS)) - mandelbulb(position - vec3(0.0, 0.0, EPS))
+  ));
+}
+
 out vec4 fragColor;
 
 vec4 hsvtorgb(vec3 c) {
@@ -46,17 +55,23 @@ void main() {
   vec3 rayDirection = normalize(uv.x * right + uv.y * up + 1.0 / tan(u_fov / 2.0) * forward);
 
   vec3 rayOrigin = cameraPosition;
+  vec3 lightPosition = cameraPosition + vec3(0.0, 2.0, 3.0);
   
   float t = 0.0;
   for (int i = 0; i < MAX_STEPS; i++) {
       vec3 position = rayOrigin + rayDirection * t;
       float distance = mandelbulb(position);
       if (distance < HIT_THRESHOLD) {
+        vec3 surfaceNormal = normal(position);
+        vec3 lightDirection = normalize(lightPosition - position); // direction of the light
+
+        float lambert = max(0.0,  dot(surfaceNormal, lightDirection))*2.0; // compute the lambert factor
+        
         // Compute the color based on the hit
         float normalizedDistance = distance / HIT_THRESHOLD; // Normalize the distance to range [0, 1]
         // an interesting, colorful color mapping based on distance
         fragColor = hsvtorgb(vec3(pow(normalizedDistance,2.0), 0.7, 0.9));
-        
+        fragColor.rgb *= lambert;
       
         return;
       }
