@@ -7,6 +7,7 @@ uniform vec2 u_resolution;
 const int MAX_ITERATIONS = 64;
 const float HIT_THRESHOLD = 0.001;
 const int MAX_STEPS = 256;
+const float R = 3.0;
 
 // Function to compute the distance to the fractal surface
 float mandelbulb(vec3 position) {
@@ -47,6 +48,8 @@ vec4 hsvtorgb(vec3 c) {
 
 void main() {
   // Compute the ray direction 
+  vec3 cameraPosition = vec3(sin(time)*R, 0.0, cos(time)*R) ;
+
   vec3 forward = normalize(cameraTarget - cameraPosition);
   vec3 right = cross(vec3(0.0, 1.0, 0.0), forward); 
   vec3 up = cross(forward, right); 
@@ -54,8 +57,10 @@ void main() {
   uv.x *= u_resolution.x / u_resolution.y; 
   vec3 rayDirection = normalize(uv.x * right + uv.y * up + 1.0 / tan(u_fov / 2.0) * forward);
 
+
+
   vec3 rayOrigin = cameraPosition;
-  vec3 lightPosition = cameraPosition + vec3(0.0, 2.0, 3.0);
+  vec3 lightPosition = vec3(2.0, 5.0, 4.0);
   
   float t = 0.0;
   for (int i = 0; i < MAX_STEPS; i++) {
@@ -65,13 +70,12 @@ void main() {
         vec3 surfaceNormal = normal(position);
         vec3 lightDirection = normalize(lightPosition - position); // direction of the light
 
-        float lambert = max(0.0,  dot(surfaceNormal, lightDirection))*2.0; // compute the lambert factor
+        float lambert = max(0.2,  dot(surfaceNormal, lightDirection)); // compute the lambert factor
         
         // Compute the color based on the hit
         float normalizedDistance = distance / HIT_THRESHOLD; // Normalize the distance to range [0, 1]
         // an interesting, colorful color mapping based on distance
-        fragColor = hsvtorgb(vec3(pow(normalizedDistance,2.0), 0.7, 0.9));
-        fragColor.rgb *= lambert;
+        fragColor = hsvtorgb(vec3(pow(normalizedDistance,2.0), 0.7, lambert*0.8 + 0.2));
       
         return;
       }

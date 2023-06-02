@@ -52,17 +52,17 @@
     running = true;
     const animate = () => {
       const time = performance.now() / 1000; // Time in seconds
-      // raymarchingProgram.setUniform("time", time, "FLOAT");
+      raymarchingProgram.setUniform("time", time, "FLOAT");
 
-      const cameraPosition = [Math.sin(time) * r, 0, Math.cos(time) * r];
-      raymarchingProgram.setUniform("cameraPosition", cameraPosition, "FLOAT");
+      // const cameraPosition = [Math.sin(time) * r, 0, Math.cos(time) * r];
+      // raymarchingProgram.setUniform("cameraPosition", cameraPosition, "FLOAT");
 
       composer.step({
         program: raymarchingProgram
       });
 
-      running && setTimeout(animate, 10);
-      // requestAnimationFrame(animate);
+      // running && setTimeout(animate, 10);
+      requestAnimationFrame(animate);
     };
 
     animate();
