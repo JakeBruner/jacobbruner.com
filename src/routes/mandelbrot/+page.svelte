@@ -61,8 +61,8 @@
         program: raymarchingProgram
       });
 
-      // running && setTimeout(animate, 10);
-      requestAnimationFrame(animate);
+      running && setTimeout(animate, 100);
+      // running && requestAnimationFrame(animate);
     };
 
     animate();
