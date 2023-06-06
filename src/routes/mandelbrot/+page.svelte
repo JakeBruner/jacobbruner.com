@@ -51,7 +51,8 @@
 
     running = true;
     const animate = () => {
-      const time = performance.now() / 1000; // Time in seconds
+      const time = performance.now() / 1000;
+
       raymarchingProgram.setUniform("time", time, "FLOAT");
 
       // const cameraPosition = [Math.sin(time) * r, 0, Math.cos(time) * r];

@@ -4,7 +4,7 @@ uniform vec3 cameraTarget;
 uniform float time;
 uniform float u_fov;
 uniform vec2 u_resolution;
-const int MAX_ITERATIONS = 64;
+const int MAX_ITERATIONS = 128;
 const int MAX_LOWP_ITERATIONS = 32;
 const float HIT_THRESHOLD = 0.001;
 const int MAX_STEPS = 128;
@@ -21,9 +21,8 @@ float fractalDF(vec3 position) {
     if(r > 2.0)
       break;
     // Compute the new position and derivative
-    float r7 = r * r * r * r * r * r * r; // simplified pow(r, 7.0)
-    // float r7 = pow(r, 7.0);
-    float r8 = r7 * r; // simplified pow(r, 8.0)
+    float r7 = pow(r, 7.0);
+    float r8 = pow(r, 8.0);
     float theta = acos(z.z / r);
     float phi = atan(z.y, z.x);
     dr = r7 * 8.0 * dr + 1.0;
@@ -44,9 +43,8 @@ float lowp_fractalDF(vec3 position) {
     if(r > 2.0)
       break;
     // Compute the new position and derivative
-    float r7 = r * r * r * r * r * r * r; // simplified pow(r, 7.0)
-    // float r7 = pow(r, 7.0);
-    float r8 = r7 * r; // simplified pow(r, 8.0)
+    float r7 = pow(r, 7.0);
+    float r8 = pow(r, 8.0);
     float theta = acos(z.z / r);
     float phi = atan(z.y, z.x);
     dr = r7 * 8.0 * dr + 1.0;
@@ -73,7 +71,7 @@ vec3 hsvtorgb(vec3 c) {
 float occlusion(vec3 position, vec3 normal) {
   float occlusion = 0.0;
   float weight = 0.0;
-  for(int i = 1; i <= 5; i++) {
+  for(int i = 1; i <= 2; i++) {
     float r = 0.1 * float(i);
     vec3 samplePosition = position + normal * r;
     float sampleDistance = lowp_fractalDF(samplePosition);
@@ -88,7 +86,7 @@ float shadow(vec3 ro, vec3 rd, float maxd) {
   float res = 1.0;
   float t = HIT_THRESHOLD;
   vec3 ro_plus_t_rd; // precalculate ro + t * rd
-  for(int i = 0; i < 50; i++) {
+  for(int i = 0; i < 25; i++) {
     if(res < 0.01 || t > maxd)
       break;
     ro_plus_t_rd = ro + t * rd; // use precalculated value
@@ -109,19 +107,31 @@ vec3 getCameraRayDir(vec2 uv, vec3 cameraPosition, vec3 cameraTarget, float u_fo
   return normalize(uv.x * right + uv.y * up + 1.0 / tan(u_fov / 2.0) * forward);
 }
 
-vec3 getLight(vec3 lightPosition, vec3 normal, vec3 rayDir) {
-  vec3 lightDir = normalize(lightPosition - rayDir);
-  float lightIntensity = max(dot(normal, lightDir), 0.0);
-  return vec3(lightIntensity);
-}
+// vec3 getLight(vec3 lightPosition, vec3 normal, vec3 rayDir) {
+//   vec3 lightDir = normalize(lightPosition - rayDir);
+//   float lightIntensity = max(dot(normal, lightDir), 0.0);
+//   return vec3(lightIntensity);
+// }
 
 vec3 render(vec3 rayOrigin, vec3 rayDir, vec3 lightPosition) {
   vec3 col;
 
   float t = 0.0;
   bool hit = false;
+
+  // Move some computations outside the loop.
+  vec3 p;
+  vec3 surfaceNormal;
+  vec3 totalLight;
+  float ao;
+  float shadowFactor;
+  float normalizedDistance;
+  vec3 fractalColor;
+  vec3 ambientLight = vec3(0.05);
+  vec3 avgLight;
+
   for(int i = 0; i < MAX_STEPS; i++) {
-    vec3 p = rayOrigin + t * rayDir;
+    p = rayOrigin + t * rayDir;
     float distance = fractalDF(p);
     if(distance < HIT_THRESHOLD) {
       hit = true;
@@ -130,29 +140,26 @@ vec3 render(vec3 rayOrigin, vec3 rayDir, vec3 lightPosition) {
     if(t > MAX_DISTANCE)
       break;
 
-    vec3 surfaceNormal = normal(p);
-    float ao = occlusion(p, surfaceNormal); // compute the occlusion factor
+    surfaceNormal = normal(p);
+    ao = occlusion(p, surfaceNormal); // compute the occlusion factor
 
-    // Compute the shadow
-    float shadowFactor = shadow(p, lightPosition - p, MAX_DISTANCE);
+    // Compute the shadow 
+    shadowFactor = shadow(p, lightPosition - p, MAX_DISTANCE);
     ao *= shadowFactor;
 
     // Compute the color based on the hit
-    float normalizedDistance = distance / HIT_THRESHOLD; // Normalize the distance to range [0, 1]
-    vec3 fractalColor = hsvtorgb(vec3(pow(normalizedDistance, 2.0), 0.7, 1.0));
+    normalizedDistance = distance / HIT_THRESHOLD; // Normalize the distance to range [0, 1]
+    fractalColor = hsvtorgb(vec3(normalizedDistance, 0.7, clamp(ao, 0.3, 1.0)));
 
-    // Compute soft light
-    vec3 ambientLight = vec3(0.03);
-    vec3 totalLight = vec3(0.0);
-    const int numSamples = 3;
-    for(int j = 0; j < numSamples; j++) {
-      vec3 sampleLightPosition = lightPosition + vec3((float(j % 4) - 1.5) * 0.5, (float(j / 4) - 0.5) * 0.5, 0.0);
+    // totalLight = vec3(0.0);
+    // const int numSamples = 3;
+    // for(int j = 0; j < numSamples; j++) {
+    //   vec3 sampleLightPosition = lightPosition + vec3((float(j % 4) - 1.5) * 0.5, (float(j / 4) - 0.5) * 0.5, 0.0);
+    //   totalLight += getLight(sampleLightPosition, surfaceNormal, p);
+    // }
+    // avgLight = totalLight / float(numSamples);
 
-      totalLight += getLight(sampleLightPosition, surfaceNormal, p);
-    }
-    vec3 avgLight = totalLight / float(numSamples);
-
-    col = fractalColor * (ambientLight + ao * avgLight);
+    col = fractalColor;
     t += distance;
   }
 
@@ -167,8 +174,7 @@ void main() {
   // Compute the ray direction 
   vec3 cameraPosition = vec3(sin(time) * R, 0.0, cos(time) * R);
 
-  vec3 rayDir = getCameraRayDir(v_uv, cameraPosition, vec3(0.0), 45.0, u_resolution);
-
+  vec3 rayDir = getCameraRayDir(v_uv, cameraPosition, vec3(0.0), u_fov, u_resolution);
   // Render the scene
   vec3 col = render(cameraPosition, rayDir, lightPosition);
 
