@@ -130,7 +130,7 @@
 {#if tone}
   <div class="shadow-md">
     <div
-      class="w-full bg-gradient-to-tr from-zinc-200 via-zinc-100 to-zinc-300  dark:from-zinc-700 dark:via-zinc-700 dark:to-zinc-600 shadow-inner z-0 rounded-2xl flex flex-row-reverse justify-between align-middle "
+      class="w-full bg-gradient-to-tr from-zinc-200 via-zinc-100 to-zinc-300 dark:from-zinc-700 dark:via-zinc-700 dark:to-zinc-600 shadow-inner z-0 rounded-2xl flex flex-row-reverse justify-between align-middle"
     >
       <div
         class={c(
@@ -154,7 +154,7 @@
             popupActive ? "text-zinc-800 dark:text-zinc-400" : "dark:text-zinc-300 text-zinc-600"
           )}
         />
-        <div class="overflow-hidden ">
+        <div class="overflow-hidden">
           {#if popupActive}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div
