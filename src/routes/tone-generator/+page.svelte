@@ -268,8 +268,9 @@
   <button
     type="button"
     class="shadow-inner text-cyan-700 bg-cyan-100 group hover:bg-cyan-200 relative flex items-center rounded-md border border-transparent px-4 py-0.5 text-base font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 mb-3 mx-5"
-    on:click={() => {
-      const frequencyList = generateFrequencies({ inputBaseFrequency: 400 });
+    on:click={(e) => {
+      e.currentTarget.blur();
+      const frequencyList = generateFrequencies({});
 
       frequencyList.map((f) => {
         const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: f });

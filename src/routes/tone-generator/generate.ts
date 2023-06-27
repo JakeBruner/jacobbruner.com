@@ -2,18 +2,34 @@ export type Harmony =
   | "min7"
   | "min9"
   | "min11"
-  // | "min7sharp9"
-  // | "maj9"
+  | "min7sharp9"
+  | "maj9"
+  | "maj7"
+  | "maj9"
   | "maj9sharp11"
-  | "maj7sharp11";
-// | "dom7flat9sharp11"
+  | "maj7sharp11"
+  | "dom7flat9aug4"
+  | "dom7sharp9"
+  | "halfdim7"
+  | "halfdim7add11"
+  | "halfdim11";
 
 const harmonicsMap: Record<Harmony, number[]> = {
-  min7: [1, -2, -11, -21, -27],
-  min9: [1, -2, -4, -7, -8, -11, -14, -21, -27],
-  min11: [1, -2, -3, -4, -6, -7, -8, -9, -11, -12 - 14, -21, -27],
-  maj7sharp11: [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 15],
-  maj9sharp11: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 15] // 1 = -1, with the - being the undertone series
+  // please note the position in array detemines, stochastically, the number of octaves above the base frequency
+  // 1 = -1, with the - being the undertone series
+  min7: [1, -21, -27, -9],
+  min7sharp9: [1, -21, -27, -9, -15],
+  min9: [1, -21, -27, -9, -7],
+  min11: [1, -3, -7, -11, -21, -27],
+  maj7: [1, 3, 5, 15],
+  maj7sharp11: [1, 3, 5, 11, 15],
+  maj9: [1, 3, 5, 9, 15],
+  maj9sharp11: [1, 3, 5, 9, 11, 15],
+  dom7flat9aug4: [1, 3, 5, 7, 17, 11],
+  dom7sharp9: [1, 5, 3, 12, 19],
+  halfdim7: [1, -27, -11, -9],
+  halfdim7add11: [1, -27, -11, -3],
+  halfdim11: [1, -27, -11, -7, -3]
 };
 
 export interface GenerateOptions {
@@ -22,62 +38,49 @@ export interface GenerateOptions {
 }
 
 export const generateFrequencies = ({ inputBaseFrequency, inputHarmonics }: GenerateOptions) => {
-  // const baseFrequency = rand ? Math.floor(Math.random() * 300 + 150) : baseFrequency;
-  const baseFrequency = inputBaseFrequency || Math.floor(Math.random() * 300 + 150);
-
-  const harmonics = inputHarmonics || (Math.random() > 0.9 ? "min7" : "min9");
-
+  const baseFrequency = inputBaseFrequency || Math.random() * 350 + 75;
+  const harmonics = "halfdim11";
+  // inputHarmonics ||
+  // (Object.keys(harmonicsMap) as Harmony[])[
+  //   Math.floor(Math.random() * Object.keys(harmonicsMap).length)
+  // ];
+  console.log("chord:", harmonics);
   const overtoneArray = harmonicsMap[harmonics];
 
   let frequencyList = [baseFrequency];
 
   frequencyList = frequencyList.concat(
-    overtoneArray.map((o) =>
-      o > 0
-        ? // ? baseFrequency * o // correcting for octave
-          baseFrequency * o
-        : baseFrequency / Math.abs(o)
-    )
+    overtoneArray.map((o) => (o > 0 ? baseFrequency * o : baseFrequency / Math.abs(o)))
   );
 
-  // algorithm to get the frequencies as close to the base frequency as possible minimizing square error while being constrained to only multiply/divide values by 2
-
-  const minSquareError = Math.sqrt(
-    frequencyList.reduce((acc, cur, i) => {
-      if (i === 0) {
-        return acc;
-      } else {
-        return acc + Math.pow(cur - frequencyList[i - 1], 2);
-      }
-    }, 0)
-  );
-
-  const maxIterations = 1000;
-
-  for (let i = 0; i < maxIterations; i++) {
-    const randomIndex = Math.floor(Math.random() * frequencyList.length);
-    const randomValue = frequencyList[randomIndex];
-    const randomMultiplier = Math.random() > 0.5 ? 2 : 0.5;
-    const newFrequencyList = frequencyList.map((f, i) => {
-      if (i === randomIndex) {
-        return randomValue * randomMultiplier;
-      } else {
-        return f;
-      }
-    });
-    const newSquareError = Math.sqrt(
-      newFrequencyList.reduce((acc, cur, i) => {
-        if (i === 0) {
-          return acc;
-        } else {
-          return acc + Math.pow(cur - newFrequencyList[i - 1], 2);
-        }
-      }, 0)
-    );
-    if (newSquareError < minSquareError) {
-      frequencyList = newFrequencyList;
+  // ensure frequencies are as close as possible to the base frequency
+  frequencyList = frequencyList.map((frequency) => {
+    while (frequency > 2.5 * baseFrequency) {
+      frequency /= 2;
     }
-  }
+
+    while (frequency < baseFrequency) {
+      frequency *= 2;
+    }
+
+    return frequency;
+  });
+
+  // randomly move frequencies up by a random (or 0) number of octaves, progressively more likely to be higher octaves as the array index increases
+  // sigmoid from 0 octaves (no change) to A ocvates (max change) with a LOT of random noise. so random noise can overpower the sigmoid, sometimes, but rarely, leading to crazy chords and slash harmonies
+
+  const A = 3;
+  const randomNoise = 0.5;
+
+  const octaveShifts = frequencyList.map((f, i) => {
+    const sigmoid = 1 / (1 + Math.pow(Math.E, -((i - 2) / A)));
+    const noise = Math.random() * randomNoise * (Math.random() > 0.5 ? 1 : -1);
+    return Math.round(sigmoid + noise);
+  });
+
+  frequencyList = frequencyList.map((frequency, i) => {
+    return frequency * Math.pow(2, octaveShifts[i]);
+  });
 
   return frequencyList;
 };
