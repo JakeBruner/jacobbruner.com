@@ -8,8 +8,10 @@ export type Harmony =
   | "maj9"
   | "maj9sharp11"
   | "maj7sharp11"
+  | "dom7"
   | "dom7flat9aug4"
-  | "dom7sharp9"
+  | "dom7sharp9_1"
+  | "dom7sharp9_2"
   | "halfdim7"
   | "halfdim7add11"
   | "halfdim11";
@@ -20,13 +22,15 @@ const harmonicsMap: Record<Harmony, number[]> = {
   min7: [1, -21, -27, -9],
   min7sharp9: [1, -21, -27, -9, -15],
   min9: [1, -21, -27, -9, -7],
-  min11: [1, -3, -7, -11, -21, -27],
+  min11: [1, -21, -27, -3, -7, -11],
   maj7: [1, 3, 5, 15],
   maj7sharp11: [1, 3, 5, 11, 15],
   maj9: [1, 3, 5, 9, 15],
   maj9sharp11: [1, 3, 5, 9, 11, 15],
+  dom7: [1, 3, 5, 7],
   dom7flat9aug4: [1, 3, 5, 7, 17, 11],
-  dom7sharp9: [1, 5, 3, 12, 19],
+  dom7sharp9_1: [1, 5, 3, 12, 19],
+  dom7sharp9_2: [1, -13, -21, -15, -3],
   halfdim7: [1, -27, -11, -9],
   halfdim7add11: [1, -27, -11, -3],
   halfdim11: [1, -27, -11, -7, -3]
@@ -39,11 +43,11 @@ export interface GenerateOptions {
 
 export const generateFrequencies = ({ inputBaseFrequency, inputHarmonics }: GenerateOptions) => {
   const baseFrequency = inputBaseFrequency || Math.random() * 350 + 75;
-  const harmonics = "halfdim11";
-  // inputHarmonics ||
-  // (Object.keys(harmonicsMap) as Harmony[])[
-  //   Math.floor(Math.random() * Object.keys(harmonicsMap).length)
-  // ];
+  const harmonics =
+    inputHarmonics ||
+    (Object.keys(harmonicsMap) as Harmony[])[
+      Math.floor(Math.random() * Object.keys(harmonicsMap).length)
+    ];
   console.log("chord:", harmonics);
   const overtoneArray = harmonicsMap[harmonics];
 

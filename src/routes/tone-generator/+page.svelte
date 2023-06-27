@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Play, Pause, ArrowDownOnSquare, Plus } from "svelte-heros-v2";
+  import { Play, Pause, ArrowDownOnSquare, Plus, Trash } from "svelte-heros-v2";
   import { onMount } from "svelte";
   import ToneUI from "$components/tonegen/ToneUI.svelte";
   import c from "$lib/c";
@@ -138,6 +138,16 @@
       tones = tones.filter((t) => t.id !== id);
     }
   };
+
+  const removeAllTones = () => {
+    tones.forEach((t) => {
+      t.oscNode.stop();
+      t.oscNode.disconnect();
+      t.gainNode.disconnect();
+      t.panNode.disconnect();
+    });
+    tones = [];
+  };
 </script>
 
 <svelte:head>
@@ -267,7 +277,7 @@
 
   <button
     type="button"
-    class="shadow-inner text-cyan-700 bg-cyan-100 group hover:bg-cyan-200 relative flex items-center rounded-md border border-transparent px-4 py-0.5 text-base font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 mb-3 mx-5"
+    class="shadow-inner text-cyan-700 bg-cyan-100 group hover:bg-cyan-200 relative inline-flex items-center rounded-xl border border-transparent px-4 py-0.5 text-base font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 mb-3 ml-5"
     on:click={(e) => {
       e.currentTarget.blur();
       const frequencyList = generateFrequencies({});
@@ -307,21 +317,11 @@
       </g>
     </svg>
   </button>
-  <div class="w-200 absolute px-5">
-    <input
-      bind:value={numberOvertones}
-      type="range"
-      min="5"
-      max="25"
-      class="range slider bg-blue-500"
-      step="5"
-    />
-    <div class="w-full flex justify-between text-xs px-2">
-      <span class="border-l border-gray-500 h-4">|</span>
-      <span class="border-l border-gray-500 h-4">|</span>
-      <span class="border-l border-gray-500 h-4">|</span>
-      <span class="border-l border-gray-500 h-4">|</span>
-      <span class="border-l border-gray-500 h-4">|</span>
-    </div>
-  </div>
+  <button
+    type="button"
+    class="shadow-inner text-red-700 bg-red-100 group hover:bg-red-200 relative inline-flex items-center rounded-xl border border-transparent p-1 translate-y-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 mx-2"
+    on:click={removeAllTones}
+  >
+    <Trash class="h-8 w-8" />
+  </button>
 </main>
