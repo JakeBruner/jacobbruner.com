@@ -7,6 +7,8 @@
 
   import type { Interval, Tuning } from "$lib/tonegen/intervals";
 
+  import { generateFrequencies } from "./generate";
+
   import ToneRecorder from "$lib/tonegen/recorder";
 
   let recorder: ToneRecorder;
@@ -24,6 +26,8 @@
 
   let uid = 0;
   let tones: Tone[] = [];
+
+  type GenSetting = "maj9sharp11" | "min11";
 
   const gainOptions = { gain: 0.75 };
 
@@ -49,23 +53,23 @@
   //   numberOvertones &&
   //   localStorage.setItem("numberOvertones", numberOvertones.toString());
 
-  const devonlyInit = () => {
-    const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: 400 });
-    const gainNode = new GainNode(ctx, gainOptions);
-    const panNode = new StereoPannerNode(ctx);
+  const initSound = () => {
+    // const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: 400 });
+    // const gainNode = new GainNode(ctx, gainOptions);
+    // const panNode = new StereoPannerNode(ctx);
 
-    oscNode.connect(panNode).connect(gainNode).connect(analyzer).connect(ctx.destination);
+    // oscNode.connect(panNode).connect(gainNode).connect(analyzer).connect(ctx.destination);
 
-    tones.push({
-      id: uid++,
-      oscNode,
-      gainNode,
-      panNode,
-      isOrphan: false,
-      wave: "sine"
-    });
+    // tones.push({
+    //   id: uid++,
+    //   oscNode,
+    //   gainNode,
+    //   panNode,
+    //   isOrphan: false,
+    //   wave: "sine"
+    // });
 
-    oscNode.start();
+    // oscNode.start();
 
     // oscNode.start();
     requestAnimationFrame(animate);
@@ -141,7 +145,7 @@
 </svelte:head>
 
 <svelte:window
-  on:mousedown|once|trusted={devonlyInit}
+  on:mousedown|once|trusted={initSound}
   on:keypress|={(e) => {
     // console.log(e);
     if (e.code === "Space") {
@@ -265,74 +269,7 @@
     type="button"
     class="shadow-inner text-cyan-700 bg-cyan-100 group hover:bg-cyan-200 relative flex items-center rounded-md border border-transparent px-4 py-0.5 text-base font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 mb-3 mx-5"
     on:click={() => {
-      // Generate a random base frequency, then compute 5 random-ish of it's overtone harmonics and then randomly permute each entry by random doubling and halving factors, then push all the resulting frequencies to UI
-      const baseFrequency = Math.floor(Math.random() * 300 + 150);
-      // const baseFrequency = 400;
-
-      let frequencyList = [baseFrequency];
-
-      let numberTones = 5;
-      let maxOvertone = 7;
-
-      // for (let i = 0; i < 10; i++) {
-      //   frequencyList[i] = baseFrequency * 2 ** (-1 * i);
-      // }
-      // console.log(frequencyList);
-      const overtoneArray = Array.from(
-        { length: numberTones },
-        (_, i) => Math.random() * maxOvertone - maxOvertone / 2
-      );
-
-      frequencyList = frequencyList.concat(overtoneArray.map((o) => baseFrequency ** o));
-
-      const permutations = Math.floor(Math.random() * 50);
-
-      for (let i = 0; i < permutations; i++) {
-        const index = i % frequencyList.length;
-        const factor = Math.random() < 0.5 ? 1 / 2 : 2;
-
-        frequencyList[index] *= factor;
-      }
-
-      // check that freq for each entry is less than 5000 and halving it until it is
-
-      frequencyList = frequencyList.map((f) => {
-        while (f > 5000) {
-          f /= Math.random() < 0.5 ? 2 : 4;
-        }
-        while (f < 40) {
-          f *= Math.random() < 0.5 ? 2 : 4;
-        }
-        return f;
-      });
-
-      frequencyList.sort((a, b) => a - b);
-
-      let minDifference = 50; // Minimum difference between frequencies
-      let octaveFactor = 2; // The factor by which frequencies are shifted
-
-      for (let i = 1; i < frequencyList.length; i++) {
-        if (frequencyList[i] - frequencyList[i - 1] < minDifference) {
-          if (Math.random() < 0.5) {
-            frequencyList[i - 1] /= octaveFactor;
-          } else {
-            frequencyList[i] *= octaveFactor;
-          }
-        }
-      }
-
-      // Post-smoothing, ensure that all frequencies remain within the desired range
-      frequencyList = frequencyList.map((f) => {
-        while (f > 5000) {
-          f /= octaveFactor;
-        }
-        while (f < 40) {
-          f *= octaveFactor;
-        }
-        return f;
-      });
-
-      // append all
+      const frequencyList = generateFrequencies({ inputBaseFrequency: 400 });
 
       frequencyList.map((f) => {
         const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: f });
