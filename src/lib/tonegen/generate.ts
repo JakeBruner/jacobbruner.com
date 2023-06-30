@@ -1,41 +1,22 @@
-// export type Harmony =
-// | "min7"
-// | "min9"
-// | "min11"
-// | "min7sharp9"
-// | "maj9"
-// | "maj7"
-// | "maj9"
-// | "maj9sharp11"
-// | "maj7sharp11"
-// | "dom7"
-// | "dom7flat9aug4"
-// | "dom7sharp9_1"
-// | "dom7sharp9_2"
-// | "halfdim7"
-// | "halfdim7add11"
-// | "halfdim11";
-
-const harmonyOptions = [
-  "min7",
-  "min9",
-  "min11",
-  "min7sharp9",
-  "maj9",
-  "maj7",
-  "maj9",
-  "maj9sharp11",
-  "maj7sharp11",
-  "dom7",
-  "dom7flat9aug4",
-  "dom7sharp9_1",
-  "dom7sharp9_2",
-  "halfdim7",
-  "halfdim7add11",
-  "halfdim11"
+export const harmonyOptions = [
+  { name: "min7", notes: "1, b3, 5, b7" },
+  { name: "min9", notes: "1, b3, 5, b7, 9" },
+  { name: "min11", notes: "1, b3, 5, b7, 9, 11" },
+  { name: "min7sharp9", notes: "1, b3, 5, b7, #9" },
+  { name: "maj7", notes: "1, 3, 5, 7" },
+  { name: "maj9", notes: "1, 3, 5, 7, 9" },
+  { name: "maj9sharp11", notes: "1, 3, 5, 7, 9, #11" },
+  { name: "maj7sharp11", notes: "1, 3, 5, 7, #11" },
+  { name: "dom7", notes: "1, 3, 5, b7" },
+  { name: "dom7flat9aug4", notes: "1, 3, #4, b7, b9" },
+  { name: "dom7sharp9_1", notes: "1, 3, #9, b7" },
+  { name: "dom7sharp9_2", notes: "1, 3, b7, #9" },
+  { name: "halfdim7", notes: "1, b3, b5, b7" },
+  { name: "halfdim7add11", notes: "1, b3, b5, b7, 11" },
+  { name: "halfdim11", notes: "1, b3, b5, b7, 9, 11" }
 ] as const;
 
-export type Harmony = (typeof harmonyOptions)[number];
+export type Harmony = (typeof harmonyOptions)[number]["name"];
 
 const harmonicsMap: Record<Harmony, number[]> = {
   // please note the position in array detemines, stochastically, the number of octaves above the base frequency

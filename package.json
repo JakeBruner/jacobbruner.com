@@ -26,6 +26,8 @@
     "@fontsource/lato": "^4.5.10",
     "@fontsource/nunito": "^4.5.12",
     "@fontsource/rubik": "^4.5.14",
+    "@rgossiaux/svelte-headlessui": "^2.0.0",
+    "@rgossiaux/svelte-heroicons": "^0.1.2",
     "@sveltejs/adapter-auto": "^1.0.3",
     "@sveltejs/kit": "^1.20.1",
     "@tailwindcss/aspect-ratio": "^0.4.2",
