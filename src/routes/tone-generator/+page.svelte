@@ -7,7 +7,7 @@
 
   import type { Interval, Tuning } from "$lib/tonegen/intervals";
 
-  import { generateFrequencies } from "./generate";
+  import { generateFrequencies } from "$lib/tonegen/generate";
 
   import ToneRecorder from "$lib/tonegen/recorder";
 

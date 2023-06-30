@@ -1,20 +1,41 @@
-export type Harmony =
-  | "min7"
-  | "min9"
-  | "min11"
-  | "min7sharp9"
-  | "maj9"
-  | "maj7"
-  | "maj9"
-  | "maj9sharp11"
-  | "maj7sharp11"
-  | "dom7"
-  | "dom7flat9aug4"
-  | "dom7sharp9_1"
-  | "dom7sharp9_2"
-  | "halfdim7"
-  | "halfdim7add11"
-  | "halfdim11";
+// export type Harmony =
+// | "min7"
+// | "min9"
+// | "min11"
+// | "min7sharp9"
+// | "maj9"
+// | "maj7"
+// | "maj9"
+// | "maj9sharp11"
+// | "maj7sharp11"
+// | "dom7"
+// | "dom7flat9aug4"
+// | "dom7sharp9_1"
+// | "dom7sharp9_2"
+// | "halfdim7"
+// | "halfdim7add11"
+// | "halfdim11";
+
+const harmonyOptions = [
+  "min7",
+  "min9",
+  "min11",
+  "min7sharp9",
+  "maj9",
+  "maj7",
+  "maj9",
+  "maj9sharp11",
+  "maj7sharp11",
+  "dom7",
+  "dom7flat9aug4",
+  "dom7sharp9_1",
+  "dom7sharp9_2",
+  "halfdim7",
+  "halfdim7add11",
+  "halfdim11"
+] as const;
+
+export type Harmony = (typeof harmonyOptions)[number];
 
 const harmonicsMap: Record<Harmony, number[]> = {
   // please note the position in array detemines, stochastically, the number of octaves above the base frequency
