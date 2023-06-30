@@ -1,6 +1,5 @@
 <script lang="ts">
   import { generateOptions, type GenerateOptions } from "$lib/tonegen/generate";
-  import { onMount, onDestroy } from "svelte";
 
   import c from "$lib/c";
 

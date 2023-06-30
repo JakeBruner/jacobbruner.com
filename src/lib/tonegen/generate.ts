@@ -18,6 +18,12 @@ export const harmonyOptions = [
 
 export type Harmony = (typeof harmonyOptions)[number]["name"];
 
+export function assertIsSupportedGenerationType(str: string): asserts str is Harmony | "Random" {
+  if (str !== "Random" && !harmonyOptions.some((harmony) => harmony.name === str)) {
+    throw new Error(`${str} is not a valid Harmony and is not "Random"`);
+  }
+}
+
 export const generateOptions = [{ name: "Random", notes: "" }, ...harmonyOptions] as {
   name: string;
   notes: string;
@@ -45,26 +51,26 @@ const harmonicsMap: Record<Harmony, number[]> = {
   halfdim11: [1, -27, -11, -7, -3]
 };
 
-export interface GenerationSettings {
-  inputBaseFrequency?: number;
-  inputHarmonics?: Harmony;
-}
-
-export const generateFrequencies = ({ inputBaseFrequency, inputHarmonics }: GenerationSettings) => {
-  const baseFrequency = inputBaseFrequency || Math.random() * 350 + 75;
-  const harmonics =
-    inputHarmonics ||
-    (Object.keys(harmonicsMap) as Harmony[])[
+export const getHarmonicsFromChord = (chord: string): number[] => {
+  if (chord === "Random") {
+    return (Object.keys(harmonicsMap) as Harmony[])[
       Math.floor(Math.random() * Object.keys(harmonicsMap).length)
     ];
-  console.log("chord:", harmonics);
-  const overtoneArray = harmonicsMap[harmonics];
+  }
+  assertIsSupportedHarmony(chord);
+  return harmonicsMap[chord];
+};
 
-  let frequencyList = [baseFrequency];
+export interface GenerationSettings {
+  inputBaseFrequency?: number;
+  inputHarmony?: Harmony | "Random";
+}
 
-  frequencyList = frequencyList.concat(
-    overtoneArray.map((o) => (o > 0 ? baseFrequency * o : baseFrequency / Math.abs(o)))
-  );
+// This function generates the frequencies for a given ARRAY of harmonics.
+// This is called in /tone-generator which uses the object above to compute the relavant array
+export const generateFrequencies = ({ baseFrequency, harmonics }: GenerationSettings) => {
+  // we love list monads
+  frequencyList = harmonics.map((o) => (o > 0 ? baseFrequency * o : baseFrequency / Math.abs(o)));
 
   // ensure frequencies are as close as possible to the base frequency
   frequencyList = frequencyList.map((frequency) => {
