@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Play, Pause, ArrowDownOnSquare, Plus, Trash } from "svelte-heros-v2";
-  import { onMount } from "svelte";
+  import { onDestroy } from "svelte";
   import ToneUI from "$components/tonegen/ToneUI.svelte";
   import RandomPicker from "$components/tonegen/RandomPicker.svelte";
   import c from "$lib/c";
@@ -10,14 +10,11 @@
 
   import {
     generateFrequencies,
-    getHarmonicsFromChord,
     type GenerateOptions,
     assertIsSupportedGenerationType
   } from "$lib/tonegen/generate";
 
   import ToneRecorder from "$lib/tonegen/recorder";
-
-  $: console.log(selectedGenerationMode);
 
   let recorder: ToneRecorder;
 
@@ -35,16 +32,15 @@
   let uid = 0;
   let tones: Tone[] = [];
 
-  type GenSetting = "maj9sharp11" | "min11";
-
   const gainOptions = { gain: 0.75 };
 
   let selectedGenerationMode: GenerateOptions[number];
 
-  onMount(() => {
-    numberOvertones = parseInt(localStorage.getItem("numberOvertones") || "10");
-    // window.localStorage.setItem("numberOvertones", numberOvertones.toString());
+  onDestroy(() => {
+    ctx && ctx.close();
+  });
 
+  const initSound = () => {
     // @ts-expect-error
     ctx = new (AudioContext || window.webkitAudioContext)();
     analyzer = new AnalyserNode(ctx, { fftSize: 2048 });
@@ -54,19 +50,10 @@
 
     fftctx = fftcanvas.getContext("2d")!;
 
-    return () => {
-      ctx && ctx.close();
-    };
-  });
-
-  const initSound = () => {
     requestAnimationFrame(animate);
-
-    // recorder.connectOscillator(oscNode);
 
     recorder = new ToneRecorder(ctx, tones, "ogg");
 
-    // console.log(tones);
     console.log("AudioContext initialized");
   };
 
@@ -177,11 +164,12 @@
 
     assertIsSupportedGenerationType(mode);
 
-    const frequencyList = generateFrequencies({
-      inputBaseFrequency: baseFreq,
-      inputHarmony: mode
+    const frequencies = generateFrequencies({
+      baseFrequency: baseFreq,
+      harmony: mode
     });
-    frequencyList.map((f: number) => {
+
+    frequencies.map((f: number) => {
       const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: f });
       const gainNode = new GainNode(ctx, gainOptions);
       const panNode = new StereoPannerNode(ctx);

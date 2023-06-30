@@ -32,8 +32,12 @@ export const generateOptions = [{ name: "Random", notes: "" }, ...harmonyOptions
 export type GenerateOptions = typeof generateOptions;
 
 const harmonicsMap: Record<Harmony, number[]> = {
-  // please note the position in array detemines, stochastically, the number of octaves above the base frequency
-  // 1 = -1, with the - being the undertone series
+  // please note the position in array detemines, with some random variation, its proximity in number of octaves above the base frequency
+
+  // positive values coorespond to the overtone series, obtained by f*n for integer n
+  // negative values coorespond to the undertone series, obtained by f/n for integer n
+
+  // a value of 1 is identical to -1
   min7: [1, -21, -27, -9],
   min7sharp9: [1, -21, -27, -9, -15],
   min9: [1, -21, -27, -9, -7],
@@ -49,40 +53,44 @@ const harmonicsMap: Record<Harmony, number[]> = {
   halfdim7: [1, -27, -11, -9],
   halfdim7add11: [1, -27, -11, -3],
   halfdim11: [1, -27, -11, -7, -3]
+  // each harmony is NOT AT ALL in 12TET. Some are closer-sounding than others, just know that the harmonic serieses match up closely—but not perfectly—with normal 12TET intervals.
 };
 
-export const getHarmonicsFromChord = (chord: string): number[] => {
-  if (chord === "Random") {
-    return (Object.keys(harmonicsMap) as Harmony[])[
-      Math.floor(Math.random() * Object.keys(harmonicsMap).length)
-    ];
-  }
-  assertIsSupportedHarmony(chord);
-  return harmonicsMap[chord];
-};
+export const getHarmonicsFromChord = (chord: string): number[] => harmonicsMap[chord];
 
 export interface GenerationSettings {
-  inputBaseFrequency?: number;
-  inputHarmony?: Harmony | "Random";
+  baseFrequency?: number;
+  harmony?: Harmony | "Random";
 }
 
 // This function generates the frequencies for a given ARRAY of harmonics.
 // This is called in /tone-generator which uses the object above to compute the relavant array
-export const generateFrequencies = ({ baseFrequency, harmonics }: GenerationSettings) => {
+export const generateFrequencies = ({ baseFrequency, harmony }: GenerationSettings) => {
+  assertIsSupportedGenerationType(harmony);
+
+  const harmonics =
+    harmony === "Random"
+      ? getHarmonicsFromChord(
+          (Object.keys(harmonicsMap) as Harmony[])[
+            Math.floor(Math.random() * Object.keys(harmonicsMap).length)
+          ]
+        )
+      : getHarmonicsFromChord(harmony);
+
   // we love list monads
-  frequencyList = harmonics.map((o) => (o > 0 ? baseFrequency * o : baseFrequency / Math.abs(o)));
+  let frequencies = harmonics.map((o) => (o > 0 ? baseFrequency * o : baseFrequency / Math.abs(o)));
 
   // ensure frequencies are as close as possible to the base frequency
-  frequencyList = frequencyList.map((frequency) => {
-    while (frequency > 2.5 * baseFrequency) {
-      frequency /= 2;
+  frequencies = frequencies.map((f) => {
+    while (f > 2.5 * baseFrequency) {
+      f /= 2;
     }
 
-    while (frequency < baseFrequency) {
-      frequency *= 2;
+    while (f < baseFrequency) {
+      f *= 2;
     }
 
-    return frequency;
+    return f;
   });
 
   // randomly move frequencies up by a random (or 0) number of octaves, progressively more likely to be higher octaves as the array index increases
@@ -91,15 +99,15 @@ export const generateFrequencies = ({ baseFrequency, harmonics }: GenerationSett
   const A = 3;
   const randomNoise = 0.5;
 
-  const octaveShifts = frequencyList.map((f, i) => {
+  const octaveShifts = frequencies.map((f, i) => {
     const sigmoid = 1 / (1 + Math.pow(Math.E, -((i - 2) / A)));
     const noise = Math.random() * randomNoise * (Math.random() > 0.5 ? 1 : -1);
     return Math.round(sigmoid + noise);
   });
 
-  frequencyList = frequencyList.map((frequency, i) => {
+  frequencies = frequencies.map((frequency, i) => {
     return frequency * Math.pow(2, octaveShifts[i]);
   });
 
-  return frequencyList;
+  return frequencies;
 };
