@@ -63,19 +63,22 @@ export interface GenerationSettings {
   harmony?: Harmony | "Random";
 }
 
+const randomHarmony = () => {
+  const harmony = (Object.keys(harmonicsMap) as Harmony[])[
+    Math.floor(Math.random() * Object.keys(harmonicsMap).length)
+  ];
+  const msg = "Generated " + ("aeiou".includes(harmony[0]) ? "an " : "a ") + harmony + " chord!";
+  console.log(msg);
+  return harmony;
+};
+
 // This function generates the frequencies for a given ARRAY of harmonics.
 // This is called in /tone-generator which uses the object above to compute the relavant array
 export const generateFrequencies = ({ baseFrequency, harmony }: GenerationSettings) => {
   assertIsSupportedGenerationType(harmony);
 
   const harmonics =
-    harmony === "Random"
-      ? getHarmonicsFromChord(
-          (Object.keys(harmonicsMap) as Harmony[])[
-            Math.floor(Math.random() * Object.keys(harmonicsMap).length)
-          ]
-        )
-      : getHarmonicsFromChord(harmony);
+    harmony === "Random" ? getHarmonicsFromChord(randomHarmony()) : getHarmonicsFromChord(harmony);
 
   // we love list monads
   let frequencies = harmonics.map((o) => (o > 0 ? baseFrequency * o : baseFrequency / Math.abs(o)));

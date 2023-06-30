@@ -320,7 +320,10 @@
         class="shadow-inner text-cyan-700 bg-cyan-100 group hover:bg-cyan-200 relative inline-flex items-center rounded-xl border border-transparent px-4 h-11 text-base font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 mb-3"
         on:click={generate}
       >
-        Generate {selectedGenerationMode?.name || "Random"}!
+        Generate {(selectedGenerationMode?.name &&
+          selectedGenerationMode.name.charAt(0).toUpperCase() +
+            selectedGenerationMode.name.slice(1)) ||
+          "Random"}!
         <svg
           aria-hidden="true"
           class="-ml-2 -mr-0.5 w-10 h-10 fill-cyan-700 translate-y-1 translate-x-2 group-hover:scale-105 transition-transform duration-75"
