@@ -49,9 +49,8 @@
         query = "";
       }}
     />
-    <button
-      type="button"
-      class="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none"
+    <div
+      class="absolute pointer-events-none inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none"
     >
       <svg class="h-5 w-5 text-zinc-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
         <path
@@ -60,7 +59,7 @@
           clip-rule="evenodd"
         />
       </svg>
-    </button>
+    </div>
     {#if active}
       <ul
         class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"

@@ -27,8 +27,6 @@
   let frequencies: Uint8Array;
   let barwidth: number;
 
-  let numberOvertones: number;
-
   let uid = 0;
   let tones: Tone[] = [];
 
@@ -41,6 +39,7 @@
   });
 
   const initSound = () => {
+    if (ctx) return;
     // @ts-expect-error
     ctx = new (AudioContext || window.webkitAudioContext)();
     analyzer = new AnalyserNode(ctx, { fftSize: 2048 });
@@ -94,7 +93,7 @@
           customNonlinearRescale(freq / 255),
           0,
           1,
-          100,
+          0,
           360
         )}, 100%, 50%)`;
         fftctx.fillRect(x, fftcanvas.height - barheight, barwidth, barheight);
@@ -150,12 +149,10 @@
     window && e.target instanceof HTMLElement && window.scrollTo(0, e.target.offsetTop);
   };
 
-  const generate = (
-    e: MouseEvent & {
-      currentTarget: EventTarget & HTMLButtonElement;
+  const generate = <E extends Event>(e: E) => {
+    if (e.currentTarget instanceof HTMLElement) {
+      e.currentTarget.blur();
     }
-  ) => {
-    e.currentTarget.blur();
 
     //TODO implement choosing your own base frequency
     const baseFreq = Math.floor((Math.random() * 350 + 75) * 3) / 3;
@@ -186,6 +183,10 @@
       oscNode.start();
     });
   };
+
+  onDestroy(() => {
+    ctx && ctx.close();
+  });
 </script>
 
 <svelte:head>
@@ -194,11 +195,15 @@
 
 <svelte:window
   on:mousedown|once|trusted={initSound}
+  on:keydown|once|trusted={initSound}
   on:keypress|={(e) => {
     // console.log(e);
-    if (e.code === "Space") {
+    if (ctx && e.code === "Space") {
       e.preventDefault();
       playing = ctx.state === "suspended";
+    }
+    if (ctx && !(e.target instanceof HTMLInputElement) && e.code === "R") {
+      e.preventDefault();
     }
   }}
 />

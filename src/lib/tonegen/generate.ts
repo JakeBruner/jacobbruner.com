@@ -1,5 +1,6 @@
 export const harmonyOptions = [
   { name: "min7", notes: "1, b3, 5, b7" },
+  { name: "min7add2", notes: "1, 2, b3, 5, b7" },
   { name: "min9", notes: "1, b3, 5, b7, 9" },
   { name: "min11", notes: "1, b3, 5, b7, 9, 11" },
   { name: "min7sharp9", notes: "1, b3, 5, b7, #9" },
@@ -39,6 +40,7 @@ const harmonicsMap: Record<Harmony, number[]> = {
 
   // a value of 1 is identical to -1
   min7: [1, -21, -27, -9],
+  min7add2: [1, -15, -21, -27, -9],
   min7sharp9: [1, -21, -27, -9, -15],
   min9: [1, -21, -27, -9, -7],
   min11: [1, -21, -27, -3, -7, -11],
@@ -51,8 +53,9 @@ const harmonicsMap: Record<Harmony, number[]> = {
   dom7sharp9_1: [1, 5, 3, 12, 19],
   dom7sharp9_2: [1, -13, -21, -15, -3],
   halfdim7: [1, -27, -11, -9],
-  halfdim7add11: [1, -27, -11, -3],
-  halfdim11: [1, -27, -11, -7, -3]
+  halfdim7add11: [1, -27, -11, -9, -3],
+  halfdim11: [1, -27, -7, -11, -9, -3]
+
   // each harmony is NOT AT ALL in 12TET. Some are closer-sounding than others, just know that the harmonic serieses match up closely—but not perfectly—with normal 12TET intervals.
 };
 
