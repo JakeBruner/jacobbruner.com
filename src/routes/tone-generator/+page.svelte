@@ -8,9 +8,11 @@
 
   import type { Interval, Tuning } from "$lib/tonegen/intervals";
 
-  import { generateFrequencies } from "$lib/tonegen/generate";
+  import { generateFrequencies, type GenerateOptions } from "$lib/tonegen/generate";
 
   import ToneRecorder from "$lib/tonegen/recorder";
+
+  $: console.log(randomMode);
 
   let recorder: ToneRecorder;
 
@@ -32,7 +34,7 @@
 
   const gainOptions = { gain: 0.75 };
 
-  let randomMode = { name: "Random", notes: "???" };
+  let randomMode: GenerateOptions[number];
 
   onMount(() => {
     numberOvertones = parseInt(localStorage.getItem("numberOvertones") || "10");
@@ -142,7 +144,7 @@
     }
   };
 
-  const removeAllTones = () => {
+  const removeAllTones = (e) => {
     tones.forEach((t) => {
       t.oscNode.stop();
       t.oscNode.disconnect();
@@ -150,6 +152,8 @@
       t.panNode.disconnect();
     });
     tones = [];
+
+    window && e.target && window.scrollTo(e.target);
   };
 </script>
 

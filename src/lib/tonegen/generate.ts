@@ -18,6 +18,13 @@ export const harmonyOptions = [
 
 export type Harmony = (typeof harmonyOptions)[number]["name"];
 
+export const generateOptions = [{ name: "Random", notes: "" }, ...harmonyOptions] as {
+  name: string;
+  notes: string;
+}[];
+
+export type GenerateOptions = typeof generateOptions;
+
 const harmonicsMap: Record<Harmony, number[]> = {
   // please note the position in array detemines, stochastically, the number of octaves above the base frequency
   // 1 = -1, with the - being the undertone series
@@ -38,12 +45,12 @@ const harmonicsMap: Record<Harmony, number[]> = {
   halfdim11: [1, -27, -11, -7, -3]
 };
 
-export interface GenerateOptions {
+export interface GenerationSettings {
   inputBaseFrequency?: number;
   inputHarmonics?: Harmony;
 }
 
-export const generateFrequencies = ({ inputBaseFrequency, inputHarmonics }: GenerateOptions) => {
+export const generateFrequencies = ({ inputBaseFrequency, inputHarmonics }: GenerationSettings) => {
   const baseFrequency = inputBaseFrequency || Math.random() * 350 + 75;
   const harmonics =
     inputHarmonics ||
