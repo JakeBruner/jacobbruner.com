@@ -97,14 +97,14 @@ export const generateFrequencies = ({ baseFrequency, harmony }: GenerationSettin
   });
 
   // randomly move frequencies up by a random (or 0) number of octaves, progressively more likely to be higher octaves as the array index increases
-  // sigmoid from 0 octaves (no change) to A ocvates (max change) with a LOT of random noise. so random noise can overpower the sigmoid, sometimes, but rarely, leading to crazy chords and slash harmonies
+  // sigmoid from 0 octaves (no change) to MAX_SHIFT ocvates (max change) with a LOT of random noise. so random noise can overpower the sigmoid, sometimes, but rarely, leading to crazy chords and slash harmonies
 
-  const A = 3;
-  const randomNoise = 0.5;
+  const MAX_SHIFT = 3;
+  const RANDOM_NOISE = 0.5;
 
   const octaveShifts = frequencies.map((f, i) => {
-    const sigmoid = 1 / (1 + Math.pow(Math.E, -((i - 2) / A)));
-    const noise = Math.random() * randomNoise * (Math.random() > 0.5 ? 1 : -1);
+    const sigmoid = 1 / (1 + Math.pow(Math.E, -((i - 2) / MAX_SHIFT)));
+    const noise = Math.random() * RANDOM_NOISE * (Math.random() > 0.5 ? 1 : -1);
     return Math.round(sigmoid + noise);
   });
 

@@ -32,9 +32,10 @@
 <svelte:window on:click={clickHandler} />
 
 <div class="max-w-2xs" bind:this={boundingBox}>
-  <label for="combobox" class="block text-sm font-medium leading-6 text-zinc-900">Assigned to</label
+  <label for="combobox" class="block text-sm font-medium leading-6 text-zinc-900 dark:text-zinc-200"
+    >Generation mode:</label
   >
-  <div class="relative mt-2">
+  <div class="relative mt-0.5">
     <input
       id="combobox"
       type="text"

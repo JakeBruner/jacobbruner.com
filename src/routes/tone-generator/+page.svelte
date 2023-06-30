@@ -2,7 +2,7 @@
   import { Play, Pause, ArrowDownOnSquare, Plus, Trash } from "svelte-heros-v2";
   import { onDestroy } from "svelte";
   import ToneUI from "$components/tonegen/ToneUI.svelte";
-  import RandomPicker from "$components/tonegen/RandomPicker.svelte";
+  import ModePicker from "$components/tonegen/ModePicker.svelte";
   import c from "$lib/c";
   import type { Tone } from "$lib/tonegen/type";
 
@@ -314,10 +314,10 @@
   <!-- <button class="py-2 px-4 rounded-md bg-zinc-200" on:click={() f=> {}}> Stop Recording </button> -->
 
   <div class="w-auto px-5">
-    <div class="relative">
+    <div class="relative mb-3">
       <button
         type="button"
-        class="shadow-inner text-cyan-700 bg-cyan-100 group hover:bg-cyan-200 relative inline-flex items-center rounded-xl border border-transparent px-4 h-11 text-base font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 mb-3"
+        class="shadow-inner text-cyan-700 bg-cyan-100 group hover:bg-cyan-200 relative inline-flex items-center rounded-xl border border-transparent px-4 h-11 text-base font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2"
         on:click={generate}
       >
         Generate {(selectedGenerationMode?.name &&
@@ -348,6 +348,6 @@
         <Trash class="h-8 w-8" />
       </button>
     </div>
-    <RandomPicker bind:selected={selectedGenerationMode} />
+    <ModePicker bind:selected={selectedGenerationMode} />
   </div>
 </main>
