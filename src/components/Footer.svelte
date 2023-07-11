@@ -65,7 +65,7 @@
             >
           </div>
           <div class="relative top-2 text-primary">
-            <a href="https://t.snapchat.com/MuAktGcB" aria-label="Snapchat"
+            <a href="https://pastebin.com/a7ycgjfe" aria-label="Snapchat"
               ><svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="32"
