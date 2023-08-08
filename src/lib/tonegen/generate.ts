@@ -40,10 +40,10 @@ const harmonicsMap: Record<Harmony, number[]> = {
 
   // a value of 1 is identical to -1
   min7: [1, -21, -27, -9],
-  min7add2: [1, -15, -21, -27, -9],
+  min7add2: [1, -7, -21, -27, -9],
   min7sharp9: [1, -21, -27, -9, -15],
   min9: [1, -21, -27, -9, -7],
-  min11: [1, -21, -27, -3, -7, -11],
+  min11: [1, -21, -27, -7, -11, -3],
   maj7: [1, 3, 5, 15],
   maj7sharp11: [1, 3, 5, 11, 15],
   maj9: [1, 3, 5, 9, 15],
@@ -62,8 +62,8 @@ const harmonicsMap: Record<Harmony, number[]> = {
 export const getHarmonicsFromChord = (chord: string): number[] => harmonicsMap[chord];
 
 export interface GenerationSettings {
-  baseFrequency?: number;
-  harmony?: Harmony | "Random";
+  baseFrequency: number;
+  harmony: Harmony | "Random";
 }
 
 const randomHarmony = () => {
@@ -80,8 +80,12 @@ const randomHarmony = () => {
 export const generateFrequencies = ({ baseFrequency, harmony }: GenerationSettings) => {
   assertIsSupportedGenerationType(harmony);
 
-  const harmonics =
-    harmony === "Random" ? getHarmonicsFromChord(randomHarmony()) : getHarmonicsFromChord(harmony);
+  // const harmonics =
+  // harmony === "Random" ? getHarmonicsFromChord(randomHarmony()) : getHarmonicsFromChord(harmony);
+
+  const harmonySetting: Harmony = harmony === "Random" ? randomHarmony() : harmony;
+
+  const harmonics = getHarmonicsFromChord(harmonySetting);
 
   // we love list monads
   let frequencies = harmonics.map((o) => (o > 0 ? baseFrequency * o : baseFrequency / Math.abs(o)));
@@ -115,5 +119,5 @@ export const generateFrequencies = ({ baseFrequency, harmony }: GenerationSettin
     return frequency * Math.pow(2, octaveShifts[i]);
   });
 
-  return frequencies;
+  return { frequencies, harmonySetting };
 };

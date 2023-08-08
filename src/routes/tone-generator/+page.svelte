@@ -149,6 +149,8 @@
     window && e.target instanceof HTMLElement && window.scrollTo(0, e.target.offsetTop);
   };
 
+  let log: HTMLDivElement;
+
   const generate = <E extends Event>(e: E) => {
     if (e.currentTarget instanceof HTMLElement) {
       e.currentTarget.blur();
@@ -161,7 +163,7 @@
 
     assertIsSupportedGenerationType(mode);
 
-    const frequencies = generateFrequencies({
+    const { frequencies, harmonySetting } = generateFrequencies({
       baseFrequency: baseFreq,
       harmony: mode
     });
@@ -182,6 +184,12 @@
       tones = tones;
       oscNode.start();
     });
+
+    log.innerText = `Generated a ${harmonySetting} chord in the key of ${baseFreq.toPrecision(
+      4
+    )} Hz!`;
+    setInterval(() => (log.innerText = ""), 4000);
+    // TODO: improve
   };
 
   onDestroy(() => {
@@ -208,7 +216,7 @@
   }}
 />
 
-<header class="flex flex-row py-5 px-5 dark:bg-zinc-900 align-middle items-center z-10">
+<header class="flex flex-row py-5 px-5 dark:bg-zinc-900 bg-zinc-50 align-middle items-center z-10">
   <h1>Tone Generator</h1>
   <span class={c(ctx ? "text-green-500" : "text-red-500", "text-4xl")}>.</span>
   <div class="flex-grow min-width-none" />
@@ -271,7 +279,7 @@
 </header>
 <main>
   <div
-    class="relative mb-5 mx-5 p-7 bg-zinc-100 dark:bg-zinc-800 rounded-3xl min-h-[800px] flex flex-col space-y-4"
+    class="relative mb-5 mx-5 p-7 bg-zinc-200 dark:bg-zinc-800 rounded-3xl min-h-[800px] flex flex-col space-y-4"
   >
     {#if tones.length > 0}
       {#each tones as tone (tone.id)}
@@ -318,7 +326,7 @@
   </div>
   <!-- <button class="py-2 px-4 rounded-md bg-zinc-200" on:click={() f=> {}}> Stop Recording </button> -->
 
-  <div class="w-auto px-5">
+  <div class="w-auto pl-10">
     <div class="relative mb-3">
       <button
         type="button"
@@ -353,6 +361,9 @@
         <Trash class="h-8 w-8" />
       </button>
     </div>
-    <ModePicker bind:selected={selectedGenerationMode} />
+    <div class="block">
+      <ModePicker bind:selected={selectedGenerationMode} />
+      <div class="h-5 w-full text-xs pt-1 italic" bind:this={log} />
+    </div>
   </div>
 </main>
