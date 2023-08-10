@@ -188,8 +188,8 @@
     log.innerText = `Generated a ${harmonySetting} chord in the key of ${baseFreq.toPrecision(
       4
     )} Hz!`;
-    setInterval(() => (log.innerText = ""), 4000);
-    // TODO: improve
+    setTimeout(() => (log.innerText = ""), 4000);
+    //
   };
 
   onDestroy(() => {
