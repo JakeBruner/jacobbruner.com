@@ -168,10 +168,17 @@
       harmony: mode
     });
 
+    const sorted = frequencies.sort((a, b) => a - b);
+
+    const max = sorted[sorted.length - 1];
+    const min = sorted[0];
+
     frequencies.map((f: number) => {
       const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: f });
       const gainNode = new GainNode(ctx, gainOptions);
-      const panNode = new StereoPannerNode(ctx);
+      // lowest goes to -0.5, highest to 0.5
+      const pan = 1.5 * ((f - min) / (max - min)) - 0.75 + (0.2 * Math.random() - 0.1);
+      const panNode = new StereoPannerNode(ctx, { pan });
       oscNode.connect(panNode).connect(gainNode).connect(analyzer).connect(ctx.destination);
       tones.push({
         id: uid++,
