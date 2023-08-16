@@ -128,9 +128,9 @@
 </script>
 
 {#if tone}
-  <div class="shadow-md">
+  <div class="shadow-md rounded-3xl">
     <div
-      class="w-full bg-gradient-to-tr from-zinc-200 via-zinc-100 to-zinc-300 dark:from-zinc-700 dark:via-zinc-700 dark:to-zinc-600 shadow-inner z-0 rounded-2xl flex flex-row-reverse justify-between align-middle"
+      class="w-full bg-gradient-to-tr from-zinc-50 via-zinc-100 to-zinc-300 dark:from-zinc-700 dark:via-zinc-700 dark:to-zinc-600 dark:shadow-inner z-0 rounded-2xl flex flex-row-reverse justify-between align-middle"
     >
       <div
         class={c(
@@ -158,7 +158,7 @@
           {#if popupActive}
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div
-              class="absolute z-50 p-2 w-40 top-1/2 right-0 rounded-md dark:bg-zinc-400/80 bg-zinc-300/50 backdrop-blur-sm"
+              class="absolute z-50 p-2 w-40 top-1/2 right-0 rounded-md dark:bg-zinc-400/80 bg-white/50 backdrop-blur-sm"
               transition:fade
               on:click|stopPropagation
             >
@@ -243,7 +243,7 @@
       </div>
       <div
         class={c(
-          "rounded-2xl flex flex-row px-6 py-4 items-center align-middle z-0 transition-all duration-150 ease-in-out bg-zinc-300 dark:bg-zinc-750 shadow-inner relative",
+          "rounded-2xl flex flex-row px-6 py-4 items-center align-middle z-0 transition-all duration-150 ease-in-out bg-zinc-50/80 dark:bg-zinc-750 shadow-inner relative",
           popupActive ? "w-[94%] -z-10 rounded-r-3xl" : "w-[96%] peer-hover:w-[94%]"
         )}
       >
@@ -308,7 +308,7 @@
         <!-- TODO handle disabled state -->
         <input
           type="alphanumeric"
-          class="w-24 rounded-md bg-zinc-200 dark:bg-zinc-700 text-lg text-center touch-none dark:text-zinc-300 text-zinc-800"
+          class="w-24 rounded-md bg-zinc-200 shadow-inner dark:bg-zinc-700 text-lg text-center touch-none dark:text-zinc-300 text-zinc-900 pl-0.5"
           value={tone.oscNode.frequency.value}
           on:change={(e) => {
             if (!e.currentTarget || e.currentTarget.value === "") {
@@ -333,7 +333,7 @@
           on:wheel|preventDefault={(e) =>
             e.deltaY > 0 ? tone.oscNode.frequency.value-- : tone.oscNode.frequency.value++}
         />
-        <span class="text-zinc-300 text-base pl-1">Hz</span>
+        <span class="dark:text-zinc-300 text-zinc-500 text-base pl-1">Hz</span>
         <div class="px-2" />
         <!-- double frequency button -->
         <button
