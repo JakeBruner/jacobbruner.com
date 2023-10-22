@@ -132,8 +132,8 @@
           <p
             class="xl:leading-relaxed xl:text-2xl lg:text-xl  leading-snug text-lg py-10 md:py-5 md:px-10 px-3 font-light dark:text-zinc-300"
           >
-            Jacob Bruner is a 18 year-old student at The Dwight School in New York City. During his
-            senior year in high-school, he is exploring his various creative interests through his
+            Jacob Bruner is a 19 year-old student currently studying at Duke University—with his roots in New York City and Wyoming. During his
+            studies, he is exploring his various creative interests through his
             out-of-school self-study and projects. Beyond his class' curriculum, he spends his free
             time learning new things. He would best describe himself as an interdisciplinary
             thinker, who thrives on his inability to stick to one thing. The culmination of these
