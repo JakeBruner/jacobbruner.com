@@ -9,7 +9,7 @@
   // using raymarching to render a projection of the mandelbrot set evaluated on the quaternions and projected into 3D space
 
   let canvas: HTMLCanvasElement;
-  let composer: GPUComposer;
+  let composer: GPUComposer | null;
   let running: boolean;
 
   const r = 3;
@@ -58,18 +58,20 @@
       // const cameraPosition = [Math.sin(time) * r, 0, Math.cos(time) * r];
       // raymarchingProgram.setUniform("cameraPosition", cameraPosition, "FLOAT");
 
+      // @ts-expect-error
       composer.step({
         program: raymarchingProgram
       });
 
-      running && setTimeout(animate, 100);
-      // running && requestAnimationFrame(animate);
+      // running && setTimeout(animate, 100);
+      running && requestAnimationFrame(animate);
     };
 
     animate();
   });
 
   onDestroy(() => {
+    composer = null;
     running = false;
   });
 </script>
