@@ -74,7 +74,15 @@
     composer = null;
     running = false;
   });
+
+  import {O} from "$lib/math/sedenions"
 </script>
+
+<div class="w-full h-20">
+
+
+</div>
+
 
 <div class="w-full h-screen">
   <canvas bind:this={canvas} class="w-full h-full" />
