@@ -6,17 +6,19 @@ uniform float u_fov;
 uniform vec2 u_resolution;
 const int MAX_ITERATIONS = 64;
 const int MAX_LOWP_ITERATIONS = 32;
-const float HIT_THRESHOLD = 0.001;
+const float HIT_THRESHOLD = 0.005;
 const int MAX_STEPS = 128;
-const float MAX_DISTANCE = 5.0;
+const float MAX_DISTANCE = 4.0;
 const float R = 3.0;
+
+const vec3 lightPosition = vec3(0.0, 5.0, 4.0);
 
 // Function to compute the distance to the fractal surface
 float fractalDF(vec3 position) {
   vec3 z = position;
   float dr = 1.0;
   float r = 0.0;
-  for(int i = 0; i < MAX_ITERATIONS; i++) {
+  for(int i = 0; i < MAX_ITERATIONS; i++) { //TODO use a cartesian form of a mandelbulb to avoid conversion to spherical coordinates
     r = length(z);
     if(r > 2.0)
       break;
@@ -29,6 +31,8 @@ float fractalDF(vec3 position) {
     theta = theta * 8.0;
     phi = phi * 8.0;
     z = r8 * vec3(sin(theta) * cos(phi), sin(phi) * sin(theta), cos(theta)) + position;
+
+    // this performing z \in set if z -> z^8 + c bounded
   }
   return 0.5 * log(r) * r / dr;
 }
@@ -55,7 +59,7 @@ float lowp_fractalDF(vec3 position) {
   return 0.5 * log(r) * r / dr;
 }
 
-vec3 normal(vec3 position) {
+vec3 normal(vec3 position) { // TODO calculate gradient algebraically, if possible, for this function, then the normal vector is just the orthogonal vector to the gradient plane
   const float EPS = 0.001;
   return normalize(vec3(lowp_fractalDF(position + vec3(EPS, 0.0, 0.0)) - lowp_fractalDF(position - vec3(EPS, 0.0, 0.0)), lowp_fractalDF(position + vec3(0.0, EPS, 0.0)) - lowp_fractalDF(position - vec3(0.0, EPS, 0.0)), lowp_fractalDF(position + vec3(0.0, 0.0, EPS)) - lowp_fractalDF(position - vec3(0.0, 0.0, EPS))));
 }
@@ -66,6 +70,7 @@ vec3 hsvtorgb(vec3 c) {
   vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
   vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
   return vec3(c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y));
+  // return c;
 }
 
 float occlusion(vec3 position, vec3 normal) {
@@ -114,6 +119,8 @@ vec3 getCameraRayDir(vec2 uv, vec3 cameraPosition, vec3 cameraTarget, float u_fo
 // }
 
 vec3 render(vec3 rayOrigin, vec3 rayDir, vec3 lightPosition) {
+// vec3 render(vec3 rayOrigin, vec3 rayDir) {
+
   vec3 col;
 
   float t = 0.0;
@@ -145,10 +152,12 @@ vec3 render(vec3 rayOrigin, vec3 rayDir, vec3 lightPosition) {
 
     // Compute the shadow 
     shadowFactor = shadow(p, lightPosition - p, MAX_DISTANCE);
+    // make a downward facing plane of light
+    // shadowFactor = shadow(p, vec3(0.0, -1.0, 0.0), MAX_DISTANCE);
     ao *= shadowFactor;
 
     // Compute the color based on the hit
-    normalizedDistance = distance / HIT_THRESHOLD; // Normalize the distance to range [0, 1]
+    normalizedDistance = distance / 0.05; // Normalize the distance to range [0, 1]
     fractalColor = hsvtorgb(vec3(normalizedDistance, 0.7, clamp(ao, 0.3, 1.0)));
 
     // totalLight = vec3(0.0);
@@ -170,13 +179,13 @@ vec3 render(vec3 rayOrigin, vec3 rayDir, vec3 lightPosition) {
 }
 
 void main() {
-  vec3 lightPosition = vec3(0.0, 5.0, 4.0);
   // Compute the ray direction 
   vec3 cameraPosition = vec3(sin(time) * R, 0.0, cos(time) * R);
 
   vec3 rayDir = getCameraRayDir(v_uv, cameraPosition, vec3(0.0), u_fov, u_resolution);
   // Render the scene
   vec3 col = render(cameraPosition, rayDir, lightPosition);
+  // vec3 col = render(cameraPosition, rayDir);
 
   // Apply gamma correction
   col = pow(col, vec3(0.5));

@@ -63,8 +63,8 @@
         program: raymarchingProgram
       });
 
-      // running && setTimeout(animate, 100);
-      running && requestAnimationFrame(animate);
+      running && setTimeout(animate, 100);
+      // running && requestAnimationFrame(animate);
     };
 
     animate();
@@ -75,7 +75,7 @@
     running = false;
   });
 
-  import {O} from "$lib/math/sedenions"
+  // import {O}`` from "$lib/math/sedenions"
 </script>
 
 <div class="w-full h-20">
