@@ -47,7 +47,7 @@ export async function load({ params }: ServerLoadEvent) {
     if (errormessage) {
       // this isn't race conditions because errormessage should be empty
       // eslint-disable-next-line no-unsafe-finally
-      throw error(404, errormessage);
+      error(404, errormessage);
     }
   }
 }

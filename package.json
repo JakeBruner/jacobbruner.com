@@ -28,8 +28,9 @@
     "@fontsource/rubik": "^4.5.14",
     "@rgossiaux/svelte-headlessui": "^2.0.0",
     "@rgossiaux/svelte-heroicons": "^0.1.2",
-    "@sveltejs/adapter-auto": "^1.0.3",
-    "@sveltejs/kit": "^1.30.4",
+    "@sveltejs/adapter-auto": "^3.1.1",
+    "@sveltejs/kit": "^2.5.1",
+    "@sveltejs/vite-plugin-svelte": "^3.0.2",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/typography": "^0.5.10",
     "@threlte/core": "^5.0.9",
@@ -61,7 +62,7 @@
     "tailwindcss": "^3.4.1",
     "tslib": "^2.6.2",
     "typescript": "^5.3.3",
-    "vite": "^4.5.2",
+    "vite": "^5.1.4",
     "vite-plugin-wasm": "^3.3.0",
     "web-vitals": "^3.5.2"
   },
@@ -72,9 +73,10 @@
     "cookie": "^0.5.0",
     "svelte-heros-v2": "^0.3.21",
     "svelte-inview": "^3.0.4",
-    "web-vitals": "^3.5.0"
+    "web-vitals": "^3.5.2"
   },
   "overrides": {
-    "svelte": "$svelte"
+    "svelte": "$svelte",
+    "@sveltejs/adapter-auto": "$@sveltejs/adapter-auto"
   }
 }

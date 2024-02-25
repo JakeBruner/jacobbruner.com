@@ -4,7 +4,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     // "typeRoots": ["node_modules/@types"],
-    "paths": {
+    "paths": { //TODO migrate to kit.ailias
       "$lib": ["src/lib"],
       "$lib/*": ["src/lib/*"],
       "$components": ["src/components"],

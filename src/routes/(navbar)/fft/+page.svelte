@@ -10,7 +10,7 @@
   const initAudio = async () => {
     console.log("navigator.mediaDevices", navigator.mediaDevices);
     if (!navigator.mediaDevices) {
-      throw error(500, "MediaDevices not supported");
+      error(500, "MediaDevices not supported");
     }
 
     const stream = await navigator.mediaDevices.getUserMedia({
@@ -25,7 +25,7 @@
     audioSource.connect(analyser);
 
     if (!analyser) {
-      throw error(500, "Analyser not supported");
+      error(500, "Analyser not supported");
     }
     const audioFFT = new AudioFFT(c, analyser);
   };
