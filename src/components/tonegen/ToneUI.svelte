@@ -159,7 +159,7 @@
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div
               class="absolute z-50 p-2 w-40 top-1/2 right-0 rounded-md dark:bg-zinc-400/80 bg-white/50 backdrop-blur-sm"
-              transition:fade
+              transition:fade|global
               on:click|stopPropagation
             >
               <table class="z-50 w-full table-fixed">

@@ -247,7 +247,7 @@
 
   // $: console.log(moveSmallScreenCanvas(x));
 
-  // q: If i want to have each `nav` item fade in on mount one after another, what would be the best way to do that with the transition:fade directive?
+  // q: If i want to have each `nav` item fade in on mount one after another, what would be the best way to do that with the transition:fade|global directive?
   // a: use the `delay` option
   // q: how do I activate it on mount?
   // a: use the `in` option and set it to true
@@ -287,7 +287,7 @@
 
               <div
                 class="relative z-20 basis-1/6 self-start"
-                in:fly={{
+                in:fly|global={{
                   delay: 50 * i,
                   y: -30,
                   x: 5,

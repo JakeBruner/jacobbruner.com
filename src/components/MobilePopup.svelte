@@ -6,7 +6,7 @@
 <div
   class="fixed z-[200] sm:!hidden inset-0 w-full h-full bg-black/40 transition-all ease-in-out"
   style:visibility={hidePopup ? "hidden" : "visible"}
-  transition:fade
+  transition:fade|global
   on:click={() => (hidePopup = true)}
   on:keypress={(e) => {
     if (e.key === "Escape") {

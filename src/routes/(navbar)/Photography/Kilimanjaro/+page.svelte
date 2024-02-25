@@ -147,7 +147,7 @@
 {#if fullscreen}
   <div
     class="select-none flex mx-auto fixed inset-0 z-30 h-full w-full bg-zinc-800/70 dark:bg-zinc-800/70 items-center "
-    transition:fade={{ duration: 100 }}
+    transition:fade|global={{ duration: 100 }}
     on:click={deselectMe}
     on:keypress={deselectMe}
   >

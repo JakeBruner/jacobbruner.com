@@ -82,8 +82,8 @@
 {#if popup}
   <div
     class="fixed top-0 w-full z-[700]"
-    in:fly={{ x: 0, y: -100, duration: 1000, easing: sineIn, delay: 1000 }}
-    out:fly={{ x: 0, y: -100, duration: 500, opacity: 0 }}
+    in:fly|global={{ x: 0, y: -100, duration: 1000, easing: sineIn, delay: 1000 }}
+    out:fly|global={{ x: 0, y: -100, duration: 500, opacity: 0 }}
   >
     {#if $page.url.pathname !== "/"}
       <div class="h-14" />
@@ -134,7 +134,7 @@
 
 {#if $loading}
   <div
-    out:fade={{ duration: 200 }}
+    out:fade|global={{ duration: 200 }}
     class="loader fixed inset-0 opacity-100 h-full w-full z-[9999] bg-center bg-no-repeat"
     style="background-image: url(/images/loader.gif);"
   />

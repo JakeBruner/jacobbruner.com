@@ -224,7 +224,7 @@
 </div>
 <div class="pt-5 w-full flex flex-col content-center text-center">
   {#if selected}
-    <div class=" w-auto pb-2 font-semibold text-xl" transition:fade>
+    <div class=" w-auto pb-2 font-semibold text-xl" transition:fade|global>
       {#each sg as elem, i}
         <span class="">
           {#if i !== 0}
