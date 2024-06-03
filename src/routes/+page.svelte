@@ -82,7 +82,7 @@
 
   import { onMount } from "svelte";
   import { dev } from "$app/environment";
-  onMount(() => !dev && window.scrollTo(0, 0));
+  onMount(async () => !dev && window.scrollTo(0, 0));
 </script>
 
 <svelte:head>
@@ -134,8 +134,7 @@
           >
             Jacob Bruner is a 19 year-old student currently studying at Duke University—with his roots in New York City and Wyoming. During his
             studies, he is exploring his various creative interests through his
-            out-of-school self-study and projects. Beyond his class' curriculum, he spends his free
-            time learning new things. He would best describe himself as an interdisciplinary
+            out-of-school self-study and projects. During the summer of his freshman year, he is working as a Software Engineer at Fermat Capital Management. He would best describe himself as an interdisciplinary
             thinker, who thrives on his inability to stick to one thing. The culmination of these
             efforts is a wide variety of projects demonstrating his ability and understanding across
             a range of fields, including some more STEM-oriented and some more humanities oriented.
@@ -156,8 +155,6 @@
         <Typewriter text="Interactive Projects!" activated={typewriterEffect} />
       </h1>
     </div>
-
-    <!-- look at how neat this is! -->
 
     <div
       class="mt-12 md:mt-18 xl:mt-24 grid gap-16 max-w-md md:max-w-5xl mx-auto md:grid-cols-2 md:gap-x-5 md:gap-y-12 items-center"
