@@ -11,6 +11,9 @@
 
   import { webVitals } from "$lib/vitals";
   import { inject } from "@vercel/analytics";
+  import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
+
+  injectSpeedInsights()
 
   import { browser, dev } from "$app/environment";
   import { page } from "$app/stores";

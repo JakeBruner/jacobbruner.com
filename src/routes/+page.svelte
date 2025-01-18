@@ -93,11 +93,11 @@
   <div class="h-screen relative min-h-[650px]">
     <LatticeHero />
   </div>
-  <!-- thinline with gradient fading to zinc 800 on both sides-->
+  <!-- thinline with gradient-->
   <div
     class="w-full h-px bg-gradient-to-r from-transparent dark:via-zinc-800 via-zinc-200 to-transparent"
   />
-  <!-- little description of the animation above on the right side -->
+
   <div class="relative w-full">
     <div
       class="absolute top-0 right-0 pt-3 pr-3 md:pt-6 md:pr-8 max-w-[17rem] md:max-w-md xl:max-w-xl text-right text-zinc-500 dark:text-zinc-400 text-sm md:text-base"
@@ -132,9 +132,9 @@
           <p
             class="xl:leading-relaxed xl:text-2xl lg:text-xl  leading-snug text-lg py-10 md:py-5 md:px-10 px-3 font-light dark:text-zinc-300"
           >
-            Jacob Bruner is a 19 year-old student currently studying at Duke University—with his roots in New York City and Wyoming. During his
+            Jacob Bruner is a 20 year-old student studying Math + ECE at Duke University—with his roots in New York City and Wyoming. During his
             studies, he is exploring his various creative interests through his
-            out-of-school self-study and projects. During the summer of his freshman year, he is working as a Software Engineer at Fermat Capital Management. He would best describe himself as an interdisciplinary
+            out-of-school self-study and projects. He will be working on digital ledger technology at Tradeweb this summer under the site-reliability team. He would best describe himself as an interdisciplinary
             thinker, who thrives on his inability to stick to one thing. The culmination of these
             efforts is a wide variety of projects demonstrating his ability and understanding across
             a range of fields, including some more STEM-oriented and some more humanities oriented.
