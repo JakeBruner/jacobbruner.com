@@ -132,10 +132,9 @@
           <p
             class="xl:leading-relaxed xl:text-2xl lg:text-xl  leading-snug text-lg py-10 md:py-5 md:px-10 px-3 font-light dark:text-zinc-300"
           >
-            Jacob Bruner is a 20 year-old student studying Math + ECE at Duke University—with his roots in New York City and Wyoming. During his
+            Jacob Bruner is a 21 year-old student studying Math + ECE at Duke University—with his roots in New York City and Wyoming. During his
             studies, he is exploring his various creative interests through his
-            out-of-school self-study and projects. He will be working on digital ledger technology at Tradeweb this summer under the site-reliability team. He would best describe himself as an interdisciplinary
-            thinker, who thrives on his inability to stick to one thing. The culmination of these
+            out-of-school self-study and projects. The culmination of these
             efforts is a wide variety of projects demonstrating his ability and understanding across
             a range of fields, including some more STEM-oriented and some more humanities oriented.
             Explore this website to find out more!
