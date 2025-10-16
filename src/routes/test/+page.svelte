@@ -1,5 +1,1 @@
-<script>
-import AcousticVisualizer from '$lib/helmholtz/AcousticVisualizer.svelte';
-</script>
-
-            <AcousticVisualizer />
+<h1 class="text-3xl font-semibold">Visualizer coming soon.</h1>
