@@ -1,8 +1,9 @@
 ---
-title: Moral Integrity within Jane Austen’s *Pride and Prejudice*
+title: Moral Integrity within Jane Austen’s "Pride and Prejudice"
 date: 2023-09-26
 layout: blog
 excerpt: Critics wide and far have commented on how Austen's unique literary style and juxaposition of character and their growth presents a narrative rife with moral lessons here. I sought to explore how character chiasmus develops meaningful forward leaning themes within the text.
+thumbnailpath: /images/prideprejudice.jpg
 tags: Creative
 ---
 
