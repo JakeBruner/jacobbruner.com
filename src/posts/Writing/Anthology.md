@@ -300,10 +300,6 @@ Awake! An echo yells
 
 never berating, never berating;
 
-—
 
-I sigh and lay there and cry
-
-For that was the only company this evening.
 
 
