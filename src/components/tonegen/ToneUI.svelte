@@ -143,6 +143,9 @@
             togglePopup(e);
           }
         }}
+        role="button"
+        tabindex="0"
+        aria-label="Add interval"
       >
         <Plus
           variation="solid"
@@ -154,11 +157,14 @@
             popupActive ? "text-zinc-800 dark:text-zinc-400" : "dark:text-zinc-300 text-zinc-600"
           )}
         />
-        <div class="overflow-hidden">
-          {#if popupActive}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
             <div
               class="absolute z-50 p-2 w-40 top-1/2 right-0 rounded-md dark:bg-zinc-400/80 bg-white/50 backdrop-blur-sm"
+              transition:fade|global
+              on:click|stopPropagation
+              role="dialog"
+              aria-modal="true"
+              tabindex="0"
+            >
               transition:fade|global
               on:click|stopPropagation
             >
