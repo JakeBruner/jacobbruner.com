@@ -3,7 +3,7 @@
   "name": "jacobbruner.com",
   "version": "0.0.1",
   "scripts": {
-    "setup": "npm install && npm run build:wasm",
+    "setup": "npm install && npm run build:wasm3",
     "opt:wasm": "cd game-of-life/pkg && wasm-opt -Oz -o game_of_life_bg.wasm game_of_life_bg.wasm",
     "build:wasm3": "wasm-pack build ./game-of-life --target web && python3 ./scripts/fixwasm.py",
     "build:wasm": "wasm-pack build ./game-of-life --target web && python ./scripts/fixwasm.py",
