@@ -198,19 +198,19 @@ two halves, see?
 
 a colorful maze
 
-            a sinking buoy
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a sinking buoy
 
 a harvested meadow
 
-            a flickering son
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a flickering son
 
 a rockdove's perch
 
-            a dormant volcanoe
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a dormant volcanoe
 
 a yearning question 
 
-            —an oxymoron?
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;—an oxymoron?
 
 ### #13 Greece
 
@@ -236,15 +236,15 @@ an athlete?
 
 Tirelessly aching
 
-            joints too young to smoke
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;joints too young to smoke
 
 Through a cold night's whispering
 
-            come back to life
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;come back to life
 
 then suddenly, a jester,
 
-            for it was but a dream
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for it was but a dream
 
 ### #15 Dusk
 
