@@ -2,9 +2,9 @@
 title: An Anthology from a Square
 date: 2025-10-24
 layout: blog
-excerpt: A detailed exploration of exploration and belonging.
-thumbnailpath: /thumbnails/placeholder.png
-tags: News
+excerpt: An exploration of exploration and belonging.
+thumbnailpath: /thumbnails/gallard.png
+tags: Creative
 ---
 
 ### #1 Icicles
@@ -97,6 +97,22 @@ and what was once violently ripped away from my cold-dead hands that
 
 loved the boy. But even love is triumphed by Saudade.
 
+### #6 Casper
+
+Where shadows lie fate cannot escape
+beneath the ghastly devil that prances
+
+shape shifting forms evermore contain 
+that from which the ghost abstains
+
+to wander alone through gathered stone
+breaks eyesight in platos cave
+
+from where then can its remains go
+squirming in the creeps below, stowed
+
+baggage contains empty paper cans
+and the wills of the pentatonic hum
 
 ### #7 Saxophones
 
