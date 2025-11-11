@@ -3,7 +3,7 @@ title: An Anthology from a Square
 date: 2025-10-24
 layout: blog
 excerpt: An exploration of exploration and belonging.
-thumbnailpath: /thumbnails/gallard.png
+thumbnailpath: /thumbnails/gallard.jpg
 tags: Creative
 ---
 
