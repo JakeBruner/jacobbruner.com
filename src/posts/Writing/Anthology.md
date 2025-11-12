@@ -7,7 +7,7 @@ thumbnailpath: /thumbnails/placeholder.png
 tags: News
 ---
 
-### #1 Icicles
+### Icicles
 
 Strengths wallows rife with inbred fear
 
@@ -23,7 +23,7 @@ surmises on the countless wonts we've always neglected.
 
 End may not punctuate new beginnings but
 
-### #2 Ephemeral
+### Ephemeral
 
 Cherry blossoms are afraid of their own effervescence.
 
@@ -41,7 +41,7 @@ A mother exclaims back "stop! dont!", as the
 
 blossum smirks back knowingly
 
-### #3 Violins
+### Violins
 
 Petrichor — the smell of wet-cobble
 
@@ -59,7 +59,7 @@ into one's very bones.
 
 From what are we to make of this, indifference?
 
-### #4 Moon's Breath
+### Moon's Breath
 
 There was a day, dusk actually, on a beach where I saw the
 
@@ -79,26 +79,8 @@ Timid, but not skittish. Aloof but not unaware.
 
 The pool drained and the cat was yet to be remained. 
 
-### #5 On Language
 
-"Saudade" is a word seldom translated to English.
-
-One might ascribe it nostalgia, or longing, yet to a Brazilian,
-
-whom I've only encountered romantically, will he remember those
-
-crying roses begging for nothing but his embrace. The hours as kids
-
-we watched modern family and chuckled?
-
-What I know well is the intense dread of longing for what was once had,
-
-and what was once violently ripped away from my cold-dead hands that
-
-loved the boy. But even love is triumphed by Saudade.
-
-
-### #7 Saxophones
+### Saxophones
 
 You peer down a latter,
 
@@ -130,7 +112,7 @@ Why would you do this to me?
 
 The latter was read anyways.
 
-### #8 Circles
+### Circles
 
 On our east campus lawn, circles, circles, circles, would
 
@@ -150,7 +132,7 @@ But that siren was too beckoning. What other avenues were
 
 there to explore, traveling on a campus in circles, I mean.
 
-### #10 Worth
+### Worth
 
 For what purpose do we 
 
@@ -174,7 +156,7 @@ will wander toward becoming.
 
 There's a faith-value in that—
 
-### #11 Snakes
+### Snakes
 
 What hath death wrought,
 
@@ -194,7 +176,7 @@ slivering my sense of self in
 
 two halves, see?
 
-### #12 Identity
+### Identity
 
 a colorful maze
 
@@ -212,7 +194,7 @@ a yearning question
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;—an oxymoron?
 
-### #13 Greece
+### Greece
 
 Bitter olives ripen in a 
 
@@ -232,7 +214,7 @@ Olympia. Does that make me
 
 an athlete?
 
-### #14 Daytime
+### Daytime
 
 Tirelessly aching
 
@@ -246,7 +228,7 @@ then suddenly, a jester,
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for it was but a dream
 
-### #15 Dusk
+### Dusk
 
 You wake in a daze. It's been
 
@@ -282,7 +264,7 @@ The lights go out.
 
 You try again tomorrow.
 
-### Cold Sweat Draft #16
+### Cold Sweat
 
 Some mornings I wake in a cold sweat.
 
