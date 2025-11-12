@@ -2,9 +2,9 @@
 title: An Anthology from a Square
 date: 2025-10-24
 layout: blog
-excerpt: A detailed exploration of exploration and belonging.
-thumbnailpath: /thumbnails/placeholder.png
-tags: News
+excerpt: An exploration of exploration and belonging.
+thumbnailpath: /thumbnails/gallard.jpg
+tags: Creative
 ---
 
 ### Icicles
