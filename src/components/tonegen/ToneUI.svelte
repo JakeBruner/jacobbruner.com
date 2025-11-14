@@ -1,7 +1,8 @@
 <script lang="ts">
   import { SpeakerWave, SpeakerXMark, Plus, XMark } from "svelte-heros-v2";
   import Waveform from "./Waveform.svelte";
-  import type { Tone } from "$lib/tonegen/type";
+  import { applyPeriodicWave } from "$lib/tonegen/type";
+  import type { BuiltInWave, Tone } from "$lib/tonegen/type";
   import c from "$lib/c";
 
   const noteNames = {
@@ -125,6 +126,12 @@
 
   // $: pendingFrequency = tone.oscNode.frequency.value.toString();
   // console.log("test C4", getNoteFrequency("A4"));
+
+  const handleWaveChange = (waveId: BuiltInWave) => {
+    if (!tone) return;
+    tone.wave = waveId;
+    applyPeriodicWave(tone.oscNode, waveId);
+  };
 </script>
 
 {#if tone}
@@ -164,17 +171,17 @@
           {#if popupActive}
 
 
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
+   
+            <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+            <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
             <div
               class="absolute z-50 p-2 w-40 top-1/2 right-0 rounded-md dark:bg-zinc-400/80 bg-white/50 backdrop-blur-sm"
               transition:fade|global
               on:click|stopPropagation
+              on:keydown|stopPropagation
               role="dialog"
               aria-modal="true"
               tabindex="0"
-            >
-              transition:fade|global
-              on:click|stopPropagation
             >
               <table class="z-50 w-full table-fixed">
                 <thead>
@@ -297,7 +304,13 @@
           )}
           bind:this={volumeParent}
         >
-          <span
+          <div
+            role="slider"
+            tabindex="0"
+            aria-label="Volume"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow={Math.round((tone.gainNode.gain.value || storedGain || 0) * 100)}
             style:width={(tone.gainNode.gain.value || storedGain || 0) * 100 + "%"}
             bind:this={volume}
             class={c(
@@ -312,54 +325,77 @@
                 { once: true }
               );
             }}
-          />
+            on:keydown={(e) => {
+              const step = e.shiftKey ? 0.1 : 0.01;
+              if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
+                tone.gainNode.gain.value = Math.max(0, tone.gainNode.gain.value - step);
+              } else if (e.key === "ArrowRight" || e.key === "ArrowUp") {
+                tone.gainNode.gain.value = Math.min(1, tone.gainNode.gain.value + step);
+              } else if (e.key === "Home") {
+                tone.gainNode.gain.value = 0;
+              } else if (e.key === "End") {
+                tone.gainNode.gain.value = 1;
+              }
+            }}
+          ></div>
         </div>
         <div class="px-2 xs:px-4" />
-        <!-- waveform canvas -->
-        <Waveform class="sm:block hidden" />
-        <div class="sm:px-4" />
-        <!-- frequency picker -->
-        <!-- TODO handle disabled state -->
-        <input
-          type="alphanumeric"
-          class="w-24 rounded-md bg-zinc-200 shadow-inner dark:bg-zinc-700 text-lg text-center touch-none dark:text-zinc-300 text-zinc-900 pl-0.5"
-          value={tone.oscNode.frequency.value}
-          on:change={(e) => {
-            if (!e.currentTarget || e.currentTarget.value === "") {
-              e.currentTarget.value = tone.oscNode.frequency.value;
-              return;
-            }
-
-            let parsed = parseInt(e.currentTarget.value);
-
-            if (isNaN(parsed)) {
-              parsed = getNoteFrequency(e.currentTarget.value) || 400;
-            } else {
-              e.currentTarget.value = Math.round(parsed);
-            }
-
-            if (parsed) {
-              tone.oscNode.frequency.value = parsed;
-              // round
-              e.currentTarget.value = Math.round(parsed);
-            }
-          }}
-          on:wheel|preventDefault={(e) =>
-            e.deltaY > 0 ? tone.oscNode.frequency.value-- : tone.oscNode.frequency.value++}
+        <!-- waveform selector -->
+        <Waveform
+          wave={tone.wave}
+          class="w-[20rem] flex-shrink-0"
+          on:change={(event) => handleWaveChange(event.detail)}
         />
-        <span class="dark:text-zinc-300 text-zinc-500 text-base pl-1">Hz</span>
-        <div class="px-2" />
-        <!-- double frequency button -->
-        <button
-          class="py-1 px-1 mr-1 rounded-md bg-zinc-400 dark:bg-zinc-500 hover:bg-zinc-600 text-sm text-center touch-none text-zinc-50 dark:text-zinc-300"
-          title="double frequency"
-          on:click={() => (tone.oscNode.frequency.value *= 2)}>2x</button
-        >
-        <button
-          class="py-1 px-1 rounded-md bg-zinc-400 dark:bg-zinc-500 hover:bg-zinc-600 text-sm text-center touch-none text-zinc-50 dark:text-zinc-300"
-          title="half frequency"
-          on:click={() => (tone.oscNode.frequency.value /= 2)}>½x</button
-        >
+        <div class="px-2 sm:px-4" />
+        <!-- frequency picker -->
+        <div class="flex flex-col gap-1">
+          <span class="text-xs uppercase tracking-wide text-zinc-500 dark:text-zinc-300"
+            >Frequency</span
+          >
+          <div class="flex items-center">
+            <!-- TODO handle disabled state -->
+            <input
+              type="alphanumeric"
+              class="w-24 rounded-md bg-zinc-200 shadow-inner dark:bg-zinc-700 text-lg text-center touch-none dark:text-zinc-300 text-zinc-900 pl-0.5"
+              value={tone.oscNode.frequency.value}
+              on:change={(e) => {
+                if (!e.currentTarget || e.currentTarget.value === "") {
+                  e.currentTarget.value = tone.oscNode.frequency.value;
+                  return;
+                }
+
+                let parsed = parseInt(e.currentTarget.value);
+
+                if (isNaN(parsed)) {
+                  parsed = getNoteFrequency(e.currentTarget.value) || 400;
+                } else {
+                  e.currentTarget.value = Math.round(parsed);
+                }
+
+                if (parsed) {
+                  tone.oscNode.frequency.value = parsed;
+                  // round
+                  e.currentTarget.value = Math.round(parsed);
+                }
+              }}
+              on:wheel|preventDefault={(e) =>
+                e.deltaY > 0 ? tone.oscNode.frequency.value-- : tone.oscNode.frequency.value++}
+            />
+            <span class="dark:text-zinc-300 text-zinc-500 text-base pl-1">Hz</span>
+            <div class="px-2" />
+            <!-- double frequency button -->
+            <button
+              class="py-1 px-1 mr-1 rounded-md bg-zinc-400 dark:bg-zinc-500 hover:bg-zinc-600 text-sm text-center touch-none text-zinc-50 dark:text-zinc-300"
+              title="double frequency"
+              on:click={() => (tone.oscNode.frequency.value *= 2)}>2x</button
+            >
+            <button
+              class="py-1 px-1 rounded-md bg-zinc-400 dark:bg-zinc-500 hover:bg-zinc-600 text-sm text-center touch-none text-zinc-50 dark:text-zinc-300"
+              title="half frequency"
+              on:click={() => (tone.oscNode.frequency.value /= 2)}>½x</button
+            >
+          </div>
+        </div>
         <div class="px-1 sm:px-4" />
         <!-- dial -->
         <div class="flex-col translate-y-1 sm:flex hidden" title="pan stereo channels">
@@ -368,6 +404,12 @@
               class="rounded-full w-full h-full border-2 dark:border-zinc-300 border-zinc-500"
               bind:this={dial}
               on:mousedown={handleMouseDown}
+              role="slider"
+              tabindex="0"
+              aria-label="Pan stereo channels"
+              aria-valuemin="-1"
+              aria-valuemax="1"
+              aria-valuenow={Math.round(tone.panNode.pan.value * 100) / 100}
             >
               <div
                 class="absolute w-1 h-1/2 bg-zinc-600 dark:bg-zinc-100 origin-bottom bottom-1/2 left-[18.5px] rounded-sm z-10"

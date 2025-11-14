@@ -4,6 +4,7 @@
   import ToneUI from "$components/tonegen/ToneUI.svelte";
   import ModePicker from "$components/tonegen/ModePicker.svelte";
   import c from "$lib/c";
+  import { applyPeriodicWave, defaultWave } from "$lib/tonegen/type";
   import type { Tone } from "$lib/tonegen/type";
 
   import type { Interval, Tuning } from "$lib/tonegen/intervals";
@@ -109,6 +110,7 @@
   const spawnChild = (tone: Tone, interval: Interval, tuning: Tuning) => {
     const frequency = interval[tuning] * tone.oscNode.frequency.value;
     const oscNode = new OscillatorNode(ctx, { type: "sine", frequency });
+    applyPeriodicWave(oscNode, defaultWave);
     const gainNode = new GainNode(ctx, gainOptions);
     const panNode = new StereoPannerNode(ctx);
 
@@ -120,7 +122,7 @@
       gainNode,
       panNode,
       isOrphan: true,
-      wave: "sine"
+      wave: defaultWave
     });
     tones = tones;
     oscNode.start();
@@ -175,6 +177,7 @@
 
     frequencies.map((f: number) => {
       const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: f });
+      applyPeriodicWave(oscNode, defaultWave);
       const gainNode = new GainNode(ctx, gainOptions);
       // lowest goes to -0.5, highest to 0.5
       const pan = 1.5 * ((f - min) / (max - min)) - 0.75 + (0.2 * Math.random() - 0.1);
@@ -186,7 +189,7 @@
         gainNode,
         panNode,
         isOrphan: false,
-        wave: "sine"
+        wave: defaultWave
       });
       tones = tones;
       oscNode.start();
@@ -303,6 +306,7 @@
 
         if (!ctx) return;
         const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: 400 });
+        applyPeriodicWave(oscNode, defaultWave);
         const gainNode = new GainNode(ctx, gainOptions);
         const panNode = new StereoPannerNode(ctx);
         oscNode.connect(panNode).connect(gainNode).connect(analyzer).connect(ctx.destination);
@@ -313,7 +317,7 @@
           gainNode,
           panNode,
           isOrphan: false,
-          wave: "sine"
+          wave: defaultWave
         });
         tones = tones;
         oscNode.start();
