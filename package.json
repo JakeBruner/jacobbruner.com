@@ -82,6 +82,7 @@
     "d3": "^7.9.0",
     "svelte-heros-v2": "^0.3.21",
     "svelte-inview": "^3.0.4",
+    "svelte-portal": "^2.2.1",
     "web-vitals": "^3.5.2"
   },
   "overrides": {

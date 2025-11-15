@@ -1,11 +1,15 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from "svelte";
+  import { createEventDispatcher, onDestroy, onMount } from "svelte";
   import {
     periodicWaveLibrary,
     periodicWaveOptions,
     type BuiltInWave,
     type PeriodicWaveDefinition
   } from "$lib/tonegen/type";
+  import { fade } from "svelte/transition";
+  import type { Action } from "svelte/action";
+
+  import Portal from 'svelte-portal';
 
   export let wave: BuiltInWave;
   export let options: PeriodicWaveDefinition[] = periodicWaveOptions;
@@ -15,22 +19,44 @@
   const dispatch = createEventDispatcher<{ change: BuiltInWave }>();
 
   let canvasEl: HTMLCanvasElement;
+  let triggerEl: HTMLDivElement;
   let waveCanvas: WaveCanvas | null = null;
   const sampleCache = new Map<BuiltInWave, Float32Array>();
 
   let selectedOption: PeriodicWaveDefinition | undefined;
 
-  const handleChange = (event: Event) => {
-    if (!(event.currentTarget instanceof HTMLSelectElement)) return;
-    const nextWave = event.currentTarget.value as BuiltInWave;
-    wave = nextWave;
-    dispatch("change", nextWave);
+  let popupPosition: { top: number; left: number } = { top: 0, left: 0 };
+
+  const updatePopupPosition = () => {
+    if (!triggerEl || typeof window === "undefined") return;
+    const rect = triggerEl.getBoundingClientRect();
+    popupPosition = {
+      top: rect.bottom + 8 + window.scrollY,
+      left: rect.left + window.scrollX
+    };
   };
 
   onMount(() => {
-    if (!canvasEl) return;
-    waveCanvas = new WaveCanvas(canvasEl);
-    waveCanvas.draw(wave);
+    if (canvasEl) {
+      waveCanvas = new WaveCanvas(canvasEl);
+      waveCanvas.draw(wave);
+    }
+
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const handleRelayout = () => {
+      if (popupActive) updatePopupPosition();
+    };
+
+    window.addEventListener("resize", handleRelayout);
+    window.addEventListener("scroll", handleRelayout, true);
+
+    return () => {
+      window.removeEventListener("resize", handleRelayout);
+      window.removeEventListener("scroll", handleRelayout, true);
+    };
   });
 
   $: if (waveCanvas && wave) {
@@ -74,16 +100,23 @@
     return samples;
   };
 
+  type WaveCanvasConfig = {
+    width?: number;
+    height?: number;
+  };
+
   class WaveCanvas {
     private ctx: CanvasRenderingContext2D;
-    private width = 140;
-    private height = 64;
+    private width: number;
+    private height: number;
     private waveColor = "#10b981";
     private fillColor = "rgba(16, 185, 129, 0.18)";
     private background = "#18181b";
     private axisColor = "#52525b";
 
-    constructor(private canvas: HTMLCanvasElement) {
+    constructor(private canvas: HTMLCanvasElement, config: WaveCanvasConfig = {}) {
+      this.width = config.width ?? 140;
+      this.height = config.height ?? 64;
       const ctx = canvas.getContext("2d");
       if (!ctx) {
         throw new Error("Unable to create 2D context for waveform canvas.");
@@ -157,31 +190,122 @@
       this.ctx.stroke();
     }
   }
+  const renderWavePreview: Action<HTMLCanvasElement, BuiltInWave> = (node, waveId) => {
+    let currentWave = waveId;
+    const previewCanvas = new WaveCanvas(node);
+    previewCanvas.draw(currentWave);
+
+    return {
+      update(nextWave) {
+        if (!nextWave || nextWave === currentWave) return;
+        currentWave = nextWave;
+        previewCanvas.draw(currentWave);
+      }
+    };
+  };
+
+  let popupActive = false;
+  let removeOutsideListener: (() => void) | null = null;
+
+  const cleanupOutsideListener = () => {
+    if (removeOutsideListener) {
+      removeOutsideListener();
+      removeOutsideListener = null;
+    }
+  };
+
+  const togglePopup = (e: MouseEvent | KeyboardEvent) => {
+    e.stopPropagation();
+    popupActive = !popupActive;
+
+    if (popupActive) {
+      updatePopupPosition();
+      if (typeof window === "undefined") return;
+      const handleOutsideClick = () => {
+        popupActive = false;
+        cleanupOutsideListener();
+      };
+      window.addEventListener("click", handleOutsideClick);
+      removeOutsideListener = () => window.removeEventListener("click", handleOutsideClick);
+    } else {
+      cleanupOutsideListener();
+    }
+  };
+
+  onDestroy(() => {
+    cleanupOutsideListener();
+  });
 </script>
 
 <div class={`flex flex-row items-start gap-4 ${className}`}>
-  <div
-    class="flex h-[78px] w-[158px] flex-shrink-0 items-center justify-center rounded-xl border border-zinc-600/70 bg-zinc-900/80 p-2 shadow-inner dark:border-zinc-500/70"
-  >
-    <div class="overflow-hidden rounded-md bg-zinc-900">
-      <canvas class="block h-[64px] w-[140px]" bind:this={canvasEl} />
+  <div class="relative" bind:this={triggerEl}>
+    <div
+      class="flex cursor-pointer select-none flex-col rounded-xl border border-zinc-200 bg-gradient-to-br from-white via-zinc-100 to-zinc-200 p-3 shadow-lg outline-none transition focus-visible:ring-2 focus-visible:ring-emerald-400 dark:border-zinc-600 dark:bg-gradient-to-br dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-800"
+      on:click={togglePopup}
+      on:keydown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          togglePopup(e);
+        }
+      }}
+      role="button"
+      tabindex="0"
+      aria-haspopup="dialog"
+      aria-expanded={popupActive}
+    >
+      <div class="flex items-center gap-4">
+        <div class="overflow-hidden rounded-md bg-zinc-900">
+          <canvas class="block h-[64px] w-[140px]" bind:this={canvasEl} />
+        </div>
+        <div class="text-left">
+          <p class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+            {selectedOption?.label ?? "Custom"}
+          </p>
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="flex min-w-[160px] flex-col">
-    <label class="mb-1 block text-xs uppercase tracking-wide text-zinc-500 dark:text-zinc-300"
-      >Waveform</label
-    >
-    <select
-      class="w-full rounded-md border-2 border-zinc-600 bg-zinc-200 p-1 text-sm font-medium text-zinc-800 shadow-inner dark:border-zinc-400 dark:bg-zinc-700 dark:text-zinc-50"
-      bind:value={wave}
-      on:change={handleChange}
-    >
-      {#each options as option}
-        <option value={option.id}>{option.label}</option>
-      {/each}
-    </select>
-    <p class="mt-1 text-[0.7rem] leading-tight text-zinc-500 dark:text-zinc-300">
-      {selectedOption?.description}
-    </p>
+
+    
   </div>
 </div>
+<Portal target="body">
+  {#if popupActive}
+    <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+    <div
+      class="w-[320px] rounded-lg border border-zinc-200 bg-gradient-to-br from-white via-zinc-100 to-zinc-200 p-3 shadow-2xl backdrop-blur-sm dark:border-zinc-700 dark:bg-gradient-to-br dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-800"
+      style={`position:absolute; top:${popupPosition.top}px; left:${popupPosition.left}px; z-index: 9999;`}
+      transition:fade|global
+      on:click|stopPropagation
+      on:keydown|stopPropagation
+      role="dialog"
+      aria-modal="true"
+      tabindex="-1"
+    >
+      <div class="flex max-h-[60vh] flex-col gap-2 overflow-y-auto pr-1">
+        {#each options as option}
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <!-- svelte-ignore a11y-no-static-element-interactions -->
+          <div
+            class={`flex cursor-pointer items-center gap-3 rounded-md border border-transparent p-2 transition hover:border-emerald-400 hover:bg-emerald-400/10 ${
+              wave === option.id ? "border-emerald-400 bg-emerald-400/10" : ""
+            }`}
+            on:click={() => {
+              wave = option.id;
+              popupActive = false;
+              dispatch("change", option.id);
+              cleanupOutsideListener();
+            }}
+          >
+            <div class="overflow-hidden rounded-md bg-zinc-900">
+              <canvas class="block h-16 w-36" use:renderWavePreview={option.id} />
+            </div>
+            <div class="flex flex-col">
+              <div class="font-medium text-zinc-900 dark:text-zinc-200">{option.label}</div>
+              <div class="text-sm text-zinc-600 dark:text-zinc-300">{option.description}</div>
+            </div>
+          </div>
+        {/each}
+      </div>
+    </div>
+  {/if}
+
+</Portal>

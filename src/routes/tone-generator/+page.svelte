@@ -86,7 +86,7 @@
       let x = 0;
       fftctx.clearRect(0, 0, fftcanvas.width, fftcanvas.height);
       // this is a value from 0-255
-      analyzer.getByteFrequencyData(frequencies);
+      analyzer.getByteFrequencyData(frequencies as Uint8Array<ArrayBuffer>);
       for (let i = 0; i < bufferLength; i++) {
         const freq = frequencies[i];
         let barheight = freq * SF;
@@ -110,7 +110,7 @@
   const spawnChild = (tone: Tone, interval: Interval, tuning: Tuning) => {
     const frequency = interval[tuning] * tone.oscNode.frequency.value;
     const oscNode = new OscillatorNode(ctx, { type: "sine", frequency });
-    applyPeriodicWave(oscNode, defaultWave);
+    applyPeriodicWave(oscNode, tone.wave);
     const gainNode = new GainNode(ctx, gainOptions);
     const panNode = new StereoPannerNode(ctx);
 
@@ -122,7 +122,7 @@
       gainNode,
       panNode,
       isOrphan: true,
-      wave: defaultWave
+      wave: tone.wave
     });
     tones = tones;
     oscNode.start();

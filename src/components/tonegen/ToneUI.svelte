@@ -169,9 +169,6 @@
 
 
           {#if popupActive}
-
-
-   
             <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
             <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
             <div
@@ -343,7 +340,7 @@
         <!-- waveform selector -->
         <Waveform
           wave={tone.wave}
-          class="w-[20rem] flex-shrink-0"
+          class="flex-shrink-0"
           on:change={(event) => handleWaveChange(event.detail)}
         />
         <div class="px-2 sm:px-4" />
@@ -359,23 +356,30 @@
               class="w-24 rounded-md bg-zinc-200 shadow-inner dark:bg-zinc-700 text-lg text-center touch-none dark:text-zinc-300 text-zinc-900 pl-0.5"
               value={tone.oscNode.frequency.value}
               on:change={(e) => {
-                if (!e.currentTarget || e.currentTarget.value === "") {
-                  e.currentTarget.value = tone.oscNode.frequency.value;
+              //!todo make the input element make sense with typescript
+                const input = e?.currentTarget;
+                // @ts-ignore
+                if (!input || input.value === "") {
+                  //@ts-ignore
+                  if (input) input.value = String(tone.oscNode.frequency.value);
                   return;
                 }
-
-                let parsed = parseInt(e.currentTarget.value);
+                //@ts-ignore
+                let parsed = parseInt(input.value);
 
                 if (isNaN(parsed)) {
-                  parsed = getNoteFrequency(e.currentTarget.value) || 400;
+                  //@ts-ignore
+                  parsed = getNoteFrequency(input.value) || 400;
                 } else {
-                  e.currentTarget.value = Math.round(parsed);
+                  //@ts-ignore
+                  input.value = String(Math.round(parsed));
                 }
 
                 if (parsed) {
                   tone.oscNode.frequency.value = parsed;
                   // round
-                  e.currentTarget.value = Math.round(parsed);
+                  //@ts-ignore
+                  if (input) input.value = String(Math.round(parsed));
                 }
               }}
               on:wheel|preventDefault={(e) =>
