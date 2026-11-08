@@ -10,13 +10,6 @@ use wasm_bindgen::prelude::*;
 // how to raise error
 // https://rustwasm.github.io/docs/wasm-bindgen/reference/throwing-and-catching-exceptions.html
 
-// When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
-// allocator.
-#[allow(unused)]
-#[cfg(feature = "wee_alloc")]
-#[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
-
 // extern crate web_sys;
 // macro_rules! console_log {
 //     ($($t:tt)*) => (web_sys::console::log_1(&format_args!($($t)*).to_string().into()))
@@ -154,11 +147,14 @@ impl Universe {
         // * constructor
         // I assume density is inputted even if mode is not 2
 
-        let size = (width * height) as usize;
-        let mut cells = FixedBitSet::with_capacity(size);
-
+        assert!(width > 0 && height > 0, "dimensions must be positive");
+        let size = width.checked_mul(height).expect("dimensions are too large") as usize;
         assert!(mode <= 4, "mode must be between 0 and 4");
-        assert!(density <= 1.0, "density must be between 0 and 1");
+        assert!(
+            density.is_finite() && (0.0..=1.0).contains(&density),
+            "density must be between 0 and 1"
+        );
+        let mut cells = FixedBitSet::with_capacity(size);
 
         // if mode == 2 {
         //     assert!(density.is_some() && density.unwrap() > 0.0 && density.unwrap() < 1.0);
@@ -217,8 +213,8 @@ impl Universe {
                             height,
                             cells: cells.clone(),
                         }, // in the middle of the scene
-                        row + height / 2,
-                        col + width / 2,
+                        (row + height / 2) % height,
+                        (col + width / 2) % width,
                     );
                     cells.set(idx, true);
                 }
@@ -271,8 +267,8 @@ impl Universe {
                             height,
                             cells: cells.clone(),
                         }, // in the middle of the scene
-                        row,
-                        col,
+                        row % height,
+                        col % width,
                     );
                     cells.set(idx, true);
                 }
@@ -304,7 +300,7 @@ impl Universe {
         self.height
     }
 
-    pub fn cells(&self) -> *const u32 {
+    pub fn cells(&self) -> *const usize {
         self.cells.as_slice().as_ptr() // a pointer to the vec
     }
 
@@ -319,16 +315,22 @@ impl Universe {
     // }
 
     pub fn toggle_cell(&mut self, row: u32, col: u32) {
-        // assert!(row < self.height && col < self.width);
+        assert!(
+            row < self.height && col < self.width,
+            "cell is outside the universe"
+        );
         let idx = self.get_index(row, col);
         self.cells.toggle(idx);
     }
 
     pub fn add_glider(&mut self, inrow: u32, incol: u32) {
-        let glider = [(1, 0), (2, 1), (0, 2), (1, 2), (2, 2)];
+        let glider: [(u32, u32); 5] = [(1, 0), (2, 1), (0, 2), (1, 2), (2, 2)];
 
         for (row, col) in glider.iter().cloned() {
-            let idx = self.get_index(row + inrow, col + incol);
+            let idx = self.get_index(
+                ((u64::from(row) + u64::from(inrow)) % u64::from(self.height)) as u32,
+                ((u64::from(col) + u64::from(incol)) % u64::from(self.width)) as u32,
+            );
             self.cells.set(idx, true);
         }
     }
@@ -388,6 +390,10 @@ impl Universe {
 
     pub fn set_cells(&mut self, cells: &[(u32, u32)]) {
         for (row, col) in cells.iter().cloned() {
+            assert!(
+                row < self.height && col < self.width,
+                "cell is outside the universe"
+            );
             let idx = Universe::get_index(self, row, col);
             self.cells.set(idx, true);
         }
@@ -399,18 +405,22 @@ use std::fmt::Display;
 impl Display for Universe {
     // fixed bit size
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        for line in self.cells.as_slice().chunks(self.width as usize) {
-            for &cell in line {
-                let symbol = if cell == 0 { '◻' } else { '◼' };
+        for row in 0..self.height {
+            for col in 0..self.width {
+                let symbol = if self.cells[self.get_index(row, col)] {
+                    '◼'
+                } else {
+                    '◻'
+                };
                 write!(f, "{}", symbol)?;
             }
-            write!(f, "\n")?;
+            writeln!(f)?;
         }
         Ok(())
     }
 }
 #[wasm_bindgen]
-extern "C" {
+unsafe extern "C" {
     #[wasm_bindgen(js_namespace = console)]
     fn log(s: &str);
 }

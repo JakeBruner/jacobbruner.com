@@ -16,26 +16,14 @@ const double = (n: Big) => {
   return n;
 };
 
-const add = (n1: Big, n2: Big) => {
-  let carry = 0;
-
-  for (let i = 0; i < n1.length; i++) {
-    n1[i] = n1[i] + n2[i] + carry;
-    carry = Math.floor(n1[i] / 10);
-    n1[i] %= 10;
-  }
-};
-
 export const calcLast50Digits = (n: number | bigint) => {
   let digits = [1];
 
   for (let i = 1; i <= n; i++) {
-    console.log(i);
-
     digits = double(digits);
   }
 
-  return digits.slice(-50).reverse().join("");
+  return digits.slice(0, 50).reverse().join("");
 };
 
 // // q: is this the best way to do this?
@@ -43,9 +31,7 @@ export const calcLast50Digits = (n: number | bigint) => {
 //   let digits = BigInt(1);
 
 //   for (let i = 1; i <= n; i++) {
-//     console.log(i);
-
-//     digits = digits * 2n;
+// //     digits = digits * 2n;
 //   }
 
 //   return digits.toString().slice(-50);
@@ -55,12 +41,10 @@ export const calcLast50Digits = (n: number | bigint) => {
 //   let digits = [BigInt(1)];
 
 //   for (let i = 1; i <= n; i++) {
-//     console.log(i);
-
-//     digits = doubleBigInt(digits);
+// //     digits = doubleBigInt(digits);
 //   }
 
-//   return digits.slice(-50).reverse().join("");
+//   return digits.slice(0, 50).reverse().join("");
 // };
 
 // const doubleBigInt = (n: Big) => {

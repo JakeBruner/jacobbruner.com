@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { generateOptions, type GenerateOptions } from "$lib/tonegen/generate";
+  import { generateOptions, type GenerateOptions } from "#lib/tonegen/generate.ts";
 
-  import c from "$lib/c";
+  import c from "#lib/c.ts";
 
   // create a new array
 
@@ -39,7 +39,7 @@
     <input
       id="combobox"
       type="text"
-      class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-300 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6"
+      class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-zinc-900 shadow-xs ring-1 ring-inset ring-zinc-300 focus:ring-2 focus:ring-inset focus:ring-cyan-600 sm:text-sm sm:leading-6"
       role="combobox"
       aria-controls="options"
       aria-expanded={active}
@@ -50,7 +50,7 @@
       }}
     />
     <div
-      class="absolute pointer-events-none inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none"
+      class="absolute pointer-events-none inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-hidden"
     >
       <svg class="h-5 w-5 text-zinc-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
         <path
@@ -62,11 +62,11 @@
     </div>
     {#if active}
       <ul
-        class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+        class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-hidden sm:text-sm"
         id="options"
         role="listbox"
       >
-        {#each filteredOptions as option, i}
+        {#each filteredOptions as option (option.name)}
           {@const isSelected = option.name === selected.name}
 
           <li

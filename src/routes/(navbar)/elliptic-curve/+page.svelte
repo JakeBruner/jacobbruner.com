@@ -8,14 +8,14 @@
     RawPoint,
     getSubgroup,
     getFactors
-  } from "$lib/math/curve";
+  } from "#lib/math/curve.ts";
 
-  import MobilePopup from "$components/MobilePopup.svelte";
+  import MobilePopup from "#components/MobilePopup.svelte";
 
   let a: number = 4;
   let b: number = 6;
   let p: number = 13;
-  let prime: number;
+  let prime = 13;
 
   $: discriminant = (-16 * (4 * a ** 3 + 27 * (b * b))) % prime;
 
@@ -26,11 +26,11 @@
     selected = null;
   } // this ugly shit makes the subgroup disappear if these values change
 
-  let inputIsPrime: boolean = true;
+  let inputIsPrime: boolean;
 
   $: {
     // prime = p;
-    if (isPrime(p)) {
+    if (Number.isSafeInteger(p) && p >= 5 && p <= 73 && isPrime(p)) {
       prime = p;
       inputIsPrime = true;
     } else {
@@ -38,7 +38,10 @@
     }
   }
 
-  $: curve = new EllipticCurve(a, b, prime);
+  let curve = new EllipticCurve(4, 6, 13);
+  $: if (Number.isSafeInteger(a) && Number.isSafeInteger(b)) {
+    curve = new EllipticCurve(a, b, prime);
+  }
   $: table = curve.getCayleyTable;
 
   const createColorArray = (curve: EllipticCurve): string[] => {
@@ -69,21 +72,9 @@
   $: {
     if (selected) {
       sg = getSubgroup(selected, curve);
-      console.log(sg);
     }
   }
 
-  // compute first 11 prime numbers congruent to 1 mod 12
-  let primes: number[] = [];
-  $: {
-    for (let i = 1; i < 100; i++) {
-      if (isPrime(i) && i % 12 === 1) {
-        primes.push(i);
-      }
-    }
-  }
-
-  // first ten primes === 1 mod 12:  [1, 13, 25, 37, 49, 61, 73, 85, 97, 109];
 </script>
 
 <svelte:head>
@@ -124,6 +115,7 @@
     <label class="p-8">
       <input
         type="number"
+        aria-label="Curve coefficient a"
         bind:value={a}
         on:change={() => {
           selected = null;
@@ -138,12 +130,12 @@
         text-zinc-600 dark:text-zinc-300
         bg-inherit bg-clip-padding
         border border-solid border-zinc-300 dark:border-zinc-600
-        rounded
+        rounded-sm
 
         m-0
         shadow-inner
 
-        focus:text-zinc-700 dark:focus:text-zinc-200 focus:border-primary focus:outline-none"
+        focus:text-zinc-700 dark:focus:text-zinc-200 focus:border-primary focus:outline-hidden"
       />
     </label>
     <input
@@ -158,6 +150,7 @@
     <label class="p-8">
       <input
         type="number"
+        aria-label="Curve coefficient b"
         bind:value={b}
         min="-20"
         max="20"
@@ -169,20 +162,21 @@
           text-zinc-600 dark:text-zinc-300
           bg-inherit bg-clip-padding
           border border-solid border-zinc-300 dark:border-zinc-600
-          rounded
+          rounded-sm
 
           m-0
           shadow-inner
 
-          focus:text-zinc-700 dark:focus:text-zinc-200 focus:border-primary focus:outline-none"
+          focus:text-zinc-700 dark:focus:text-zinc-200 focus:border-primary focus:outline-hidden"
       />
     </label>
     <input type="range" bind:value={b} min="0" max="20" />
     <label class="p-8">
       <input
         type="number"
+        aria-label="Prime modulus"
         bind:value={p}
-        min="0"
+        min="5"
         max="73"
         class="block
             py-1
@@ -191,12 +185,12 @@
             font-normal
             text-zinc-600 dark:text-zinc-300
             border border-solid border-zinc-300 dark:border-zinc-600
-            rounded
+            rounded-sm
             bg-inherit bg-clip-padding
             m-0
             shadow-inner
 
-            focus:text-zinc-700 dark:focus:text-zinc-200 focus:border-primary focus:outline-none"
+            focus:text-zinc-700 dark:focus:text-zinc-200 focus:border-primary focus:outline-hidden"
         style:color={inputIsPrime ? "" : "red"}
       />
       <span style:color={inputIsPrime ? "" : "red"}>*must be prime</span>
@@ -225,7 +219,7 @@
 <div class="pt-5 w-full flex flex-col content-center text-center">
   {#if selected}
     <div class=" w-auto pb-2 font-semibold text-xl" transition:fade|global>
-      {#each sg as elem, i}
+      {#each sg as elem, i (i)}
         <span class="">
           {#if i !== 0}
             &#10230;
@@ -251,20 +245,24 @@
           y = -1;
         }}
       >
-        {#each table as row, i}
+        {#each table as row, i (i)}
           <tr class="divide-x dark:divide-zinc-600 divide-zinc-300 y{i}">
-            {#each row as p, j}
+            {#each row as p, j (j)}
               <td
                 on:mouseenter={() => {
                   x = j;
                   y = i;
                 }}
                 on:click={() => {
-                  const pt = table[x][y].getRawPoint;
+                  const pt = table[i][j].getRawPoint;
                   selected = pt;
                 }}
-                on:keypress={() => {
-                  const pt = table[x][y].getRawPoint;
+                role="button"
+                tabindex="0"
+                on:keydown={(event) => {
+                  if (event.key !== "Enter" && event.key !== " ") return;
+                  event.preventDefault();
+                  const pt = table[i][j].getRawPoint;
                   selected = pt;
                 }}
                 class="x{j} first:hover:!bg-white/90"
@@ -281,7 +279,7 @@
   {#if curve}
     {@const len = curve.points.length}
     {#key curve}
-      order = {len}, which has divisors 1{#each getFactors(len) as factor},
+      order = {len}, which has divisors 1{#each getFactors(len) as factor (factor)},
         {factor}{/each}, {len}
       <!-- , and is therefore {len === 1 ? "not" : ""} cyclic -->
     {/key}
@@ -317,23 +315,24 @@
   </p>
 </div>
 
-<style>
+<style lang="postcss">
+  @reference "../../../app.css";
   /* button {
     all: unset;
   } */
   .x0 {
-    @apply bg-zinc-100 dark:bg-zinc-700 dark:text-zinc-100 !important;
+    @apply bg-zinc-100! dark:bg-zinc-700! dark:text-zinc-100!;
   }
   .active {
-    @apply bg-white/90 !important;
+    @apply bg-white/90!;
   }
   .active2 {
-    @apply bg-white/90 !important;
+    @apply bg-white/90!;
   }
   td {
     @apply p-1 whitespace-nowrap dark:text-zinc-700  text-center text-sm md:text-base;
   }
   .y0 td {
-    @apply bg-zinc-100 dark:bg-zinc-700 dark:text-zinc-100 !important;
+    @apply bg-zinc-100! dark:bg-zinc-700! dark:text-zinc-100!;
   }
 </style>

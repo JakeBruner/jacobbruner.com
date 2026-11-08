@@ -1,6 +1,6 @@
 <script lang="ts">
-  // import type { FullPost, BlogType } from "$lib/blog/blog";
-  import { BlogTagColors } from "$lib/blog/blog";
+  // import type { FullPost, BlogType } from "#lib/blog/blog.ts";
+  import { BlogTagColors } from "#lib/blog/blog.ts";
   import type { PageData } from "./$types";
 
   export let data: PageData;
@@ -8,7 +8,7 @@
   $: post = data.post;
   $: subject = data.subject;
 
-  import { hexToRGB } from "$lib/blog/tags";
+  import { hexToRGB } from "#lib/blog/tags.ts";
 
   // using pdf.js
 </script>
@@ -58,7 +58,7 @@
             {post.formatteddate}
           </p>
           <div class="ml-auto flex flex-row space-x-2 md:space-x-4 mr-2 md:mr-5">
-            {#each post.tags as tag}
+            {#each post.tags as tag (tag)}
               {@const color = hexToRGB(BlogTagColors[tag])}
               <div
                 class="rounded-lg my-auto right-0 py-1 px-2 group-hover:rounded-lg group-hover:contrast-125 transition-all ease-in-out"
@@ -82,7 +82,7 @@
           frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen
-          class="rounded"
+          class="rounded-sm"
           title=""
         /> -->
         <iframe
@@ -90,9 +90,9 @@
           frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowfullscreen
-          class="rounded"
+          class="rounded-sm"
           title=""
-        />
+        ></iframe>
       </div>
     {/if}
     {#if post?.audiopath}
@@ -127,6 +127,8 @@
        dark:prose-p:text-zinc-300 max-w-none prose-p:leading-normal prose-base
         lg:prose-xl prose-zinc dark:prose-invert subpixel-antialiased optimize-legibility"
     >
+      <!-- Repository-authored Markdown is compiled at build time; no user HTML is accepted. -->
+      <!-- eslint-disable-next-line svelte/no-at-html-tags -->
       {@html post?.html}
     </div>
   </div>

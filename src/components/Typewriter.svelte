@@ -1,34 +1,65 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+
   export let text: string;
   export let speed: number = 120;
-  let span: HTMLSpanElement;
   export let activated = false;
+  let displayedText = "";
   let hidden = false;
+  let mounted = false;
+  let typingTimer: ReturnType<typeof setTimeout> | undefined;
+  let cursorTimer: ReturnType<typeof setTimeout> | undefined;
+
+  const clearTimers = () => {
+    clearTimeout(typingTimer);
+    clearTimeout(cursorTimer);
+    typingTimer = undefined;
+    cursorTimer = undefined;
+  };
 
   export const startTypewriter = () => {
+    clearTimers();
+    if (!mounted) return;
+
     let i = 0;
-    span.innerHTML = "";
+    displayedText = "";
+    hidden = false;
     const type = () => {
+      typingTimer = undefined;
       if (i < text.length) {
-        span.textContent += text.charAt(i);
+        displayedText += text.charAt(i);
         i++;
+      }
+      if (i < text.length) {
         const rand = 1.3 * (Math.random() - 0.5);
-        setTimeout(type, speed + rand * speed);
+        typingTimer = setTimeout(type, speed + rand * speed);
+      } else {
+        cursorTimer = setTimeout(() => {
+          cursorTimer = undefined;
+          hidden = true;
+        }, 2000);
       }
     };
     type();
-    setTimeout(() => {
-      hidden = true;
-    }, text.length * speed + 2000);
   };
 
-  $: if (activated) {
+  onMount(() => {
+    mounted = true;
+    return () => {
+      mounted = false;
+      clearTimers();
+    };
+  });
+
+  $: if (mounted && activated) {
     startTypewriter();
+  } else {
+    clearTimers();
   }
 </script>
 
 <!-- prettier-ignore -->
-<span bind:this={span} class="w-full"> </span><span
+<span class="w-full">{displayedText}</span><span
   class:hidden
   class="cursor text-primary-100 dark:text-primary-900">|</span
 >

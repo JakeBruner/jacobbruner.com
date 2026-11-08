@@ -7,9 +7,7 @@
 
   let canvas: HTMLCanvasElement;
   let ctx: CanvasRenderingContext2D;
-  let pre: HTMLPreElement;
   let width = 1000;
-  let height = 1000;
 
   const base = 10;
 
@@ -29,7 +27,6 @@
     n.forEach((num, idx) => {
       // fill a pixel with a given color based on the digit in each decimal place with each being flush left
 
-      pre.innerHTML += num + " (" + idx + ")" + "\n";
       const len = num.length;
       for (let i = 0; i < len; i++) {
         const digit = +num[i];
@@ -40,8 +37,9 @@
         ctx.fillRect(width - (i + 1) * 5, 5 * idx, 5, 5);
       }
     });
+    n = [...n];
   });
 </script>
 
-<canvas bind:this={canvas} width="1000" height="1000" />
-<pre bind:this={pre} class="w-full pr-10 text-right font-mono" />
+<canvas bind:this={canvas} width="1000" height="1000" ></canvas>
+<pre class="w-full pr-10 text-right font-mono">{n.map((num, idx) => `${num} (${idx})\n`).join("")}</pre>

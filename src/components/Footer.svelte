@@ -7,7 +7,7 @@
     { title: "CS", path: "/Computer-Science" },
     { title: "Writing", path: "/Writing" }
   ];
-  import { dev } from "$app/environment";
+  import { dev } from "$app/env";
 </script>
 
 <footer class="bg-white dark:bg-zinc-900">
@@ -20,10 +20,10 @@
             Hand-coded by Jacob using Svelte, Rust, Typescript.
           </p>
         </div>
-        <div class="basis-[37.5] md:px-9 px-7 xl:px-16">
+        <div class="basis-auto md:px-9 px-7 xl:px-16">
           <h4 class="pb-4 font-bold text-primary">Links</h4>
           <p class="flex md:grid md:grid-cols-2 flex-col leading-relaxed font-light">
-            {#each navitems as item}
+            {#each navitems as item (item.path)}
               <a
                 class="leading-[1.8] hover:text-stone-900 dark:text-zinc-200 dark:hover:text-zinc-50 transition ease-in-out duration-300"
                 href={item.path}

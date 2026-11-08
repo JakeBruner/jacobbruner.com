@@ -10,20 +10,21 @@
 </script>
 
 <script lang="ts">
-  import { page } from "$app/stores";
-  import { loading } from "$lib/loading";
+  import { page } from "$app/state";
+  import { loading } from "#lib/loading.ts";
   // console.log($page)
-  import classnames from "$lib/classnames";
+  import classnames from "#lib/classnames.ts";
 
   let menuOpen = false;
 </script>
 
 <header>
-  <div class="fixed top-0 bg-white dark:bg-zinc-900 w-full h-[60px] z-[700] opacity-60" />
+  <div class="fixed top-0 bg-white dark:bg-zinc-900 w-full h-[60px] z-[700] opacity-60" ></div>
   <nav
-    class="backdrop-blur-sm fixed top-0 left-0 right-0 z-[800] bg-white_translucent dark:bg-zinc-900/80 px-2 sm:px-4 py-3.5 text-black dark:text-zinc-100/90 shadow-md dark:shadow-black/30"
+    class="backdrop-blur-xs fixed top-0 left-0 right-0 z-[800] bg-white_translucent dark:bg-zinc-900/80 px-2 sm:px-4 py-3.5 text-black dark:text-zinc-100/90 shadow-md dark:shadow-black/30"
   >
-    <style>
+    <style lang="postcss">
+  @reference "../app.css";
       nav::before {
         /* background-image: linear-gradient(90deg, #b15e84, #d772a1, #8b4968, #b15e84); */
         animation: gradientWander 25s linear infinite;
@@ -87,17 +88,17 @@
           "md:hidden fixed -z-10 w-1/2 mt-[60px] min-h-screen right-0 inset-y-0 transition-all duration-300 ease-in-out bg-white dark:bg-zinc-900 opacity-60",
           menuOpen ? "right-0" : "right-[-100%]"
         )}
-      />
+      ></div>
       <aside
         class:menuOpen
-        class="md:hidden fixed -z-1 w-1/2 mt-[60px] min-h-screen inset-y-0 shadow-md bg-white-translucent backdrop-blur-sm dark:bg-zinc-900/80  transition duration-300 ease-in-out"
+        class="md:hidden fixed -z-1 w-1/2 mt-[60px] min-h-screen inset-y-0 shadow-md bg-white-translucent backdrop-blur-xs dark:bg-zinc-900/80  transition duration-300 ease-in-out"
       >
         <ul class="flex flex-col p-5 space-y-4 ">
-          {#each navitems as item}
+          {#each navitems as item (item.path)}
             <li class="hover:scale-[102%] transition ease-in-out duration-300 relative">
               <a
                 href={item.path}
-                class:active={$page.url.pathname === item.path}
+                class:active={page.url.pathname === item.path}
                 class="before:!-bottom-0.5 transition ease-in-out duration-100 text-zinc-800/90 hover:text-primary dark:text-zinc-200/90"
                 on:click={() => {
                   $loading = true;
@@ -113,11 +114,11 @@
       <div class="hidden md:flex justify-between items-center w-full md:w-auto md:order-1">
         <!-- hidden and flex utility classes overwrite oneanother: here it is hidden until the min width 'md' makes it flex -->
         <ul class="flex lg:space-x-7 space-x-4">
-          {#each navitems as item}
+          {#each navitems as item (item.path)}
             <li class="relative">
               <a
                 href={item.path}
-                class:active={$page.url.pathname === item.path}
+                class:active={page.url.pathname === item.path}
                 class="transition ease-in-out duration-100 decoration-primary block text-[17px]  after:bg-primary after:bottom-[2px] after:absolute after:h-[2.5px] after:left-0.5 after:right-0.5 after:invisible after:-scale-x-0 hover:after:-scale-x-100 hover:after:visible after:transition after:ease-out after:duration-500"
                 on:click={() => ($loading = true)}
               >
@@ -134,7 +135,8 @@
   </nav>
 </header>
 
-<style>
+<style lang="postcss">
+  @reference "../app.css";
   aside {
     transition: right 0.3s ease-in-out;
     @apply -right-[100%];
@@ -180,7 +182,7 @@
 } */
   .active {
     position: relative;
-    @apply after:scale-x-100 after:visible after:bg-opacity-90 after:hover:opacity-100;
+    @apply after:scale-x-100 after:visible after:bg-primary/90 after:hover:opacity-100;
   }
   /* .active::after {
     position: absolute;

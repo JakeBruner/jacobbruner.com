@@ -1,134 +1,49 @@
-type DecodeOptions = {
-  sampleRate: number;
-  numChannels: number;
-  numFrames: number;
-  isFloat: boolean;
-};
-
+/** Encode interleaved WAV samples without modifying the source AudioBuffer. */
 export const audioBufferToWav = (buffer: AudioBuffer, options: { isFloat: boolean }): Blob => {
-  normalizeAudioBuffer(buffer);
+  const channels = Array.from({ length: buffer.numberOfChannels }, (_, index) =>
+    buffer.getChannelData(index)
+  );
+  const frames = buffer.length;
+  const bytesPerSample = options.isFloat ? 4 : 2;
+  const blockAlign = channels.length * bytesPerSample;
+  const dataSize = frames * blockAlign;
+  const bytes = new ArrayBuffer(44 + dataSize);
+  const view = new DataView(bytes);
+  const writeText = (offset: number, text: string) => {
+    for (let i = 0; i < text.length; i++) view.setUint8(offset + i, text.charCodeAt(i));
+  };
 
-  const [left, right] = [buffer.getChannelData(0), buffer.getChannelData(1)];
+  writeText(0, "RIFF");
+  view.setUint32(4, 36 + dataSize, true);
+  writeText(8, "WAVE");
+  writeText(12, "fmt ");
+  view.setUint32(16, 16, true);
+  view.setUint16(20, options.isFloat ? 3 : 1, true);
+  view.setUint16(22, channels.length, true);
+  view.setUint32(24, buffer.sampleRate, true);
+  view.setUint32(28, buffer.sampleRate * blockAlign, true);
+  view.setUint16(32, blockAlign, true);
+  view.setUint16(34, bytesPerSample * 8, true);
+  writeText(36, "data");
+  view.setUint32(40, dataSize, true);
 
-  // case 1: float32array
-
-  if (options.isFloat) {
-    const interleaved = new Float32Array(left.length + right.length);
-    for (let src = 0, dst = 0; src < left.length; src++, dst += 2) {
-      interleaved[dst] = left[src];
-      interleaved[dst + 1] = right[src];
-    }
-
-    const wavBytes = getWavBytes(interleaved.buffer, {
-      isFloat: true,
-      numChannels: 2,
-      sampleRate: buffer.sampleRate
-    });
-
-    return new Blob([wavBytes], { type: "audio/wav" });
-  }
-  // case 2: uint16array
-
-  const interleaved = new Uint16Array(left.length + right.length);
-  for (let src = 0, dst = 0; src < left.length; src++, dst += 2) {
-    interleaved[dst] = left[src] * 0x7fff;
-    interleaved[dst + 1] = right[src] * 0x7fff;
-  }
-
-  const wavBytes = getWavBytes(interleaved.buffer, {
-    isFloat: false,
-    numChannels: 2,
-    sampleRate: buffer.sampleRate
-  });
-
-  return new Blob([wavBytes], { type: "audio/wav" });
-};
-
-/**
- * @returns {Uint8Array} wav bytes
- */
-const getWavBytes = (
-  buffer: ArrayBufferLike,
-  options: Omit<DecodeOptions, "numFrames"> = {
-    sampleRate: 44100,
-    numChannels: 2,
-    isFloat: false
-  }
-) => {
-  const type = options.isFloat ? Float32Array : Uint16Array;
-  const numFrames = buffer.byteLength / type.BYTES_PER_ELEMENT;
-
-  const headerBytes = writeWavHeader({
-    ...options,
-    numFrames
-  });
-  const wavBytes = new Uint8Array(headerBytes.length + buffer.byteLength);
-
-  wavBytes.set(headerBytes, 0);
-
-  wavBytes.set(new Uint8Array(buffer), headerBytes.length);
-
-  return wavBytes;
-};
-
-const writeWavHeader = (options: DecodeOptions) => {
-  const { sampleRate, numChannels, numFrames, isFloat } = options;
-
-  const bytesPerSample = isFloat ? 4 : 2;
-  const format = 1; // PCM
-
-  const blockAlign = numChannels * bytesPerSample;
-  const byteRate = sampleRate * blockAlign;
-  const dataSize = numFrames * blockAlign;
-
-  const buffer = new ArrayBuffer(44);
-  const view = new DataView(buffer);
-
-  let p = 0;
-
-  function writestring(s: string) {
-    for (let i = 0; i < s.length; i++) {
-      view.setUint8(p, s.charCodeAt(i));
-      p++;
+  // A loop supports long recordings without the argument limit of Math.max(...samples).
+  let peak = 0;
+  for (const channel of channels) {
+    for (const sample of channel) {
+      if (Number.isFinite(sample)) peak = Math.max(peak, Math.abs(sample));
     }
   }
-  function writeUint32(d: number) {
-    view.setUint32(p, d, true);
-    p += 4;
+  const scale = peak > 0 ? 0.7 / peak : 0;
+  let offset = 44;
+  for (let frame = 0; frame < frames; frame++) {
+    for (const channel of channels) {
+      const raw = channel[frame];
+      const sample = Number.isFinite(raw) ? Math.max(-1, Math.min(1, raw * scale)) : 0;
+      if (options.isFloat) view.setFloat32(offset, sample, true);
+      else view.setInt16(offset, Math.round(sample * (sample < 0 ? 0x8000 : 0x7fff)), true);
+      offset += bytesPerSample;
+    }
   }
-  function writeUint16(d: number) {
-    view.setUint16(p, d, true);
-    p += 2;
-  }
-
-  writestring("RIFF"); // ChunkID
-  writeUint32(36 + dataSize); // ChunkSize
-  writestring("WAVE"); // Format
-  writestring("fmt "); // Subchunk1ID
-  writeUint32(16); // Subchunk1Size
-  writeUint16(format); // AudioFormat
-  writeUint16(numChannels); // NumChannels
-  writeUint32(sampleRate); // SampleRate
-  writeUint32(byteRate); // ByteRate
-  writeUint16(blockAlign); // BlockAlign
-  writeUint16(bytesPerSample * 8); // BitsPerSample
-  writestring("data"); // Subchunk2ID
-  writeUint32(dataSize); // Subchunk2Size
-
-  return new Uint8Array(buffer);
-};
-
-const normalizeAudioBuffer = (buffer: AudioBuffer) => {
-  const [left, right] = [buffer.getChannelData(0), buffer.getChannelData(1)];
-
-  const max = Math.max(...left, ...right);
-
-  const desiredMax = 0.7;
-
-  const scale = desiredMax / max;
-
-  for (let i = 0; i < left.length; i++) {
-    left[i] *= scale;
-    right[i] *= scale;
-  }
+  return new Blob([bytes], { type: "audio/wav" });
 };

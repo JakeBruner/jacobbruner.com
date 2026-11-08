@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { fade } from "svelte/transition";
-  import LazyImage from "$components/LazyImage.svelte";
-  import { lazyImage } from "$lib/actions/LazyImage";
+  import LazyImage from "#components/LazyImage.svelte";
+  import { lazyImage } from "#lib/actions/LazyImage.ts";
 
   let fullscreen: boolean = false;
 
@@ -42,6 +42,7 @@
   };
 
   onMount(() => {
+    const originalOverflow = document.body.style.overflow;
     // add event listener for keypress (A11Y) and mouse click on all divs with class photoframe
     const photoframes = document.querySelectorAll<HTMLDivElement>(".photoframe");
     photoframes.forEach((div) => {
@@ -58,14 +59,14 @@
         });
       }
     };
-    // log src and alt of all images
-    // let test = [];
-    // images.forEach((image) => {
-    //   // get rid of https://127.0.0.1:4000/
-
-    //   const src = image.src.replace("http://127.0.0.1:4000", "");
-    //   console.log(`src: "${src}", alt: "${image.alt}"`);
-    // });
+    return () => {
+      for (const frame of photoframes) {
+        frame.removeEventListener("click", selectMe);
+        frame.removeEventListener("keypress", selectMe);
+      }
+      webp.onload = webp.onerror = null;
+      document.body.style.overflow = originalOverflow;
+    };
   });
 
   let photoList = [
@@ -146,6 +147,9 @@
 </div>
 {#if fullscreen}
   <div
+    role="button"
+    tabindex="0"
+    aria-label="Close photograph"
     class="select-none flex mx-auto fixed inset-0 z-30 h-full w-full bg-zinc-800/70 dark:bg-zinc-800/70 items-center "
     transition:fade|global={{ duration: 100 }}
     on:click={deselectMe}
@@ -155,7 +159,7 @@
       use:lazyImage={selected.src}
       src={selected.thumb}
       alt={selected.alt}
-      class="rounded-sm content-center object-contain object-center xl:scale-95 shadow-md pointer-events-none"
+      class="rounded-xs content-center object-contain object-center xl:scale-95 shadow-md pointer-events-none"
     />
   </div>
 {/if}
@@ -250,7 +254,8 @@
   </div>
 </section>
 
-<style>
+<style lang="postcss">
+  @reference "../../../../app.css";
   .photoframe {
     @apply transition-all ease-out hover:brightness-90 hover:contrast-[90%] hover:scale-[100.5%] p-1 md:p-2;
   }

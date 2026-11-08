@@ -1,7 +1,13 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-@tailwind variants;
+@import "tailwindcss";
+@config "../tailwind.config.cjs";
+@source inline("max-w-2xl");
+
+/* Preserve the original site's defaults through the Tailwind 4 migration. */
+@layer base {
+  *, ::before, ::after, ::backdrop, ::file-selector-button { border-color: #e5e7eb; }
+  input::placeholder, textarea::placeholder { color: #9ca3af; opacity: 1; }
+  button, [role="button"] { cursor: pointer; }
+}
 
 @layer base {
   html {

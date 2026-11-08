@@ -1,23 +1,28 @@
 <script lang="ts">
   import { Play, Pause, ArrowDownOnSquare, Plus, Trash } from "svelte-heros-v2";
   import { onDestroy } from "svelte";
-  import ToneUI from "$components/tonegen/ToneUI.svelte";
-  import ModePicker from "$components/tonegen/ModePicker.svelte";
-  import c from "$lib/c";
-  import { applyPeriodicWave, defaultWave } from "$lib/tonegen/type";
-  import type { Tone } from "$lib/tonegen/type";
+  import ToneUI from "#components/tonegen/ToneUI.svelte";
+  import ModePicker from "#components/tonegen/ModePicker.svelte";
+  import c from "#lib/c.ts";
+  import { applyPeriodicWave, defaultWave } from "#lib/tonegen/type.ts";
+  import type { Tone } from "#lib/tonegen/type.ts";
 
-  import type { Interval, Tuning } from "$lib/tonegen/intervals";
+  import type { Interval, Tuning } from "#lib/tonegen/intervals.ts";
 
   import {
     generateFrequencies,
     type GenerateOptions,
     assertIsSupportedGenerationType
-  } from "$lib/tonegen/generate";
+  } from "#lib/tonegen/generate.ts";
 
-  import ToneRecorder from "$lib/tonegen/recorder";
+  import ToneRecorder, { type RecordingStatus } from "#lib/tonegen/recorder.ts";
 
-  let recorder: ToneRecorder;
+  let recorder: ToneRecorder | undefined;
+  let recordingStatus: RecordingStatus = "stopped";
+  let audioError = "";
+  let destroyed = false;
+  let animationFrame: number | null = null;
+  let logTimeout: ReturnType<typeof setTimeout> | undefined;
 
   let playing = false;
   let ctx: AudioContext;
@@ -35,32 +40,46 @@
 
   let selectedGenerationMode: GenerateOptions[number];
 
-  onDestroy(() => {
-    ctx && ctx.close();
-  });
 
   const initSound = () => {
-    if (ctx) return;
-    // @ts-expect-error
-    ctx = new (AudioContext || window.webkitAudioContext)();
+    if (ctx || destroyed) return;
+    const AudioContextClass = window.AudioContext ||
+      (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!AudioContextClass) {
+      audioError = "Audio is not supported by this browser.";
+      return;
+    }
+    ctx = new AudioContextClass();
     analyzer = new AnalyserNode(ctx, { fftSize: 2048 });
+    analyzer.connect(ctx.destination);
     bufferLength = analyzer.frequencyBinCount;
     frequencies = new Uint8Array(bufferLength);
     barwidth = fftcanvas.width / bufferLength;
-
     fftctx = fftcanvas.getContext("2d")!;
-
-    requestAnimationFrame(animate);
-
-    recorder = new ToneRecorder(ctx, tones, "ogg");
-
-    console.log("AudioContext initialized");
+    animationFrame = requestAnimationFrame(animate);
+    try {
+      recorder = new ToneRecorder(ctx, analyzer, "ogg", (status) => {
+        if (!destroyed) recordingStatus = status;
+      });
+    } catch (error) {
+      audioError = error instanceof Error ? error.message : "Recording is unavailable.";
+    }
   };
 
-  $: if (playing) {
-    ctx && ctx.resume();
-  } else {
-    ctx && ctx.suspend();
+  const record = async () => {
+    if (!recorder || recordingStatus !== "stopped") return;
+    audioError = "";
+    try {
+      recorder.startRecording();
+      await recorder.saveRecordingAsWav("tonegen-" + Date.now().toString());
+    } catch (error) {
+      if (!destroyed) audioError = error instanceof Error ? error.message : "Unable to save the recording.";
+    }
+  };
+
+  $: if (ctx && ctx.state !== "closed") {
+    if (playing) void ctx.resume();
+    else void ctx.suspend();
   }
 
   const SF = 1 / 3.5;
@@ -82,6 +101,7 @@
   };
 
   const animate = () => {
+    if (destroyed) return;
     if (ctx.state === "running" && fftcanvas) {
       let x = 0;
       fftctx.clearRect(0, 0, fftcanvas.width, fftcanvas.height);
@@ -101,9 +121,9 @@
         x += barwidth;
       }
 
-      requestAnimationFrame(animate);
+      animationFrame = requestAnimationFrame(animate);
     } else {
-      requestAnimationFrame(animate);
+      animationFrame = requestAnimationFrame(animate);
     }
   };
 
@@ -114,7 +134,7 @@
     const gainNode = new GainNode(ctx, gainOptions);
     const panNode = new StereoPannerNode(ctx);
 
-    oscNode.connect(panNode).connect(gainNode).connect(analyzer).connect(ctx.destination);
+    oscNode.connect(panNode).connect(gainNode).connect(analyzer);
 
     tones.push({
       id: uid++,
@@ -148,20 +168,24 @@
     });
     tones = [];
 
-    window && e.target instanceof HTMLElement && window.scrollTo(0, e.target.offsetTop);
+    if (e.currentTarget instanceof HTMLElement) {
+      window.scrollTo(0, e.currentTarget.offsetTop);
+    }
   };
 
-  let log: HTMLDivElement;
+  let logMessage = "";
 
   const generate = <E extends Event>(e: E) => {
     if (e.currentTarget instanceof HTMLElement) {
       e.currentTarget.blur();
     }
 
+    initSound();
+    if (!ctx) return;
     //TODO implement choosing your own base frequency
     const baseFreq = Math.floor((Math.random() * 350 + 75) * 3) / 3;
 
-    const mode: string = selectedGenerationMode.name;
+    const mode: string = selectedGenerationMode?.name || "Random";
 
     assertIsSupportedGenerationType(mode);
 
@@ -182,7 +206,7 @@
       // lowest goes to -0.5, highest to 0.5
       const pan = 1.5 * ((f - min) / (max - min)) - 0.75 + (0.2 * Math.random() - 0.1);
       const panNode = new StereoPannerNode(ctx, { pan });
-      oscNode.connect(panNode).connect(gainNode).connect(analyzer).connect(ctx.destination);
+      oscNode.connect(panNode).connect(gainNode).connect(analyzer);
       tones.push({
         id: uid++,
         oscNode,
@@ -195,15 +219,27 @@
       oscNode.start();
     });
 
-    log.innerText = `Generated a ${harmonySetting} chord in the key of ${baseFreq.toPrecision(
+    logMessage = `Generated a ${harmonySetting} chord in the key of ${baseFreq.toPrecision(
       4
     )} Hz!`;
-    setTimeout(() => (log.innerText = ""), 4000);
+    clearTimeout(logTimeout);
+    logTimeout = setTimeout(() => { if (!destroyed) logMessage = ""; }, 4000);
     //
   };
 
   onDestroy(() => {
-    ctx && ctx.close();
+    destroyed = true;
+    if (animationFrame !== null) cancelAnimationFrame(animationFrame);
+    clearTimeout(logTimeout);
+    recorder?.dispose();
+    tones.forEach((tone) => {
+      tone.oscNode.stop();
+      tone.oscNode.disconnect();
+      tone.panNode.disconnect();
+      tone.gainNode.disconnect();
+    });
+    analyzer?.disconnect();
+    if (ctx && ctx.state !== "closed") void ctx.close();
   });
 </script>
 
@@ -212,16 +248,14 @@
 </svelte:head>
 
 <svelte:window
-  on:mousedown|once|trusted={initSound}
-  on:keydown|once|trusted={initSound}
-  on:keypress|={(e) => {
-    // console.log(e);
-    if (ctx && e.code === "Space") {
+  on:pointerdown|once|trusted={initSound}
+  on:keydown={(e) => {
+    if (!e.isTrusted) return;
+    initSound();
+    const target = e.target as HTMLElement;
+    if (ctx && e.code === "Space" && !target.closest("input, textarea, button, select, [contenteditable=true], [role=button]")) {
       e.preventDefault();
-      playing = ctx.state === "suspended";
-    }
-    if (ctx && !(e.target instanceof HTMLInputElement) && e.code === "R") {
-      e.preventDefault();
+      playing = !playing;
     }
   }}
 />
@@ -229,10 +263,10 @@
 <header class="flex flex-row py-5 px-5 dark:bg-zinc-900 bg-zinc-50 align-middle items-center z-10">
   <h1>Tone Generator</h1>
   <span class={c(ctx ? "text-green-500" : "text-red-500", "text-4xl")}>.</span>
-  <div class="flex-grow min-width-none" />
+  <div class="grow min-width-none" ></div>
   <!-- fft canvas -->
-  <canvas class="w-40 h-10 border-b dark:border-zinc-600 border-zinc-300" bind:this={fftcanvas} />
-  <div class="flex-grow flex-shrink min-width-none" />
+  <canvas class="w-40 h-10 border-b dark:border-zinc-600 border-zinc-300" bind:this={fftcanvas} ></canvas>
+  <div class="grow shrink min-width-none" ></div>
   <button
     class={c(
       "rounded-md bg-inherit disabled:dark:bg-zinc-750 disabled:bg-zinc-200 transition-colors duration-10"
@@ -253,40 +287,35 @@
   >
     <Pause variation="solid" class={c("h-10 w-10", !playing && "opacity-75")} ariaLabel="pause" />
   </button>
-  <div class="px-2" />
+  <div class="px-2" ></div>
   <button
     class={c(
       "rounded-md bg-inherit disabled:dark:bg-zinc-750 disabled:bg-zinc-200 transition-colors duration-10",
-      recorder?.status !== "stopped" && "bg-zinc-500"
+      recordingStatus !== "stopped" && "bg-zinc-500"
     )}
     title="Record"
-    disabled={recorder?.status !== "stopped"}
+    on:click={record}
+    disabled={!recorder || recordingStatus !== "stopped"}
   >
     <ArrowDownOnSquare
       class={c(
         "h-10 w-10 -translate-y-0.5",
-        recorder?.status && recorder?.status !== "stopped" && "opacity-75"
+        recordingStatus !== "stopped" && "opacity-75"
       )}
-      on:click={() => {
-        if (!recorder) return;
-        recorder.startRecording();
-        // recorder.saveRecording("tonegen-" + Date.now().toString());
-        recorder.saveRecordingAsWav("tonegen-" + Date.now().toString());
-        // tones.forEach((t) => {
-        //   t.oscNode.start();
-        // });
-      }}
       variation="outline"
-      disabled={recorder?.status !== "stopped"}
       ariaLabel="record"
     />
   </button>
-  <div class="px-2" />
+  <div class="px-2" ></div>
   <button
     class="rounded-full w-5 h-5 dark:bg-zinc-200 bg-zinc-600"
-    on:click={() => recorder.stopRecording()}
-  />
+    title="Stop recording"
+    aria-label="Stop recording"
+    disabled={recordingStatus !== "recording"}
+    on:click={() => recorder?.stopRecording()}
+  ></button>
 </header>
+{#if audioError}<p role="alert" class="px-5">{audioError}</p>{/if}
 <main>
   <div
     class="relative mb-5 mx-5 p-7 bg-zinc-200 dark:bg-zinc-800 rounded-3xl min-h-[800px] flex flex-col space-y-4"
@@ -301,15 +330,16 @@
       type="button"
       class="relative block w-full rounded-2xl border-2 border-dashed border-zinc-800 dark:border-zinc-400 text-center hover:border-black hover:dark:border-zinc-400/80 group transition-all duration-100 hover:bg-zinc-200/50 hover:dark:bg-zinc-900/50"
       style="height: 98px;"
-      on:click|self={(e) => {
+      on:click={(e) => {
         e.currentTarget.blur();
 
+        initSound();
         if (!ctx) return;
         const oscNode = new OscillatorNode(ctx, { type: "sine", frequency: 400 });
         applyPeriodicWave(oscNode, defaultWave);
         const gainNode = new GainNode(ctx, gainOptions);
         const panNode = new StereoPannerNode(ctx);
-        oscNode.connect(panNode).connect(gainNode).connect(analyzer).connect(ctx.destination);
+        oscNode.connect(panNode).connect(gainNode).connect(analyzer);
 
         tones.push({
           id: uid++,
@@ -341,7 +371,7 @@
     <div class="relative mb-3">
       <button
         type="button"
-        class="shadow-inner text-cyan-700 bg-cyan-100 group hover:bg-cyan-200 relative inline-flex items-center rounded-xl border border-transparent px-4 h-11 text-base font-medium focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2"
+        class="shadow-inner text-cyan-700 bg-cyan-100 group hover:bg-cyan-200 relative inline-flex items-center rounded-xl border border-transparent px-4 h-11 text-base font-medium focus:outline-hidden focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2"
         on:click={generate}
       >
         Generate {(selectedGenerationMode?.name &&
@@ -365,8 +395,9 @@
       </button>
       <button
         type="button"
-        class="shadow-inner text-red-700 bg-red-100 group hover:bg-red-200 inline-flex items-center justify-center rounded-xl border border-transparent w-11 h-11 mt-auto text-base font-medium focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 mx-2"
+        class="shadow-inner text-red-700 bg-red-100 group hover:bg-red-200 inline-flex items-center justify-center rounded-xl border border-transparent w-11 h-11 mt-auto text-base font-medium focus:outline-hidden focus:ring-2 focus:ring-red-500 focus:ring-offset-2 mx-2"
         style:transform="translateY(9px)"
+        aria-label="Remove all tones"
         on:click={removeAllTones}
       >
         <Trash class="h-8 w-8" />
@@ -374,7 +405,7 @@
     </div>
     <div class="block">
       <ModePicker bind:selected={selectedGenerationMode} />
-      <div class="h-5 w-full text-xs pt-1 italic" bind:this={log} />
+      <div class="h-5 w-full text-xs pt-1 italic">{logMessage}</div>
     </div>
   </div>
 </main>

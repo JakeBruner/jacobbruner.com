@@ -1,9 +1,9 @@
 <script lang="ts">
-  import type { PostInfo } from "$lib/blog/blog";
-  import { BlogTagColors } from "$lib/blog/blog";
+  import type { PostInfo } from "#lib/blog/blog.ts";
+  import { BlogTagColors } from "#lib/blog/blog.ts";
   import { fly } from "svelte/transition";
-  import { hexToRGB } from "$lib/blog/tags";
-  import { c } from "$lib/c";
+  import { hexToRGB } from "#lib/blog/tags.ts";
+  import { c } from "#lib/c.ts";
   export let post: PostInfo;
   const tags = post?.tags;
   export let subject = "";
@@ -24,7 +24,7 @@
       <div
         class="group-hover:contrast-[90%] border-b-2 dark:border-zinc-800 border-zinc-100 rounded-t-lg aspect-w-16 lg:aspect-h-9 aspect-h-7 w-full bg-cover bg-center min-w-full transition ease-in-out duration-200"
         style="background-image: url({post.thumbnailpath})"
-      />
+      ></div>
     {/if}
     <div class="p-4 self-end">
       <p class="text-xl font-medium dark:text-zinc-100 text-zinc-800">{post.title}</p>
@@ -34,7 +34,7 @@
 
       {#if tags}
         <div class="-ml-[1px] flex flex-row space-x-1 pt-1.5">
-          {#each tags as tag}
+          {#each tags as tag (tag)}
             {@const color = hexToRGB(BlogTagColors[tag])}
             <div
               class="cursor-default rounded-full py-1 px-2"

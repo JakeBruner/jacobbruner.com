@@ -1,59 +1,35 @@
-import FFT from "./fft";
-// import { error } from "@sveltejs/kit";
-
 export default class AudioFFT {
-  // private audioContext: AudioContext;
-  private analyser!: AnalyserNode;
-  private fft!: FFT;
-  private bufferLength!: number;
-  private dataArray!: Uint8Array;
+  private analyser: AnalyserNode;
   private canvas: HTMLCanvasElement;
   private canvasContext: CanvasRenderingContext2D;
+  private dataArray: Uint8Array<ArrayBuffer>;
+  private animationFrame: number | null = null;
+  private disposed = false;
 
   constructor(canvas: HTMLCanvasElement, analyser: AnalyserNode) {
     this.canvas = canvas;
-    this.canvasContext = canvas.getContext("2d") as CanvasRenderingContext2D;
-
-    // this.audioContext = ctx;
+    this.canvasContext = canvas.getContext("2d")!;
     this.analyser = analyser;
-
-    this.setupFFT();
+    this.dataArray = new Uint8Array(analyser.frequencyBinCount);
     this.renderFFT();
   }
 
-  private setupFFT() {
-    // Create a new instance of the FFT object
-    this.fft = new FFT(this.analyser.fftSize);
-
-    // Get the buffer length and create a new array to hold the data
-    this.bufferLength = this.analyser.frequencyBinCount;
-    this.dataArray = new Uint8Array(this.bufferLength);
-  }
-
-  public renderFFT() {
-    requestAnimationFrame(this.renderFFT);
-
-    // Render the FFT at a rate of 60 frames per second
-    requestAnimationFrame(() => this.renderFFT());
-
-    // Get the current frequency data from the analyser
-
+  public renderFFT = () => {
+    if (this.disposed) return;
     this.analyser.getByteFrequencyData(this.dataArray);
-
-    // Clear the canvas
-
     this.canvasContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-    // Draw the frequency data on the canvas
-
-    for (let i = 0; i < this.bufferLength; i++) {
+    for (let i = 0; i < this.dataArray.length; i++) {
       const barHeight = this.dataArray[i];
-
-      const x = i * (this.canvas.width / this.bufferLength);
-
+      const x = i * (this.canvas.width / this.dataArray.length);
       const y = this.canvas.height / 2 - barHeight / 2;
-
       this.canvasContext.fillRect(x, y, 2, barHeight);
     }
+    this.animationFrame = requestAnimationFrame(this.renderFFT);
+  };
+
+  public dispose() {
+    this.disposed = true;
+    if (this.animationFrame !== null) cancelAnimationFrame(this.animationFrame);
+    this.animationFrame = null;
   }
 }

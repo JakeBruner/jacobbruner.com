@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { PostInfo, BlogType } from "$lib/blog/blog";
+  import type { PostInfo, BlogType } from "#lib/blog/blog.ts";
 
-  import PostsGrid from "$components/PostsGrid.svelte";
+  import PostsGrid from "#components/PostsGrid.svelte";
 
   /** @type {import('./$types').PageData} */
   export let data: { p: PostInfo[] };

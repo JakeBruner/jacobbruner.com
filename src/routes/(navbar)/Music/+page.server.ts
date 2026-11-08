@@ -1,4 +1,4 @@
-import { getPostsInfo, type PostInfo, type BlogType } from "$lib/blog/blog";
+import { getPostsInfo, type PostInfo, type BlogType } from "#lib/blog/blog.ts";
 //! Yes, I know it's annoying that this file is practically copy-pasted on all my separate blog routes. Sucks.
 /** @type {import('./$types').PageServerLoad} */
 export async function load(): Promise<{ p: PostInfo[] }> {
