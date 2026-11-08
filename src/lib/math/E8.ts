@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { sqdist, dotprod, sqnorm, octionionProduct } from "./vectorUtils";
 import {
   identityMatrix,
@@ -29,6 +28,8 @@ export type E8LatticeConstructor = {
 
 export default class E8 {
   ctx: CanvasRenderingContext2D;
+  private frame: number | null = null;
+  private speedRamp: ReturnType<typeof setInterval> | undefined;
 
   private readonly roots: number[][];
   private rootsZIndex!: Float32Array;
@@ -392,7 +393,7 @@ export default class E8 {
 
     this.computeAndDraw(this.rotation);
 
-    requestAnimationFrame(this.draw);
+    this.frame = requestAnimationFrame(this.draw);
   };
 
   constructor({
@@ -464,28 +465,38 @@ export default class E8 {
     this.computeAndDraw(0);
 
     this.speed = speed / 1000;
-    requestAnimationFrame(this.draw);
+    this.frame = requestAnimationFrame(this.draw);
 
     // slowly increase the speed to full
     // takes 10 seconds
-    const interval = setInterval(() => {
+    this.speedRamp = setInterval(() => {
       this.speed += 0.0003;
       if (this.speed >= speed) {
-        clearInterval(interval);
+        clearInterval(this.speedRamp);
+        this.speedRamp = undefined;
       }
     }, 20);
   }
 
   public start = () => {
+    if (this.isRunning) return;
     this.isRunning = true;
     this.animationStart = null;
-    requestAnimationFrame(this.draw);
+    this.frame = requestAnimationFrame(this.draw);
   };
 
   public stop = () => {
     this.isRunning = false;
+    if (this.frame !== null) cancelAnimationFrame(this.frame);
+    this.frame = null;
     // this.rotation = 0;
     // this.timeBase += this.rotation;
+  };
+
+  public dispose = () => {
+    this.stop();
+    clearInterval(this.speedRamp);
+    this.speedRamp = undefined;
   };
 
   public handleDarkmodeChange = (darkmode: boolean) => {

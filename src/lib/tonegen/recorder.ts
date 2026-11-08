@@ -1,153 +1,129 @@
-import type { Tone } from "./type";
+import { audioBufferToWav } from "./wav.ts";
 
-const EncodeTypes = ["ogg", "mp3", "flac", "webm"] as const;
-
-type EncodeType = typeof EncodeTypes[number];
-
-import { audioBufferToWav } from "./wav";
+export type RecordingStatus = "recording" | "encoding" | "stopped";
+type EncodeType = "ogg" | "mp3" | "flac" | "webm" | "mp4";
 
 export default class ToneRecorder {
   private ctx: AudioContext;
+  private source: AudioNode;
   private outputNode: MediaStreamAudioDestinationNode;
   private mediaRecorder: MediaRecorder;
-  private encodetype: EncodeType;
-  tones: Tone[];
-  public status: "recording" | "encoding" | "stopped" = "stopped";
+  private onStatusChange: (status: RecordingStatus) => void;
+  private recording: Promise<Blob> | null = null;
+  private rejectRecording: ((reason: Error) => void) | null = null;
+  private disposed = false;
+  public status: RecordingStatus = "stopped";
 
-  constructor(audioctx: AudioContext, tones: Tone[], encodetype: EncodeType) {
+  constructor(
+    audioctx: AudioContext,
+    source: AudioNode,
+    encodetype: EncodeType = "ogg",
+    onStatusChange: (status: RecordingStatus) => void = () => {}
+  ) {
+    if (typeof MediaRecorder === "undefined") throw new Error("Recording is not supported by this browser.");
     this.ctx = audioctx;
-    this.tones = tones;
+    this.source = source;
+    this.onStatusChange = onStatusChange;
     this.outputNode = this.ctx.createMediaStreamDestination();
-    // this.mediaRecorder = new MediaRecorder(this.outputNode.stream, {
-    //   mimeType: "audio/ogg;"
-    // });
-
-    //check supported encodes
-    const supportedEncodes: EncodeType[] = [];
-    EncodeTypes.forEach((e) => {
-      if (MediaRecorder.isTypeSupported(`audio/${e};`)) {
-        supportedEncodes.push(e);
-      }
-    });
-
-    console.log("supported encodes: ", supportedEncodes);
-
-    if (supportedEncodes.length === 0) {
-      throw new Error("no supported encodes");
+    const mimeType = [`audio/${encodetype}`, "audio/webm;codecs=opus", "audio/ogg;codecs=opus", "audio/mp4"]
+      .find((type) => MediaRecorder.isTypeSupported(type));
+    try {
+      this.mediaRecorder = new MediaRecorder(this.outputNode.stream, mimeType ? { mimeType } : undefined);
+    } catch (error) {
+      this.outputNode.stream.getTracks().forEach((track) => track.stop());
+      throw error;
     }
+    // Record the same mix that is audible, including gain, stereo pan, and tones added later.
+    this.source.connect(this.outputNode);
+  }
 
-    if (!supportedEncodes.includes(encodetype)) {
-      console.error(
-        `invalid encode type, defaulting to ${
-          supportedEncodes[0]
-        }. supported encodes: ${supportedEncodes.join(",")}`
-      );
-      encodetype = supportedEncodes[0];
-    }
-
-    this.encodetype = encodetype;
-    this.mediaRecorder = new MediaRecorder(this.outputNode.stream, {
-      mimeType: `audio/${encodetype};`
-    });
+  private setStatus(status: RecordingStatus) {
+    this.status = status;
+    this.onStatusChange(status);
   }
 
   public startRecording() {
-    this.tones.forEach((t) => {
-      // t.oscNode.disconnect(t.panNode);
-      // t.oscNode.disconnect(t.gainNode);
-      // t.oscNode.disconnect(this.ctx.destination);
-      t.oscNode.connect(this.outputNode);
+    if (this.disposed || this.status !== "stopped") return;
+    const chunks: Blob[] = [];
+    this.recording = new Promise((resolve, reject) => {
+      this.rejectRecording = reject;
+      this.mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size) chunks.push(event.data);
+      };
+      this.mediaRecorder.onstop = () => {
+        this.rejectRecording = null;
+        resolve(new Blob(chunks, { type: this.mediaRecorder.mimeType }));
+      };
+      this.mediaRecorder.onerror = () => {
+        this.setStatus("stopped");
+        reject(new Error("The browser could not record the audio."));
+      };
     });
-    this.status = "recording";
-    this.mediaRecorder.start();
+    // The save method surfaces errors, even when an error arrives before it subscribes.
+    void this.recording.catch(() => {});
+    try {
+      this.mediaRecorder.start();
+      this.setStatus("recording");
+    } catch (error) {
+      this.rejectRecording?.(error as Error);
+      this.setStatus("stopped");
+      throw error;
+    }
   }
 
   public stopRecording() {
+    if (this.disposed || this.mediaRecorder.state !== "recording") return;
+    this.setStatus("encoding");
     this.mediaRecorder.stop();
-    this.tones.forEach((t) => {
-      t.oscNode.disconnect(this.outputNode);
-      // t.oscNode.connect(this.ctx.destination);
-    });
   }
 
-  // save to file
+  private download(blob: Blob, filename: string) {
+    if (this.disposed) return;
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = filename;
+    anchor.style.display = "none";
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 0);
+  }
+
   public async saveRecording(filename: string) {
-    this.status = "encoding";
-    console.log("saving recording");
-    const chunks: Blob[] = [];
-    this.mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
-    return new Promise((resolve) => {
-      console.log("waiting for stop");
-      this.mediaRecorder.onstop = (e: Event) => {
-        console.log("stopped");
-
-        let blob: Blob;
-
-        if (this.encodetype === "ogg") {
-          blob = new Blob(chunks, { type: "audio/ogg; codecs=opus" });
-        } else if (this.encodetype === "mp3") {
-          blob = new Blob(chunks, { type: "audio/mp3; codecs=mp3" });
-        } else if (this.encodetype === "flac") {
-          blob = new Blob(chunks, { type: "audio/flac; codecs=flac" });
-        } else if (this.encodetype === "webm") {
-          blob = new Blob(chunks, { type: "audio/webm; codecs=opus" });
-        } else {
-          throw new Error(`unsupported encode type: ${this.encodetype}`);
-        }
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        document.body.appendChild(a);
-        a.style.display = "none";
-        a.href = url;
-        a.download = filename;
-        a.click();
-        window.URL.revokeObjectURL(url);
-        this.status = "stopped";
-        resolve(e);
-      };
-    });
+    if (!this.recording) return;
+    try {
+      const blob = await this.recording;
+      const extension = blob.type.split("/")[1]?.split(";")[0] || "webm";
+      this.download(blob, `${filename}.${extension}`);
+    } finally {
+      if (!this.disposed) this.setStatus("stopped");
+    }
   }
 
   public async saveRecordingAsWav(filename: string) {
-    this.status = "encoding";
-    console.log("saving recording as wav");
-    const chunks: Blob[] = [];
-    this.mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+    if (!this.recording) return;
+    try {
+      const blob = await this.recording;
+      if (this.disposed) return;
+      const buffer = await this.ctx.decodeAudioData(await blob.arrayBuffer());
+      const wav = audioBufferToWav(buffer, { isFloat: false });
+      this.download(wav, filename.endsWith(".wav") ? filename : `${filename}.wav`);
+    } finally {
+      if (!this.disposed) this.setStatus("stopped");
+    }
+  }
 
-    return new Promise((resolve) => {
-      console.log("waiting for stop");
-      this.mediaRecorder.onstop = async (e) => {
-        console.log("stopped");
-
-        // arbitrary encoding: whatever is native to the browser
-        const blob = new Blob(chunks, { type: `audio/${this.encodetype};` });
-        console.log("converting to audio buffer using intermediary format", this.encodetype);
-
-        const arrayBuffer = await blob.arrayBuffer();
-
-        const audioBuffer = this.ctx.decodeAudioData(
-          arrayBuffer,
-          () => {
-            console.log("decoded");
-          },
-          (e) => {
-            console.error("decode error", e);
-          }
-        );
-
-        const blob2 = audioBufferToWav(await audioBuffer, { isFloat: false });
-
-        const url = window.URL.createObjectURL(blob2);
-        const a = document.createElement("a");
-        document.body.appendChild(a);
-        a.style.display = "none";
-        a.href = url;
-        a.download = filename;
-        a.click();
-        window.URL.revokeObjectURL(url);
-        this.status = "stopped";
-        resolve(e);
-      };
-    });
+  public dispose() {
+    if (this.disposed) return;
+    this.disposed = true;
+    this.mediaRecorder.ondataavailable = null;
+    this.mediaRecorder.onstop = null;
+    this.mediaRecorder.onerror = null;
+    if (this.mediaRecorder.state !== "inactive") this.mediaRecorder.stop();
+    this.rejectRecording?.(new Error("Recording canceled."));
+    this.source.disconnect(this.outputNode);
+    this.outputNode.stream.getTracks().forEach((track) => track.stop());
+    this.status = "stopped";
   }
 }

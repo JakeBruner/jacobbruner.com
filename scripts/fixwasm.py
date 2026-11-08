@@ -1,10 +1,14 @@
-# * add "type": "module" to package.json
 import json
+from pathlib import Path
 
-with open("./game-of-life/pkg/package.json", "r+") as file:
-    data = json.load(file)
-    data.update({"type": "module"})
-    file.seek(0)
-    json.dump(data, file, indent=4)
+manifest = Path(__file__).resolve().parents[1] / "game-of-life" / "pkg" / "package.json"
+data = json.loads(manifest.read_text())
+data["type"] = "module"
+data["main"] = "./game_of_life.js"
+data["exports"] = {
+    ".": {"types": "./game_of_life.d.ts", "import": "./game_of_life.js"},
+    "./game_of_life_bg.wasm": "./game_of_life_bg.wasm",
+}
+manifest.write_text(json.dumps(data, indent=2) + "\n")
 
-    print('[fixwasm.py]: Added "type": "module" to package.json.')
+print("[fixwasm.py]: Ensured ES module entry points in the generated package.")

@@ -10,7 +10,7 @@
         </h3>
         <img
           alt="kilimanjaro"
-          class="static block object-cover object-center w-full h-full rounded-lg shadow-sm group-hover:brightness-90 group-hover:contrast-[90%] group-hover:scale-[100.5%]  transition-all ease-out "
+          class="static block object-cover object-center w-full h-full rounded-lg shadow-xs group-hover:brightness-90 group-hover:contrast-[90%] group-hover:scale-[100.5%]  transition-all ease-out "
           src="/images/kili/kilimanjaro-2464.jpg"
         />
       </div>

@@ -1,4 +1,4 @@
-<div class="nav inset-0 h-1 fixed w-full z-50 before:w-full before:h-1 before:fixed" />
+<div class="nav inset-0 h-1 fixed w-full z-50 before:w-full before:h-1 before:fixed" ></div>
 
 <style>
   .nav::before {

@@ -1,49 +1,25 @@
+import { defineConfig } from "vite";
 import { sveltekit } from "@sveltejs/kit/vite";
-import type { UserConfig } from "vite";
-// import wasmPack from "vite-plugin-wasm-pack";
+import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
+import adapter from "@sveltejs/adapter-vercel";
+import tailwindcss from "@tailwindcss/vite";
+import { mdsvex } from "mdsvex";
 import wasm from "vite-plugin-wasm";
-import path from "path";
+import mdsvexConfig from "./mdsvex.config.js";
 
-/** @type {import('vite').UserConfig} */
-const config: UserConfig = {
+export default defineConfig({
   plugins: [
-    // I made this plugin to fix a weird bug with vite saying that the extension '.css' was unknown
-    {
-      name: "fix-animatecss-bug",
-      transform(code, id, options = {}) {
-        if (options.ssr) return code.replace(/import .animate\.css.*$/gm, "");
-      } // gets rid of the import
-    },
-    sveltekit(),
+    tailwindcss(),
+    sveltekit({
+      extensions: [".svelte", ...mdsvexConfig.extensions!],
+      preprocess: [vitePreprocess({ script: true }), mdsvex(mdsvexConfig)],
+      adapter: adapter({ runtime: "nodejs24.x" })
+    }),
     wasm()
-    // wasmPack(["./game-of-life"]),
   ],
   define: {
-    "import.meta.env.VERCEL_ANALYTICS_ID": JSON.stringify(process.env.VERCEL_ANALYTICS_ID)
+    "import.meta.env.VERCEL_ANALYTICS_ID": JSON.stringify(process.env.VERCEL_ANALYTICS_ID ?? "")
   },
-  optimizeDeps: {
-    exclude: ["./game-of-life", "svelte-heros-v2"]
-  },
-  ssr: {
-    noExternal: ["three", "troika-three-text"]
-  },
-  build: {
-    minify: true
-    // target: "esnext"
-  },
-  server: {
-    host: "localhost",
-    port: 4000,
-    fs: {
-      //! this should be changed to only include specific paths
-      strict: false
-    }
-  },
-  resolve: {
-    alias: {
-      $components: path.resolve("./src/components")
-    }
-  }
-};
-
-export default config;
+  ssr: { noExternal: ["game-of-life"] },
+  server: { host: "localhost", port: 4000 }
+});

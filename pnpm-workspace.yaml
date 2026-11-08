@@ -1,0 +1,28 @@
+engineStrict: true
+# Keep upstream-pinned tooling dependencies on patched releases.
+# The build, lint, typecheck and route tests exercise these consumers.
+overrides:
+  'postcss-selector-parser@6.0.10': 6.1.5
+  'glob@13.0.6': 14.0.4
+  'minimatch@10.2.6': 11.0.5
+
+# Exact releases selected for this upgrade; retain pnpm's age policy for future updates.
+minimumReleaseAgeExclude:
+  - '@tailwindcss/node@4.3.5'
+  - '@tailwindcss/oxide@4.3.5'
+  - '@tailwindcss/oxide-android-arm64@4.3.5'
+  - '@tailwindcss/oxide-darwin-arm64@4.3.5'
+  - '@tailwindcss/oxide-darwin-x64@4.3.5'
+  - '@tailwindcss/oxide-freebsd-x64@4.3.5'
+  - '@tailwindcss/oxide-linux-arm-gnueabihf@4.3.5'
+  - '@tailwindcss/oxide-linux-arm64-gnu@4.3.5'
+  - '@tailwindcss/oxide-linux-arm64-musl@4.3.5'
+  - '@tailwindcss/oxide-linux-x64-gnu@4.3.5'
+  - '@tailwindcss/oxide-linux-x64-musl@4.3.5'
+  - '@tailwindcss/oxide-wasm32-wasi@4.3.5'
+  - '@tailwindcss/oxide-win32-arm64-msvc@4.3.5'
+  - '@tailwindcss/oxide-win32-x64-msvc@4.3.5'
+  - '@tailwindcss/vite@4.3.5'
+  - tailwindcss@4.3.5
+  - glob@14.0.4
+  - minimatch@11.0.5

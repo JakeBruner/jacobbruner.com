@@ -20,8 +20,8 @@
 
   // const randomlink: string = featuredposts[rand(featuredposts.length)];
 
-  import type { PostInfo } from "$lib/blog/blog";
-  import Post from "$components/Post.svelte";
+  import type { PostInfo } from "#lib/blog/blog.ts";
+  import Post from "#components/Post.svelte";
   // import { fly } from "svelte/transition";
   const projectList = [
     {
@@ -73,15 +73,15 @@
     // scrollDirection = detail.scrollDirection;
   };
 
-  import Typewriter from "$components/Typewriter.svelte";
+  import Typewriter from "#components/Typewriter.svelte";
   $: typewriterEffect = isInView[7];
 
   import { ChevronUp } from "svelte-heros-v2";
 
-  import LatticeHero from "$components/LatticeHero.svelte";
+  import LatticeHero from "#components/LatticeHero.svelte";
 
   import { onMount } from "svelte";
-  import { dev } from "$app/environment";
+  import { dev } from "$app/env";
   onMount(async () => !dev && window.scrollTo(0, 0));
 </script>
 
@@ -95,8 +95,8 @@
   </div>
   <!-- thinline with gradient-->
   <div
-    class="w-full h-px bg-gradient-to-r from-transparent dark:via-zinc-800 via-zinc-200 to-transparent"
-  />
+    class="w-full h-px bg-linear-to-r/srgb from-transparent dark:via-zinc-800 via-zinc-200 to-transparent"
+  ></div>
 
   <div class="relative w-full">
     <div
@@ -147,7 +147,7 @@
   <section
     class="bg-primary items-center pt-10 pb-20 px-4 sm:px-6 lg:pt-16 lg:pb-28 lg:px-8 w-full"
   >
-    <div class="flex" use:inview={options} on:change={handleChange} id="7">
+    <div class="flex" use:inview={options} on:inview_change={handleChange} id="7">
       <h1
         class="w-full text-center underline anim text-4xl sm:text-5xl md:text-6xl text-zinc-50 dark:text-zinc-800 italic cursor-text"
       >
@@ -158,9 +158,9 @@
     <div
       class="mt-12 md:mt-18 xl:mt-24 grid gap-16 max-w-md md:max-w-5xl mx-auto md:grid-cols-2 md:gap-x-5 md:gap-y-12 items-center"
     >
-      {#each projectList as post, i}
+      {#each projectList as post, i (post.slug)}
         {@const arraypos = i + 4}
-        <div use:inview={options} on:change={handleChange} id={arraypos.toString()}>
+        <div use:inview={options} on:inview_change={handleChange} id={arraypos.toString()}>
           {#if isInView[arraypos]}
             <Post class="" {post} id={i} />
           {/if}
@@ -169,5 +169,5 @@
     </div>
   </section>
 
-  <div class="h-20 md:h-0" />
+  <div class="h-20 md:h-0" ></div>
 </main>

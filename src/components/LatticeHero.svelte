@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { navitems } from "$components/Header.svelte";
-  import { page } from "$app/stores";
+  import { navitems } from "#components/Header.svelte";
+  import { page } from "$app/state";
   import { fly } from "svelte/transition";
 
   let c: HTMLCanvasElement;
   let small_c: HTMLCanvasElement;
   let ctx: CanvasRenderingContext2D;
 
-  import { onDestroy, onMount } from "svelte";
-  import E8, { type E8LatticeConstructor } from "$lib/math/E8";
+  import { onMount } from "svelte";
+  import E8, { type E8LatticeConstructor } from "#lib/math/E8.ts";
 
   let instance: E8 | null = null;
   let darkmode: boolean = false;
@@ -62,11 +62,12 @@
   };
 
   // event handler for window resize
-  function handleResize(this: Window, e: UIEvent): void {
-    if (this.innerWidth <= 768) {
+  function handleResize(this: Window, _e: UIEvent): void {
+    if (!mounted || !supportsCanvas) return;
+    if (this.innerWidth < 768) {
       if (!smallScreen) {
         smallScreen = true;
-        instance?.stop();
+        instance?.dispose();
         instance = null;
         ctx = small_c.getContext("2d")!;
         instance = new E8(getOptions(smallScreen));
@@ -74,7 +75,7 @@
     } else {
       if (smallScreen) {
         smallScreen = false;
-        instance?.stop();
+        instance?.dispose();
         instance = null;
         ctx = c.getContext("2d")!;
         instance = new E8(getOptions(smallScreen));
@@ -111,7 +112,7 @@
     supportsCanvas = !!document.createElement("canvas").getContext;
 
     if (!supportsCanvas) {
-      return;
+      return () => clearInterval(interval);
     }
 
     smallScreen = window.innerWidth < 768;
@@ -128,31 +129,20 @@
 
     instance = new E8(options);
 
-    // listen for darkmode changes
-
-    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
-      darkmode = e.matches;
-      instance?.stop();
-      instance = null;
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const changeTheme = (event: MediaQueryListEvent) => {
+      darkmode = event.matches;
+      instance?.dispose();
       instance = new E8(getOptions(smallScreen));
-    });
-
-    // // listen for resize above or below 768px
-
-    // window.addEventListener("resize", handleResize);
-
-    // return () => {
-    //   window.removeEventListener("resize", handleResize);
-    //   instance?.stop();
-    //   instance = null;
-    // };
-  });
-
-  onDestroy(() => {
-    if (instance) {
-      instance.stop();
+    };
+    media.addEventListener("change", changeTheme);
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+      media.removeEventListener("change", changeTheme);
+      instance?.dispose();
       instance = null;
-    }
+    };
   });
 
   let totalDistance = 0;
@@ -219,7 +209,7 @@
   };
 
   import GradientWander from "./GradientWander.svelte";
-  import classnames from "$lib/classnames";
+  import classnames from "#lib/classnames.ts";
   import { cubicInOut } from "svelte/easing";
   // q: how to make use flexbox to make the child fill the parent height when the parent is absolute?
   // a: by using flexbox and setting the child to flex: 1
@@ -268,18 +258,18 @@
   <div class="mt-12 md:mt-10 mx-5 flex-col flex">
     <h1 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold headingGradient flex-initial">
       Welcome to <br />
-      <span class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl decoration-clone"
+      <span class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl box-decoration-clone"
         >jacobbruner.com</span
       >
     </h1>
     <div class="flex flex-col flex-1">
-      <div class="flex-grow flex flex-row">
+      <div class="grow flex flex-row">
         {#if mounted}
           <div class="flex flex-col pt-12 pb-48 sm:py-20 relative flex-start mr-auto">
-            {#each navitems as item, i}
+            {#each navitems as item, i (item.path)}
               {@const active =
-                item.path === $page.url.pathname ||
-                (item.path === "/" && $page.url.pathname === "/test")}
+                item.path === page.url.pathname ||
+                (item.path === "/" && page.url.pathname === "/test")}
 
               <div
                 class="relative z-20 basis-1/6 self-start"
@@ -296,7 +286,7 @@
                   class={classnames(
                     "group text-3xl sm:text-4xl md:text-5xl font-semibold text-transparent bg-clip-text self-start",
                     "bigGradient hoverMove",
-                    "bg-gradient-to-bl from-teal-500 via-indigo-500 to-primary-600 dark:from-teal-400 dark:via-indigo-400 dark:to-primary-500 bg-pos-0 hover:bg-pos-x-100",
+                    "bg-linear-to-bl/srgb from-teal-500 via-indigo-500 to-primary-600 dark:from-teal-400 dark:via-indigo-400 dark:to-primary-500 bg-pos-0 hover:bg-pos-x-100",
                     "transition-all duration-300 sm:duration-700 ease-in-out whitespace-nowrap relative"
                   )}
                   class:active
@@ -310,16 +300,16 @@
                       active
                         ? "h-1/3 from-primary-200/50 to-violet-400/50 group-hover:from-primary-400/70 group-hover:to-violet-400/50 dark:from-primary-700/50 dark:to-violet-700/50 dark:group-hover:from-primary-700/70 dark:group-hover:to-violet-700/50"
                         : "h-0 from-primary-200/70 to-violet-400/70 dark:from-primary-700/70 dark:to-violet-700/70",
-                      "bg-gradient-to-bl  group-hover:h-full group-hover:opactiy-full transition-all duration-200 sm:duration-500 ease-in-out px-1"
+                      "bg-linear-to-bl/srgb  group-hover:h-full group-hover:opactiy-full transition-all duration-200 sm:duration-500 ease-in-out px-1"
                     )}
                     aria-hidden="true"
-                  />
+                  ></span>
                 </a>
               </div>
             {/each}
           </div>
         {/if}
-        <div class="flex-grow hidden -z-50" />
+        <div class="grow hidden -z-50" ></div>
       </div>
       <h3
         class="text-3xl sm:text-4xl md:text-6xl font-semibold italic headingGradient pb-6 bottom-0 overflow-visible"
@@ -328,7 +318,7 @@
       </h3>
     </div>
   </div>
-  <div class="absolute bottom-0 ml-5 mb-16" />
+  <div class="absolute bottom-0 ml-5 mb-16" ></div>
 
   <div
     class="absolute mr-auto right-0 bottom-0 mb-4 sm:mb-0 overflow-x-hidden origin-center "
@@ -346,9 +336,9 @@
       width={500}
       height={500}
       bind:this={small_c}
-    />
+    ></canvas>
     <canvas
-      class="hidden md:block overflow-x-clip select-none origin-center touch-none {/** maybe add scale */ ''} "
+      class="hidden md:block overflow-x-clip select-none origin-center touch-none  "
       style="overflow-clip-margin: auto;"
       aria-label="Projection of the E8 root system in 8-dimensional space."
       on:mousemove={handleMouseMove}
@@ -359,7 +349,7 @@
       width={1000}
       height={1000}
       bind:this={c}
-    />
+    ></canvas>
   </div>
   <!-- placeholder -->
 
@@ -376,17 +366,18 @@
       class="md:hidden block overflow-x-clip select-none opacity-90 origin-center bg-center bg-[url('/images/E8/E8SmallLight.png')] dark:bg-[url('/images/E8/E8SmallDark.png')] bg-cover bg-no-repeat"
       aria-label="Projection of the E8 root system in 8-dimensional space."
       style="width: 500px; height: 500px;"
-    />
+    ></div>
     <div
       aria-label="Projection of the E8 root system in 8-dimensional space."
       class="hidden md:block overflow-x-clip select-none opacity-90 origin-center touch-none bg-center bg-[url('/images/E8/E8LargeLight.png')] dark:bg-[url('/images/E8/E8LargeDark.png')] bg-cover bg-no-repeat"
       style="width: 1000px; height: 1000px;"
-    />
+    ></div>
   </div>
 </div>
 
 <!-- <canvas class="" width={x} height={y} bind:this={c} /> -->
-<style>
+<style lang="postcss">
+  @reference "../app.css";
   @supports (height: 100dvh) {
     .dvh {
       height: 100dvh !important;
@@ -401,7 +392,7 @@
 
   .headingGradient {
     @apply text-transparent bg-clip-text -z-20;
-    @apply bg-gradient-to-bl from-primary-500 via-violet-600 to-pink-500 dark:from-primary-500 dark:via-violet-600 dark:to-pink-500 leading-relaxed;
+    @apply bg-linear-to-bl/srgb from-primary-500 via-violet-600 to-pink-500 dark:from-primary-500 dark:via-violet-600 dark:to-pink-500 leading-relaxed;
     @apply transition-colors duration-500 ease-in-out;
   }
 </style>

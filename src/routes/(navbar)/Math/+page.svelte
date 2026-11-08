@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { PostInfo, BlogType } from "$lib/blog/blog";
+  import type { PostInfo, BlogType } from "#lib/blog/blog.ts";
 
-  import PostsGrid from "$components/PostsGrid.svelte";
+  import PostsGrid from "#components/PostsGrid.svelte";
 
   export let data: { p: PostInfo[] };
   const subject = "Math" as BlogType;
@@ -11,7 +11,7 @@
 <svelte:head>
   <title>{subject}</title>
 </svelte:head>
-<div class=" bg-white dark:bg-zinc-900 w-full h-[60px] z-30 fixed" />
+<div class=" bg-white dark:bg-zinc-900 w-full h-[60px] z-30 fixed" ></div>
 <!-- TODO: this div above ensures the blurred navbar doesn't become dark during lightmode -->
 <!-- TODO: make this video transparent and have background controlled by css -->
 <div class="bg-zinc-800 group">

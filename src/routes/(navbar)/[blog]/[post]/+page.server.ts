@@ -4,8 +4,9 @@ import {
   type FullPost,
   type ImportedPost,
   correctBlogTags
-} from "$lib/blog/blog";
+} from "#lib/blog/blog.ts";
 import { error, type ServerLoadEvent } from "@sveltejs/kit";
+import { render } from "svelte/server";
 
 // type data = {
 //   post: FullPost;
@@ -30,7 +31,7 @@ export async function load({ params }: ServerLoadEvent) {
         title: post.metadata.title,
         date: post.metadata.date,
         formatteddate: convertDateToString(unicodedate),
-        html: post.default.render().html,
+        html: render(post.default).body,
         videoid: post.metadata?.videoid,
         audiopath: post.metadata?.audiopath,
         pdfpath: post.metadata?.pdfpath,
@@ -46,7 +47,6 @@ export async function load({ params }: ServerLoadEvent) {
   } finally {
     if (errormessage) {
       // this isn't race conditions because errormessage should be empty
-      // eslint-disable-next-line no-unsafe-finally
       error(404, errormessage);
     }
   }

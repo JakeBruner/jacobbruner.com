@@ -1,0 +1,11 @@
+.git
+node_modules
+.svelte-kit
+.vercel
+build
+game-of-life/target
+test-results
+playwright-report
+.env
+.env.*
+!.env.example

@@ -1,40 +1,50 @@
 <script lang="ts">
-  // audio-fft.ts
-  import { onMount } from "svelte";
-  import { error } from "@sveltejs/kit";
+  import { onDestroy } from "svelte";
   import AudioFFT from "./audio";
 
-  let analyser: AnalyserNode;
-  let audioContext: AudioContext;
+  let audioContext: AudioContext | undefined;
+  let stream: MediaStream | undefined;
+  let visualizer: AudioFFT | undefined;
+  let starting = false;
+  let started = false;
+  let destroyed = false;
+  let audioError = "";
+  let c: HTMLCanvasElement;
 
   const initAudio = async () => {
-    console.log("navigator.mediaDevices", navigator.mediaDevices);
-    if (!navigator.mediaDevices) {
-      error(500, "MediaDevices not supported");
+    if (starting || started) return;
+    starting = true;
+    audioError = "";
+    try {
+      if (!navigator.mediaDevices?.getUserMedia) throw new Error("Microphone input is not supported by this browser.");
+      const input = await navigator.mediaDevices.getUserMedia({ audio: true });
+      if (destroyed) {
+        input.getTracks().forEach((track) => track.stop());
+        return;
+      }
+      stream = input;
+      audioContext = new AudioContext();
+      await audioContext.resume();
+      if (destroyed) return;
+      const analyser = audioContext.createAnalyser();
+      audioContext.createMediaStreamSource(stream).connect(analyser);
+      visualizer = new AudioFFT(c, analyser);
+      started = true;
+    } catch (error) {
+      stream?.getTracks().forEach((track) => track.stop());
+      if (audioContext && audioContext.state !== "closed") void audioContext.close();
+      if (!destroyed) audioError = error instanceof Error ? error.message : "Unable to start the microphone.";
+    } finally {
+      starting = false;
     }
-
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: true
-    });
-
-    // Create an AudioNode from the stream
-    console.log("stream", stream);
-    audioContext = new AudioContext();
-    const audioSource = audioContext.createMediaStreamSource(stream);
-    analyser = audioContext.createAnalyser();
-    audioSource.connect(analyser);
-
-    if (!analyser) {
-      error(500, "Analyser not supported");
-    }
-    const audioFFT = new AudioFFT(c, analyser);
   };
 
-  onMount(() => {
-    console.log(navigator.mediaDevices?.enumerateDevices());
+  onDestroy(() => {
+    destroyed = true;
+    visualizer?.dispose();
+    stream?.getTracks().forEach((track) => track.stop());
+    if (audioContext && audioContext.state !== "closed") void audioContext.close();
   });
-
-  let c: HTMLCanvasElement;
 </script>
 
 <svelte:head>
@@ -48,7 +58,9 @@
     class="mx-auto stroke-black  dark:stroke-slate-100 dark:fill-zinc-300 bg-white"
     width="1024px"
     height="512px"
-  />
+  ></canvas>
 </div>
 
-<button on:click={initAudio} class="bg-primary text-white rounded-md px-3 py-2 ml-2">Start</button>
+<button disabled={starting || started} on:click={initAudio} class="bg-primary text-white rounded-md px-3 py-2 ml-2">Start</button>
+
+{#if audioError}<p role="alert">{audioError}</p>{/if}

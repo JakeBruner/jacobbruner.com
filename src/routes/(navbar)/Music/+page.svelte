@@ -1,8 +1,8 @@
 <script lang="ts">
   // export const prerender = true;
-  import type { PostInfo, BlogType } from "$lib/blog/blog";
+  import type { PostInfo, BlogType } from "#lib/blog/blog.ts";
 
-  import PostsGrid from "$components/PostsGrid.svelte";
+  import PostsGrid from "#components/PostsGrid.svelte";
 
   /** @type {import('./$types').PageData} */
   export let data: { p: PostInfo[] };
@@ -14,7 +14,7 @@
   <title>{subject}</title>
 </svelte:head>
 
-<div class="pt-8 md:pt-16 pb-20 px-4 sm:px-6 lg:pt-18 lg:pb-28 lg:px-8">
+<div class="pt-8 md:pt-16 pb-20 px-4 sm:px-6 lg:pb-28 lg:px-8">
   <div class="max-w-lg mx-auto lg:max-w-7xl">
     <div class="border-b border-b-zinc-200  dark:border-b-zinc-700 pb-6">
       <h2 class="text-3xl tracking-tight font-semibold  sm:text-4xl">{subject}</h2>
@@ -39,14 +39,14 @@
               frameborder="0"
               allow="clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowfullscreen
-            />
+            ></iframe>
           </div>
           <p class="w-full text-center italic font-light">
             Gaspard de la Nuit: 1. Ondine — Maurice Ravel
           </p>
         </div>
 
-        <div class="hidden lg:block lg:p-5" />
+        <div class="hidden lg:block lg:p-5" ></div>
 
         <div class="flex-1">
           <div
@@ -60,7 +60,7 @@
               frameborder="0"
               allow="clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowfullscreen
-            />
+            ></iframe>
           </div>
           <p class="w-full text-center italic font-light">Jeux d'eau — Maurice Ravel</p>
         </div>

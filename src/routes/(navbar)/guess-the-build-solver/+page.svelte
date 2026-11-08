@@ -1,6 +1,6 @@
 <script>
-  import { search } from "$lib/gtb/gtb";
-  // import { test } from "$lib/gtb/gtb";
+  import { search } from "#lib/gtb/gtb.ts";
+  // import { test } from "#lib/gtb/gtb.ts";
   let input = "";
   $: guesses = search(input);
   $: numresults = guesses.length;
@@ -52,11 +52,11 @@
             text-zinc-600 dark:text-zinc-300
             bg-inherit bg-clip-padding
             border border-solid border-zinc-300 dark:border-zinc-600
-            rounded
+            rounded-sm
             transition
             ease-in-out
             m-0
-            focus:text-zinc-700 dark:focus:text-zinc-200 focus:border-primary focus:outline-none
+            focus:text-zinc-700 dark:focus:text-zinc-200 focus:border-primary focus:outline-hidden
           "
       id="formInput"
       placeholder="Start typing..."
@@ -68,7 +68,7 @@
     </h4>
   </div>
   <ul class="mono text-lg pt-4">
-    {#each guesses as guess}
+    {#each guesses as guess (guess)}
       <li
         class="mono even:bg-white dark:even:bg-inherit dark:odd:bg-zinc-800 px-2 text-xl odd:bg-zinc-50"
       >
@@ -78,9 +78,9 @@
   </ul>
 
   {#if !numresults}
-    <div class="h-40" />
+    <div class="h-40" ></div>
   {:else}
-    <div class="h-20" />
+    <div class="h-20" ></div>
   {/if}
 </div>
 

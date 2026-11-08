@@ -5,7 +5,7 @@
     periodicWaveOptions,
     type BuiltInWave,
     type PeriodicWaveDefinition
-  } from "$lib/tonegen/type";
+  } from "#lib/tonegen/type.ts";
   import { fade } from "svelte/transition";
   import type { Action } from "svelte/action";
 
@@ -240,7 +240,7 @@
 <div class={`flex flex-row items-start gap-4 ${className}`}>
   <div class="relative" bind:this={triggerEl}>
     <div
-      class="flex cursor-pointer select-none flex-col rounded-xl border border-zinc-200 bg-gradient-to-br from-white via-zinc-100 to-zinc-200 p-3 shadow-lg outline-none transition focus-visible:ring-2 focus-visible:ring-emerald-400 dark:border-zinc-600 dark:bg-gradient-to-br dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-800"
+      class="flex cursor-pointer select-none flex-col rounded-xl border border-zinc-200 bg-linear-to-br/srgb from-white via-zinc-100 to-zinc-200 p-3 shadow-lg outline-hidden transition focus-visible:ring-2 focus-visible:ring-emerald-400 dark:border-zinc-600 dark:bg-linear-to-br/srgb dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-800"
       on:click={togglePopup}
       on:keydown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -254,7 +254,7 @@
     >
       <div class="flex items-center gap-4">
         <div class="overflow-hidden rounded-md bg-zinc-900">
-          <canvas class="block h-[64px] w-[140px]" bind:this={canvasEl} />
+          <canvas class="block h-[64px] w-[140px]" bind:this={canvasEl} ></canvas>
         </div>
         <div class="text-left">
           <p class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
@@ -269,9 +269,8 @@
 </div>
 <Portal target="body">
   {#if popupActive}
-    <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
     <div
-      class="w-[320px] rounded-lg border border-zinc-200 bg-gradient-to-br from-white via-zinc-100 to-zinc-200 p-3 shadow-2xl backdrop-blur-sm dark:border-zinc-700 dark:bg-gradient-to-br dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-800"
+      class="w-[320px] rounded-lg border border-zinc-200 bg-linear-to-br/srgb from-white via-zinc-100 to-zinc-200 p-3 shadow-2xl backdrop-blur-xs dark:border-zinc-700 dark:bg-linear-to-br/srgb dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-800"
       style={`position:absolute; top:${popupPosition.top}px; left:${popupPosition.left}px; z-index: 9999;`}
       transition:fade|global
       on:click|stopPropagation
@@ -281,10 +280,8 @@
       tabindex="-1"
     >
       <div class="flex max-h-[60vh] flex-col gap-2 overflow-y-auto pr-1">
-        {#each options as option}
-          <!-- svelte-ignore a11y-click-events-have-key-events -->
-          <!-- svelte-ignore a11y-no-static-element-interactions -->
-          <div
+        {#each options as option (option.id)}
+          <button type="button"
             class={`flex cursor-pointer items-center gap-3 rounded-md border border-transparent p-2 transition hover:border-emerald-400 hover:bg-emerald-400/10 ${
               wave === option.id ? "border-emerald-400 bg-emerald-400/10" : ""
             }`}
@@ -296,13 +293,13 @@
             }}
           >
             <div class="overflow-hidden rounded-md bg-zinc-900">
-              <canvas class="block h-16 w-36" use:renderWavePreview={option.id} />
+              <canvas class="block h-16 w-36" use:renderWavePreview={option.id} ></canvas>
             </div>
             <div class="flex flex-col">
               <div class="font-medium text-zinc-900 dark:text-zinc-200">{option.label}</div>
               <div class="text-sm text-zinc-600 dark:text-zinc-300">{option.description}</div>
             </div>
-          </div>
+          </button>
         {/each}
       </div>
     </div>

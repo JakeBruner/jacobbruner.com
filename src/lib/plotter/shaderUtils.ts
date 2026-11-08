@@ -1,5 +1,3 @@
-import { translate } from "./matrixUtils";
-
 export interface ProgramInfo {
   program: WebGLProgram;
   attribLocations: {
@@ -19,14 +17,17 @@ interface Buffers {
 // creates/compiles shader object
 const createShader = (gl: WebGLRenderingContext, type: number, source: string): WebGLShader => {
   const shader = gl.createShader(type);
+  if (shader === null) {
+    throw new Error("Unable to create a WebGL shader");
+  }
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
 
   // error
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    alert("shader could not compile: " + gl.getShaderInfoLog(shader));
+    const message = "shader could not compile: " + gl.getShaderInfoLog(shader);
     gl.deleteShader(shader);
-    return null;
+    throw new Error(message);
   }
 
   return shader;
@@ -40,23 +41,34 @@ export const initShaderProgram = (
 ): WebGLProgram => {
   // create shader objects, type is WebGLShader
   const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertCode);
-  const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragCode);
+  let fragmentShader: WebGLShader | null = null;
+  let shaderProgram: WebGLProgram | null = null;
 
-  // create shader shaderProgram and attach/link shaders
-  const shaderProgram = gl.createProgram();
-  gl.attachShader(shaderProgram, vertexShader);
-  gl.attachShader(shaderProgram, fragmentShader);
+  try {
+    fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragCode);
+    shaderProgram = gl.createProgram();
+    if (shaderProgram === null) {
+      throw new Error("Unable to create a WebGL program");
+    }
+    gl.attachShader(shaderProgram, vertexShader);
+    gl.attachShader(shaderProgram, fragmentShader);
+    gl.linkProgram(shaderProgram);
 
-  gl.linkProgram(shaderProgram); // forgot this leading to many headaches :(
+    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+      throw new Error("shader program could not link: " + gl.getProgramInfoLog(shaderProgram));
+    }
 
-  if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-    throw new Error("shader program could not link: " + gl.getProgramInfoLog(shaderProgram));
+    return shaderProgram;
+  } catch (error) {
+    if (shaderProgram !== null) gl.deleteProgram(shaderProgram);
+    throw error;
+  } finally {
+    gl.deleteShader(vertexShader);
+    if (fragmentShader !== null) gl.deleteShader(fragmentShader);
   }
-
-  return shaderProgram;
 };
 
-export const initBuffers = (gl: WebGLRenderingContext) => {
+export const initBuffers = (gl: WebGLRenderingContext): Buffers => {
   // prettier-ignore
   const colors = [
     1.0,  1.0,  1.0,  1.0,    // white
@@ -66,8 +78,9 @@ export const initBuffers = (gl: WebGLRenderingContext) => {
   ];
 
   const colorBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+  if (colorBuffer === null) {
+    throw new Error("Unable to create the WebGL color buffer");
+  }
 
   // prettier-ignore
   const positions = [
@@ -77,14 +90,23 @@ export const initBuffers = (gl: WebGLRenderingContext) => {
    -1.0, -1.0, 0.0,
  ];
 
-  const positionBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+  let positionBuffer: WebGLBuffer | null = null;
+  try {
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+    positionBuffer = gl.createBuffer();
+    if (positionBuffer === null) {
+      throw new Error("Unable to create the WebGL position buffer");
+    }
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
-  return {
-    position: positionBuffer,
-    color: colorBuffer
-  };
+    return { position: positionBuffer, color: colorBuffer };
+  } catch (error) {
+    gl.deleteBuffer(colorBuffer);
+    if (positionBuffer !== null) gl.deleteBuffer(positionBuffer);
+    throw error;
+  }
 };
 
 export const draw = (gl: WebGLRenderingContext, programInfo: ProgramInfo, buffers: Buffers) => {
@@ -97,8 +119,12 @@ export const draw = (gl: WebGLRenderingContext, programInfo: ProgramInfo, buffer
 
   const fov = (45 * Math.PI) / 180; // in radians
   const f = 1.0 / Math.tan(fov / 2);
-  const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-  console.log("aspect", aspect);
+  const canvas = gl.canvas;
+  const hasDisplaySize = "clientWidth" in canvas && canvas.clientWidth > 0 && canvas.clientHeight > 0;
+  const width = hasDisplaySize ? canvas.clientWidth : canvas.width;
+  const height = hasDisplaySize ? canvas.clientHeight : canvas.height;
+  if (width <= 0 || height <= 0) return;
+  const aspect = width / height;
   const zNear = 1;
   const zFar = 100.0;
   const nf = 1 / (zNear - zFar);

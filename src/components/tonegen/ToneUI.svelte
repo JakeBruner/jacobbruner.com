@@ -1,32 +1,18 @@
 <script lang="ts">
   import { SpeakerWave, SpeakerXMark, Plus, XMark } from "svelte-heros-v2";
   import Waveform from "./Waveform.svelte";
-  import { applyPeriodicWave } from "$lib/tonegen/type";
-  import type { BuiltInWave, Tone } from "$lib/tonegen/type";
-  import c from "$lib/c";
+  import { applyPeriodicWave } from "#lib/tonegen/type.ts";
+  import type { BuiltInWave, Tone } from "#lib/tonegen/type.ts";
+  import c from "#lib/c.ts";
 
-  const noteNames = {
-    A: 0,
-    "A#": 1,
-    Bb: 1,
-    B: 2,
-    C: 3,
-    "C#": 4,
-    Db: 4,
-    D: 5,
-    "D#": 6,
-    Eb: 6,
-    E: 7,
-    F: 8,
-    "F#": 9,
-    Gb: 9,
-    G: 10,
-    "G#": 11,
-    Ab: 11
+  const noteNames: Record<string, number> = {
+    C: 0, "C#": 1, Db: 1, D: 2, "D#": 3, Eb: 3, E: 4,
+    F: 5, "F#": 6, Gb: 6, G: 7, "G#": 8, Ab: 8, A: 9, "A#": 10, Bb: 10, B: 11
   };
 
-  import { Intervals, type Interval, type Tuning } from "$lib/tonegen/intervals";
+  import { Intervals, type Interval, type Tuning } from "#lib/tonegen/intervals.ts";
   import { fade } from "svelte/transition";
+  import { onDestroy } from "svelte";
 
   export let tone: Tone;
 
@@ -42,13 +28,26 @@
   let volume: HTMLSpanElement;
   let volumeParent: HTMLDivElement;
 
-  const handleMouseDown = () => {
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener(
-      "mouseup",
-      () => window.removeEventListener("mousemove", handleMouseMove),
-      { once: true }
-    );
+  let dragHandler: ((event: PointerEvent) => void) | undefined;
+  const stopDragging = () => {
+    if (dragHandler) window.removeEventListener("pointermove", dragHandler);
+    window.removeEventListener("pointerup", stopDragging);
+    window.removeEventListener("pointercancel", stopDragging);
+    dragHandler = undefined;
+  };
+  const startDragging = (event: PointerEvent, handler: (event: PointerEvent) => void) => {
+    event.preventDefault();
+    stopDragging();
+    dragHandler = handler;
+    window.addEventListener("pointermove", handler);
+    window.addEventListener("pointerup", stopDragging, { once: true });
+    window.addEventListener("pointercancel", stopDragging, { once: true });
+    handler(event);
+  };
+  const setPan = (value: number) => {
+    tone.panNode.pan.value = Math.min(1, Math.max(-1, value));
+    indicator.style.transform = `rotate(${tone.panNode.pan.value * 90}deg)`;
+    tone = tone;
   };
 
   const handleMouseMove = (e: MouseEvent) => {
@@ -63,8 +62,7 @@
         : Math.atan2(diffY, diffX) * (180 / Math.PI);
 
     if ((angle >= -180 && angle <= 0) || Math.trunc(angle) === 180) {
-      tone.panNode.pan.value = (angle * (10 / 9) + 100) / 100;
-      indicator.style.transform = `rotate(${angle + 90}deg)`;
+      setPan((angle + 90) / 90);
     }
   };
 
@@ -78,7 +76,7 @@
     if (percent < 0) percent = 0;
 
     tone.gainNode.gain.value = percent;
-    volume.style.width = `${percent}`;
+    tone = tone;
   };
 
   let storedGain: number | null = null;
@@ -86,40 +84,38 @@
   let popupActive = false;
   // $: console.log(popupActive);
 
+  const closePopup = () => {
+    popupActive = false;
+    window.removeEventListener("click", closePopup);
+  };
   const togglePopup = (e: MouseEvent | KeyboardEvent) => {
     e.stopPropagation();
-    popupActive = !popupActive;
-
-    if (popupActive) {
-      window.addEventListener(
-        "click",
-        () => {
-          popupActive = false;
-        },
-        { once: true }
-      );
-    } else {
-      window.removeEventListener("click", () => {
-        popupActive = false;
-      });
+    if (popupActive) closePopup();
+    else {
+      popupActive = true;
+      window.addEventListener("click", closePopup);
     }
   };
+  onDestroy(() => {
+    if (typeof window !== "undefined") {
+      stopDragging();
+      window.removeEventListener("click", closePopup);
+    }
+  });
 
   const getNoteFrequency = (note: string): number | null => {
-    if (!/^[A-G](b|#)?[0-9]$/.test(note)) {
-      return null;
-    }
+    const match = /^([A-Ga-g])([b#]?)([0-9])$/.exec(note);
+    if (!match) return null;
+    const pitch = noteNames[match[1].toUpperCase() + match[2]];
+    if (pitch === undefined) return null;
+    const midi = (Number(match[3]) + 1) * 12 + pitch;
+    return 440 * 2 ** ((midi - 69) / 12);
+  };
 
-    const noteName = note.slice(0, -1);
-    const octave = parseInt(note.slice(-1));
-
-    // @ts-ignore
-    const noteNumber: number = noteNames[noteName];
-
-    const basefreq = 440;
-    const factor = Math.pow(2, (octave - 4) * noteNumber) / 12;
-
-    return basefreq * factor;
+  const setFrequency = (value: number) => {
+    if (!Number.isFinite(value)) return;
+    tone.oscNode.frequency.value = Math.min(tone.oscNode.context.sampleRate / 2, Math.max(1, value));
+    tone = tone;
   };
 
   // let pendingFrequency: string;
@@ -137,42 +133,36 @@
 {#if tone}
   <div class="shadow-md rounded-3xl">
     <div
-      class="w-full bg-gradient-to-tr from-zinc-50 via-zinc-100 to-zinc-300 dark:from-zinc-700 dark:via-zinc-700 dark:to-zinc-600 dark:shadow-inner z-0 rounded-2xl flex flex-row-reverse justify-between align-middle"
+      class="w-full bg-linear-to-tr/srgb from-zinc-50 via-zinc-100 to-zinc-300 dark:from-zinc-700 dark:via-zinc-700 dark:to-zinc-600 dark:shadow-inner z-0 rounded-2xl flex flex-row-reverse justify-between align-middle"
     >
       <div
         class={c(
           "flex peer transition-transform ease-in-out duration-150 -mr-2 w-10",
           popupActive ? "scale-100 z-50" : "hover:scale-110"
         )}
-        on:click|self={togglePopup}
-        on:keydown|self={(e) => {
-          if (e.key === "Enter") {
-            togglePopup(e);
-          }
-        }}
-        role="button"
-        tabindex="0"
-        aria-label="Add interval"
       >
-        <Plus
-          variation="solid"
-          on:click={(e) => {
-            togglePopup(e);
-          }}
-          class={c(
-            "ml-0.5 my-auto h-6 w-6",
-            popupActive ? "text-zinc-800 dark:text-zinc-400" : "dark:text-zinc-300 text-zinc-600"
-          )}
-        />
+        <button
+          type="button"
+          class="flex items-center"
+          aria-label="Add interval"
+          aria-expanded={popupActive}
+          on:click={togglePopup}
+        >
+          <Plus
+            variation="solid"
+            class={c(
+              "ml-0.5 my-auto h-6 w-6",
+              popupActive ? "text-zinc-800 dark:text-zinc-400" : "dark:text-zinc-300 text-zinc-600"
+            )}
+          />
+        </button>
         <div class="overflow-hidden">
 
 
 
           {#if popupActive}
-            <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-            <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
             <div
-              class="absolute z-50 p-2 w-40 top-1/2 right-0 rounded-md dark:bg-zinc-400/80 bg-white/50 backdrop-blur-sm"
+              class="absolute z-50 p-2 w-40 top-1/2 right-0 rounded-md dark:bg-zinc-400/80 bg-white/50 backdrop-blur-xs"
               transition:fade|global
               on:click|stopPropagation
               on:keydown|stopPropagation
@@ -202,12 +192,12 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {#each Intervals as interval}
+                  {#each Intervals as interval (interval.name)}
                     <tr>
                       <td class="font-medium text-center text-base font-mono">
                         <button
                           class={c(
-                            "w-7 p-px rounded-md bg-zinc-400 hover:shadow dark:bg-zinc-500 hover:dark:bg-zinc-500/75 hover:bg-zinc-400/90 dark:text-zinc-50 text-white hover:text-zinc-100",
+                            "w-7 p-px rounded-md bg-zinc-400 hover:shadow-sm dark:bg-zinc-500 hover:dark:bg-zinc-500/75 hover:bg-zinc-400/90 dark:text-zinc-50 text-white hover:text-zinc-100",
                             interval.name === "diminished fifth" && "hidden",
                             interval.name === "augmented fourth" && "translate-y-3"
                           )}
@@ -224,7 +214,7 @@
                       </td>
                       <td class="font-medium text-center text-base font-mono">
                         <button
-                          class="w-7 p-px rounded-md bg-zinc-400 hover:shadow dark:bg-zinc-500 hover:dark:bg-zinc-500/75 hover:bg-zinc-400/90 dark:text-zinc-50 text-white hover:text-zinc-100"
+                          class="w-7 p-px rounded-md bg-zinc-400 hover:shadow-sm dark:bg-zinc-500 hover:dark:bg-zinc-500/75 hover:bg-zinc-400/90 dark:text-zinc-50 text-white hover:text-zinc-100"
                           title={"just tempered " + interval.name}
                           class:hidden={interval.just === interval.equal}
                           on:click={(e) => {
@@ -238,7 +228,7 @@
                       </td>
                       <td class="font-medium text-center text-base font-mono">
                         <button
-                          class="w-7 p-px rounded-md bg-zinc-400 hover:shadow dark:bg-zinc-500 hover:dark:bg-zinc-500/75 hover:bg-zinc-400/90 dark:text-zinc-50 text-white hover:text-zinc-100"
+                          class="w-7 p-px rounded-md bg-zinc-400 hover:shadow-sm dark:bg-zinc-500 hover:dark:bg-zinc-500/75 hover:bg-zinc-400/90 dark:text-zinc-50 text-white hover:text-zinc-100"
                           title={"pythagoran tempered " + interval.name}
                           class:hidden={interval.pyth === interval.equal ||
                             interval.pyth === interval.just}
@@ -265,41 +255,45 @@
           popupActive ? "w-[94%] -z-10 rounded-r-3xl" : "w-[96%] peer-hover:w-[94%]"
         )}
       >
-        <div class="absolute top-0 left-0 z-30 p-2">
+        <button type="button" aria-label="Remove tone" class="absolute top-0 left-0 z-30 p-2" on:click={() => removeTone(tone.id)}>
           <XMark
             class="h-4 w-4 text-zinc-650 dark:text-zinc-400"
-            on:click={() => removeTone(tone.id)}
           />
-        </div>
+        </button>
         <!-- volume slider -->
 
-        <button>
+        <button type="button" aria-label={tone.gainNode.gain.value === 0 ? "Unmute tone" : "Mute tone"} on:click={() => {
+          if (tone.gainNode.gain.value === 0) {
+            tone.gainNode.gain.value = storedGain ?? 0.5;
+            storedGain = null;
+          } else {
+            storedGain = tone.gainNode.gain.value;
+            tone.gainNode.gain.value = 0;
+          }
+          tone = tone;
+        }}>
           {#if tone.gainNode.gain.value === 0}
             <SpeakerXMark
               variation="solid"
               class="h-4 w-4 mr-2 dark:text-zinc-300 text-zinc-700"
-              on:click={() => {
-                tone.gainNode.gain.value = storedGain ?? 0.5;
-                storedGain = null;
-              }}
             />
           {:else}
             <SpeakerWave
               variation="solid"
               class="h-4 w-4 mr-2 dark:text-zinc-300 text-zinc-700"
-              on:click={() => {
-                storedGain = tone.gainNode.gain.value;
-                tone.gainNode.gain.value = 0;
-              }}
             />
           {/if}
         </button>
         <div
           class={c(
-            "flex-grow max-w-3xs border-2 border-zinc-700 dark:border-zinc-400 rounded-sm h-5 relative z-10",
+            "grow max-w-3xs border-2 border-zinc-700 dark:border-zinc-400 rounded-xs h-5 relative z-10",
             tone.gainNode.gain.value === 0 ? "cursor-not-allowed" : "cursor-pointer"
           )}
+          role="group"
+          aria-label="Volume control"
           bind:this={volumeParent}
+          on:pointerdown={(event) => startDragging(event, handleVolume)}
+          style:touch-action="none"
         >
           <div
             role="slider"
@@ -314,15 +308,8 @@
               "dark:bg-zinc-950 bg-zinc-400 h-[1.04rem] absolute -z-10 left-0",
               tone.gainNode.gain.value === 0 && "opacity-50 "
             )}
-            on:mousedown={() => {
-              window.addEventListener("mousemove", handleVolume);
-              window.addEventListener(
-                "mouseup",
-                () => window.removeEventListener("mousemove", handleVolume),
-                { once: true }
-              );
-            }}
             on:keydown={(e) => {
+              if (["ArrowLeft", "ArrowDown", "ArrowRight", "ArrowUp", "Home", "End"].includes(e.key)) e.preventDefault();
               const step = e.shiftKey ? 0.1 : 0.01;
               if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
                 tone.gainNode.gain.value = Math.max(0, tone.gainNode.gain.value - step);
@@ -336,14 +323,14 @@
             }}
           ></div>
         </div>
-        <div class="px-2 xs:px-4" />
+        <div class="px-2 xs:px-4" ></div>
         <!-- waveform selector -->
         <Waveform
           wave={tone.wave}
           class="flex-shrink-0"
           on:change={(event) => handleWaveChange(event.detail)}
         />
-        <div class="px-2 sm:px-4" />
+        <div class="px-2 sm:px-4" ></div>
         <!-- frequency picker -->
         <div class="flex flex-col gap-1">
           <span class="text-xs uppercase tracking-wide text-zinc-500 dark:text-zinc-300"
@@ -352,62 +339,51 @@
           <div class="flex items-center">
             <!-- TODO handle disabled state -->
             <input
-              type="alphanumeric"
+              type="text"
+              aria-label="Frequency"
               class="w-24 rounded-md bg-zinc-200 shadow-inner dark:bg-zinc-700 text-lg text-center touch-none dark:text-zinc-300 text-zinc-900 pl-0.5"
               value={tone.oscNode.frequency.value}
-              on:change={(e) => {
-              //!todo make the input element make sense with typescript
-                const input = e?.currentTarget;
-                // @ts-ignore
-                if (!input || input.value === "") {
-                  //@ts-ignore
-                  if (input) input.value = String(tone.oscNode.frequency.value);
-                  return;
-                }
-                //@ts-ignore
-                let parsed = parseInt(input.value);
-
-                if (isNaN(parsed)) {
-                  //@ts-ignore
-                  parsed = getNoteFrequency(input.value) || 400;
-                } else {
-                  //@ts-ignore
-                  input.value = String(Math.round(parsed));
-                }
-
-                if (parsed) {
-                  tone.oscNode.frequency.value = parsed;
-                  // round
-                  //@ts-ignore
-                  if (input) input.value = String(Math.round(parsed));
-                }
+              on:change={(event) => {
+                const input = event.currentTarget as HTMLInputElement;
+                const text = input.value.trim();
+                if (text) setFrequency(getNoteFrequency(text) ?? Number(text));
+                input.value = String(tone.oscNode.frequency.value);
               }}
-              on:wheel|preventDefault={(e) =>
-                e.deltaY > 0 ? tone.oscNode.frequency.value-- : tone.oscNode.frequency.value++}
+              on:wheel|preventDefault={(e) => setFrequency(tone.oscNode.frequency.value + (e.deltaY > 0 ? -1 : 1))}
             />
             <span class="dark:text-zinc-300 text-zinc-500 text-base pl-1">Hz</span>
-            <div class="px-2" />
+            <div class="px-2" ></div>
             <!-- double frequency button -->
             <button
               class="py-1 px-1 mr-1 rounded-md bg-zinc-400 dark:bg-zinc-500 hover:bg-zinc-600 text-sm text-center touch-none text-zinc-50 dark:text-zinc-300"
               title="double frequency"
-              on:click={() => (tone.oscNode.frequency.value *= 2)}>2x</button
+              on:click={() => setFrequency(tone.oscNode.frequency.value * 2)}>2x</button
             >
             <button
               class="py-1 px-1 rounded-md bg-zinc-400 dark:bg-zinc-500 hover:bg-zinc-600 text-sm text-center touch-none text-zinc-50 dark:text-zinc-300"
               title="half frequency"
-              on:click={() => (tone.oscNode.frequency.value /= 2)}>½x</button
+              on:click={() => setFrequency(tone.oscNode.frequency.value / 2)}>½x</button
             >
           </div>
         </div>
-        <div class="px-1 sm:px-4" />
+        <div class="px-1 sm:px-4" ></div>
         <!-- dial -->
         <div class="flex-col translate-y-1 sm:flex hidden" title="pan stereo channels">
           <div class="relative w-10 h-10 block">
             <div
               class="rounded-full w-full h-full border-2 dark:border-zinc-300 border-zinc-500"
               bind:this={dial}
-              on:mousedown={handleMouseDown}
+              on:pointerdown={(event) => startDragging(event, handleMouseMove)}
+              style:touch-action="none"
+              on:keydown={(event) => {
+                const step = event.shiftKey ? 0.1 : 0.01;
+                if (event.key === "ArrowLeft" || event.key === "ArrowDown") setPan(tone.panNode.pan.value - step);
+                else if (event.key === "ArrowRight" || event.key === "ArrowUp") setPan(tone.panNode.pan.value + step);
+                else if (event.key === "Home") setPan(-1);
+                else if (event.key === "End") setPan(1);
+                else return;
+                event.preventDefault();
+              }}
               role="slider"
               tabindex="0"
               aria-label="Pan stereo channels"
@@ -416,12 +392,13 @@
               aria-valuenow={Math.round(tone.panNode.pan.value * 100) / 100}
             >
               <div
-                class="absolute w-1 h-1/2 bg-zinc-600 dark:bg-zinc-100 origin-bottom bottom-1/2 left-[18.5px] rounded-sm z-10"
+                class="absolute w-1 h-1/2 bg-zinc-600 dark:bg-zinc-100 origin-bottom bottom-1/2 left-[18.5px] rounded-xs z-10"
                 bind:this={indicator}
-              />
+                style:transform={`rotate(${tone.panNode.pan.value * 90}deg)`}
+              ></div>
               <div
                 class="rounded-full absolute top-0.5 left-0.5 w-[90%] h-[90%] border-4 border-dotted dark:border-zinc-400/80 border-zinc-500 -z-10 rotate-15"
-              />
+              ></div>
             </div>
           </div>
           <div
@@ -445,6 +422,7 @@
 
   /* Firefox */
   input {
+    appearance: textfield;
     -moz-appearance: textfield;
   }
 </style>

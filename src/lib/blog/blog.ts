@@ -1,3 +1,5 @@
+import type { Component } from "svelte";
+
 // PostInfo provides the nessecary information about a post to be displayed in the grid "blog homepage" layout
 
 // note that BlogType cant inherit from navigating because not all pages (e.g., /photography) have blogs
@@ -172,12 +174,7 @@ export interface ImportedPost {
     pdfpath?: string;
     tags?: string;
   };
-  default: {
-    render: () => {
-      // eek
-      html: string;
-    };
-  };
+  default: Component;
 }
 
 export type FullPost = Omit<

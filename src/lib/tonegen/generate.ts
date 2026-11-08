@@ -59,7 +59,7 @@ const harmonicsMap: Record<Harmony, number[]> = {
   // each harmony is NOT AT ALL in 12TET. Some are closer-sounding than others, just know that the harmonic serieses match up closely—but not perfectly—with normal 12TET intervals.
 };
 
-export const getHarmonicsFromChord = (chord: string): number[] => harmonicsMap[chord];
+export const getHarmonicsFromChord = (chord: Harmony): number[] => harmonicsMap[chord];
 
 export interface GenerationSettings {
   baseFrequency: number;

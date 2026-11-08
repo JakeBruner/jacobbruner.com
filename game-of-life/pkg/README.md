@@ -1,87 +1,59 @@
-<div align="center">
+# Game of Life WebAssembly module
 
-  <h1><code>wasm-pack-template</code></h1>
+This crate powers the website’s interactive Game of Life. It retains the empty,
+random, arithmetic, glider, and glider-gun starting patterns and wraps neighbors
+and inserted gliders across the grid edges.
 
-<strong>A template for kick starting a Rust and WebAssembly project using <a href="https://github.com/rustwasm/wasm-pack">wasm-pack</a>.</strong>
+## Build
 
-  <p>
-    <a href="https://travis-ci.org/rustwasm/wasm-pack-template"><img src="https://img.shields.io/travis/rustwasm/wasm-pack-template.svg?style=flat-square" alt="Build Status" /></a>
-  </p>
+Use Rust 1.85 or newer, the `wasm32-unknown-unknown` target, and
+`wasm-pack` 0.15.1. The current generated package was built with Rust 1.99.1.
+Run these commands from the repository root:
 
-  <h3>
-    <a href="https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/index.html">Tutorial</a>
-    <span> | </span>
-    <a href="https://discordapp.com/channels/442252698964721669/443151097398296587">Chat</a>
-  </h3>
-
-<sub>Built with 🦀🕸 by <a href="https://rustwasm.github.io/">The Rust and WebAssembly Working Group</a></sub>
-
-</div>
-
-## About
-
-[**📚 Read this template tutorial! 📚**][template-docs]
-
-This template is designed for compiling Rust libraries into WebAssembly and
-publishing the resulting package to NPM.
-
-Be sure to check out [other `wasm-pack` tutorials online][tutorials] for other
-templates and usages of `wasm-pack`.
-
-[tutorials]: https://rustwasm.github.io/docs/wasm-pack/tutorials/index.html
-[template-docs]: https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/index.html
-
-## 🚴 Usage
-
-### 🐑 Use `cargo generate` to Clone this Template
-
-[Learn more about `cargo generate` here.](https://github.com/ashleygwilliams/cargo-generate)
-
-```
-cargo generate --git https://github.com/rustwasm/wasm-pack-template.git --name my-project
-cd my-project
+```sh
+rustup target add wasm32-unknown-unknown
+wasm-pack build game-of-life --target web --release --no-gitignore -- --locked
+python3 scripts/fixwasm.py
 ```
 
-### 🛠️ Build with `wasm-pack build`
+Keep `Cargo.lock` and the generated files in `pkg/` together with source changes.
+The dependency versions for `wasm-bindgen`, `js-sys`, and `wasm-bindgen-test`
+are coordinated; update them together and rebuild the package.
+`fixwasm.py` supplies the package’s ES module exports after each build.
 
-```
-wasm-pack build
-```
+## Test
 
-### 🔬 Test in Headless Browsers with `wasm-pack test`
-
-```
-wasm-pack test --headless --firefox
-```
-
-### 🎁 Publish to NPM with `wasm-pack publish`
-
-```
-wasm-pack publish
+```sh
+cargo test --manifest-path game-of-life/Cargo.toml --locked
+wasm-pack test --node game-of-life --locked
+node --test game-of-life/tests/pkg.mjs
 ```
 
-## 🔋 Batteries Included
+The Rust suite checks Conway’s rules, glider movement, toroidal edges, small
+grids, text rendering, and invalid input. The Wasm suite also checks the random
+seed boundaries. The JavaScript suite exercises the generated release package,
+including its packed cells and memory-growth behavior.
 
-- [`wasm-bindgen`](https://github.com/rustwasm/wasm-bindgen) for communicating
-  between WebAssembly and JavaScript.
-- [`console_error_panic_hook`](https://github.com/rustwasm/console_error_panic_hook)
-  for logging panic messages to the developer console.
-- [`wee_alloc`](https://github.com/rustwasm/wee_alloc), an allocator optimized
-  for small code size.
-- `LICENSE-APACHE` and `LICENSE-MIT`: most Rust projects are licensed this way, so these are included for you
+With `cargo-audit` installed, inspect all locked dependencies with:
+
+```sh
+cargo audit --file game-of-life/Cargo.lock --deny warnings
+```
+
+## JavaScript interface
+
+Initialize the module once, then call `Universe.new(width, height, mode, density)`.
+Dimensions must be positive and their product must fit in a `u32`; mode is 0–4
+and density must be finite in the inclusive range 0–1. Call `free()` when replacing
+or discarding a universe.
+
+`cells()` returns a pointer into the exported `WebAssembly.Memory`. Its bitset
+contains one bit per cell in row-major order, least-significant bit first.
+Construct a fresh view from `memory.buffer` and `universe.cells()` after a tick
+or an allocation, with a length of `Math.ceil(width * height / 8)`. Both the
+pointer and buffer can change; retained buffers become detached when memory grows.
 
 ## License
 
-Licensed under either of
-
-- Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
-- MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
-
-at your option.
-
-### Contribution
-
-Unless you explicitly state otherwise, any contribution intentionally
-submitted for inclusion in the work by you, as defined in the Apache-2.0
-license, shall be dual licensed as above, without any additional terms or
-conditions.
+Licensed under either Apache License 2.0 ([LICENSE-APACHE](LICENSE-APACHE)) or
+MIT ([LICENSE-MIT](LICENSE-MIT)), at your option.

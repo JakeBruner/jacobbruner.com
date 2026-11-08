@@ -9,15 +9,12 @@ const mod = (a: number, n: number): number => {
 // export let b = 3;
 // export let char = 7; // characteristic of the finite field
 
-export const isPrime = function (n: number): boolean {
-  // return true;
-  if (mod(n, 2) === 0) {
-    return false;
-  }
-  for (let d = 3; (d ^ 2) < n; d += 2) {
-    if (mod(n, d) === 0) {
-      return false;
-    }
+export const isPrime = (n: number): boolean => {
+  if (!Number.isSafeInteger(n) || n < 2) return false;
+  if (n === 2) return true;
+  if (n % 2 === 0) return false;
+  for (let divisor = 3; divisor * divisor <= n; divisor += 2) {
+    if (n % divisor === 0) return false;
   }
   return true;
 };
@@ -32,7 +29,6 @@ export class FiniteField {
   constructor(char: number) {
     if (!isPrime(char)) {
       throw new Error("not prime");
-      return;
     }
     this.characteristic = char;
 
@@ -62,7 +58,7 @@ export class FiniteField {
   }
 
   getInv(n: number): number {
-    return n >= this.characteristic ? this.inverses[n % this.characteristic] : this.inverses[n];
+    return this.inverses[mod(n, this.characteristic)];
   }
 }
 
@@ -273,62 +269,16 @@ export class Point extends RawPoint {
 }
 
 export const getSubgroup = (point: RawPoint, curve: EllipticCurve): RawPoint[] => {
-  const subgroup: RawPoint[] = [point];
-  // console.log(subgroup);
-
-  if (!(curve instanceof EllipticCurve)) {
-    console.log("something went wrong");
-    return [];
-  }
-  // this is how this should have been implemented in the first place...
-  // for now its just a helper function in thise local scope
-  // should probably be a method on EllipticCurve
-  const plus = (P: RawPoint, Q: RawPoint): RawPoint => {
-    let m: number;
-
-    if (P.isIdentity || Q.isIdentity) {
-      return new RawPoint();
-    }
-
-    if (P.x == Q.x) {
-      // if x-coords equal
-      //* CASE 1: points are additive inverses
-      if (P.y !== Q.y || (P.y || Q.y) === 0) {
-        return new RawPoint();
-        //* return the identity
-      }
-
-      //* CASE 2: points are equal
-      // from implicit differentiation we get the tangent:
-      // m = \frac{3x^2 + a}{2y} \mod curve.characteristic
-      m = mod(
-        // I use P here but Q would work too
-        mod(3 * P.x ** 2 + curve.a, curve.characteristic) * curve.getInv(2 * P.y),
-        curve.characteristic
-      );
-      // console.log("x coordinates equal");
-    } else {
-      //* Points are different, so we draw secant thru them
-      // m = \frac{py - qy}{px - qx} \mod field.characteristic
-      m = mod(
-        mod(Q.y - P.y, curve.characteristic) * curve.getInv(mod(Q.x - P.x, curve.characteristic)),
-        curve.characteristic
-      );
-    }
-    // xr = \frac{m^2 - px - qx}{2*py} \mod field.characteristic
-    const xr = mod(m * m - Q.x - P.x, curve.characteristic);
-    const yr = mod(-(P.y + m * (xr - P.x)), curve.characteristic);
-    // console.log(m, xr, yr);
-    return new RawPoint(xr, yr);
-  };
-
-  // the order of an element in a finitely generated group must be finite => must wrap to Id
-  while (!subgroup[subgroup.length - 1].isIdentity) {
-    subgroup.push(plus(point, subgroup[subgroup.length - 1]));
-    // console.log(subgroup);
-    if (subgroup.length > 20) {
-      break;
-    }
+  const generator = curve.points.find((candidate) => candidate.rawequals(point));
+  if (!generator) return [];
+  const subgroup: RawPoint[] = [];
+  let current = generator;
+  // A valid finite group returns to the identity within its order. Singular
+  // curves are still viewable, so bound the walk even when no group exists.
+  for (let count = 0; count < curve.points.length; count++) {
+    subgroup.push(current.getRawPoint);
+    if (current.isIdentity) break;
+    current = current.plus(generator);
   }
   return subgroup;
 };

@@ -1,153 +1,146 @@
 <script lang="ts">
-  import { onMount, afterUpdate } from 'svelte';
-
-  import glsl from "./j-invar.glsl?raw";
+  import { onMount, tick } from "svelte";
+  import fragmentSource from "./j-invar.glsl?raw";
+  import { invariantColor } from "./j-invariant";
 
   let canvas: HTMLCanvasElement;
   let colorHue = 0;
   let useWebGL = true;
+  let mounted = false;
+  let drawFrame: number | null = null;
+  let generation = 0;
+  let draw: (() => void) | undefined;
+  let disposeRenderer: (() => void) | undefined;
+  let renderError = "";
 
-  const fragmentShader = glsl;
-
-  function initWebGL() {
-    const gl = canvas.getContext('webgl');
-    if (!gl) {
-      useWebGL = false;
-      return;
-    }
-    if (gl === null) {
-      throw new Error('Unable to initialize WebGL. Your browser may not support it.');
-    }
-
-    const vertexShader = gl.createShader(gl.VERTEX_SHADER)!;
-    gl.shaderSource(vertexShader, `
-      attribute vec2 position;
-      void main() {
-        gl_Position = vec4(position, 0.0, 1.0);
-      }
-    `);
-    gl.compileShader(vertexShader);
-
-    const fragShader = gl.createShader(gl.FRAGMENT_SHADER)!;
-    gl.shaderSource(fragShader, fragmentShader);
-    gl.compileShader(fragShader);
-
-    const program = gl.createProgram()!;
-    gl.attachShader(program, vertexShader);
-    gl.attachShader(program, fragShader);
-    gl.linkProgram(program);
-
-    const positionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-
-    const positionLocation = gl.getAttribLocation(program, 'position');
-    gl.enableVertexAttribArray(positionLocation);
-    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-
-    const resolutionLocation = gl.getUniformLocation(program, 'resolution');
-    const colorHueLocation = gl.getUniformLocation(program, 'colorHue');
-
-    function render() {
-      gl!.viewport(0, 0, canvas.width, canvas.height);
-      gl!.useProgram(program);
-      gl!.uniform2f(resolutionLocation, canvas.width, canvas.height);
-      gl!.uniform1f(colorHueLocation, colorHue);
-      gl!.drawArrays(gl!.TRIANGLE_STRIP, 0, 4);
-      requestAnimationFrame(render);
-    }
-
-    render();
+  function scheduleDraw(_hue?: number) {
+    if (!mounted) return;
+    if (drawFrame !== null) cancelAnimationFrame(drawFrame);
+    drawFrame = requestAnimationFrame(() => {
+      drawFrame = null;
+      draw?.();
+    });
   }
 
-  function renderFallback() {
-    console.log("_________Rendering fallback");
-    const ctx = canvas.getContext('2d')!;
-    const imageData = ctx.createImageData(canvas.width, canvas.height);
-
-    function hsvToRgb(h: number, s: number, v: number): [number, number, number] {
-      const i = Math.floor(h * 6);
-      const f = h * 6 - i;
-      const p = v * (1 - s);
-      const q = v * (1 - f * s);
-      const t = v * (1 - (1 - f) * s);
-      switch (i % 6) {
-        case 0: return [v, t, p];
-        case 1: return [q, v, p];
-        case 2: return [p, v, t];
-        case 3: return [p, q, v];
-        case 4: return [t, p, v];
-        case 5: return [v, p, q];
-      }
-      return [0, 0, 0];
-    }
-
-    function cmul(a: [number, number], b: [number, number]): [number, number] {
-      return [a[0] * b[0] - a[1] * b[1], a[0] * b[1] + a[1] * b[0]];
-    }
-
-    function cdiv(a: [number, number], b: [number, number]): [number, number] {
-      const denom = b[0] * b[0] + b[1] * b[1];
-      return [(a[0] * b[0] + a[1] * b[1]) / denom, (a[1] * b[0] - a[0] * b[1]) / denom];
-    }
-
-    function jInvariant(z: [number, number]): [number, number] {
-      let j: [number, number] = [0, 0];
-      for (let i = 0; i < 100; i++) {
-        j = cmul(j, j);
-        j = cdiv(j, z);
-        j[0] += 1;
-        if (Math.hypot(j[0], j[1]) > 1e10) break;
-      }
-      return j;
-    }
-
-    for (let y = 0; y < canvas.height; y++) {
-      for (let x = 0; x < canvas.width; x++) {
-        const u = (x - canvas.width / 2) / (canvas.width / 8);
-        const v = (y - canvas.height / 2) / (canvas.height / 8);
-        const j = jInvariant([u, v]);
-        const arg = Math.atan2(j[1], j[0]);
-        const mag = Math.hypot(j[0], j[1]);
-        const [r, g, b] = hsvToRgb((arg / (2 * Math.PI) + colorHue) % 1, 1, Math.min(Math.log(mag) / 10, 1));
-        const index = (y * canvas.width + x) * 4;
-        imageData.data[index] = r * 255;
-        imageData.data[index + 1] = g * 255;
-        imageData.data[index + 2] = b * 255;
-        imageData.data[index + 3] = 255;
-      }
-    }
-
-    ctx.putImageData(imageData, 0, 0);
-    requestAnimationFrame(renderFallback);
-  }
-
-  afterUpdate(() => {
+  function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    
-    if (useWebGL) {
-      initWebGL();
-    } else {
-      renderFallback();
-    }
+    scheduleDraw();
+  }
 
-    window.addEventListener('resize', () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    });
+  function initWebGL() {
+    const gl = canvas.getContext("webgl");
+    if (!gl) return false;
+    const shaders: WebGLShader[] = [];
+    const program = gl.createProgram()!;
+    const buffer = gl.createBuffer();
+    disposeRenderer = () => {
+      shaders.forEach((shader) => gl.deleteShader(shader));
+      gl.deleteBuffer(buffer);
+      gl.deleteProgram(program);
+    };
+    const compile = (type: number, source: string) => {
+      const shader = gl.createShader(type)!;
+      shaders.push(shader);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(shader) || "Unable to compile the visualization.");
+      gl.attachShader(program, shader);
+    };
+    try {
+      compile(gl.VERTEX_SHADER, "attribute vec2 position; void main() { gl_Position = vec4(position, 0.0, 1.0); }");
+      compile(gl.FRAGMENT_SHADER, fragmentSource);
+      gl.linkProgram(program);
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(program) || "Unable to link the visualization.");
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+      const position = gl.getAttribLocation(program, "position");
+      const resolution = gl.getUniformLocation(program, "resolution");
+      const hue = gl.getUniformLocation(program, "colorHue");
+      draw = () => {
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.useProgram(program);
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.enableVertexAttribArray(position);
+        gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+        gl.uniform2f(resolution, canvas.width, canvas.height);
+        gl.uniform1f(hue, colorHue);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      };
+      return true;
+    } catch {
+      disposeRenderer();
+      disposeRenderer = undefined;
+      return false;
+    }
+  }
+
+  async function configure() {
+    const version = ++generation;
+    draw = undefined;
+    disposeRenderer?.();
+    disposeRenderer = undefined;
+    await tick();
+    if (!mounted || version !== generation) return;
+    if (useWebGL && !initWebGL()) {
+      useWebGL = false;
+      await tick(); // A new canvas is required when changing its rendering context type.
+      if (!mounted || version !== generation) return;
+    }
+    if (!useWebGL) {
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        renderError = "Unable to initialize the visualization.";
+        return;
+      }
+      draw = () => {
+        const { width, height } = canvas;
+        const data = ctx.createImageData(width, height);
+        const scale = Math.min(width, height);
+        for (let y = 0; y < height; y++) {
+          for (let x = 0; x < width; x++) {
+            const real = ((x + 0.5 - width / 2) / scale) * 4;
+            const imaginary = Math.max(0.05, 1 - ((height / 2 - y - 0.5) / scale) * 2);
+            const color = invariantColor(real, imaginary, colorHue);
+            const offset = (y * width + x) * 4;
+            for (let c = 0; c < 3; c++) data.data[offset + c] = color[c] * 255;
+            data.data[offset + 3] = 255;
+          }
+        }
+        ctx.putImageData(data, 0, 0);
+      };
+    }
+    renderError = "";
+    resize();
+  }
+
+  $: if (mounted) scheduleDraw(colorHue);
+
+  onMount(() => {
+    mounted = true;
+    void configure();
+    window.addEventListener("resize", resize);
+    return () => {
+      mounted = false;
+      generation++;
+      if (drawFrame !== null) cancelAnimationFrame(drawFrame);
+      window.removeEventListener("resize", resize);
+      disposeRenderer?.();
+    };
   });
 </script>
 
-<canvas bind:this={canvas} class="w-full h-full" />
-
-<div class="absolute top-4 left-4 bg-white bg-opacity-50 p-4 rounded">
+{#key useWebGL}
+  <canvas bind:this={canvas} class="w-full h-full" aria-label="Klein j-invariant visualization" ></canvas>
+{/key}
+<div class="absolute top-20 left-4 bg-white bg-opacity-50 p-4 rounded-sm">
   <label class="block">
     Color Hue:
     <input type="range" bind:value={colorHue} min="0" max="1" step="0.01" class="w-full" />
   </label>
   <label class="block mt-2">
     Use WebGL:
-    <input type="checkbox" bind:checked={useWebGL} on:change={() => location.reload()} />
+    <input type="checkbox" bind:checked={useWebGL} on:change={configure} />
   </label>
+  {#if renderError}<p role="alert">{renderError}</p>{/if}
 </div>
